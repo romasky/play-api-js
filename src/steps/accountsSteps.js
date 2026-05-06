@@ -12,7 +12,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 Before({ tags: '@allure.label.suite:User_Management' }, async function () {
   await sleep(2000);
 });
-Before({ tags: '@allure.label.subSuite:Login' }, async function () {
+Before({ tags: '@allure.label.subSuite:Login', timeout: 15000 }, async function () {
   await sleep(13000);
 });
 
