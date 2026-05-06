@@ -11,8 +11,8 @@
   "devDependencies": {
     "@cucumber/cucumber": "^10.9.0",
     "axios": "^1.6.8",
-    "allure-cucumberjs": "^3.0.10",
-    "allure-js-commons": "^3.0.10",
+    "allure-cucumberjs": "^2.15.1",
+    "allure-commandline": "^2.32.0",
     "dotenv": "^16.4.5",
     "uuid": "^9.0.1"
   }
