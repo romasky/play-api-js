@@ -50,7 +50,7 @@ jobs:
           path: allure-results
           retention-days: 30
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (versioned)
         if: always() && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -58,4 +58,14 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-report
           destination_dir: ${{ github.run_number }}
+          keep_files: true
+
+      - name: Deploy to GitHub Pages (latest)
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-report
+          destination_dir: latest
           keep_files: true
