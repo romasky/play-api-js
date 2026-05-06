@@ -4,7 +4,7 @@ module.exports = {
     require: ['src/steps/**/*.js'],
     format: [
       'progress',
-      './src/config/allureFormatter.js',
+      'allure-cucumberjs/reporter',
       'json:reports/cucumber-report.json',
       'html:reports/cucumber-report.html',
     ],
