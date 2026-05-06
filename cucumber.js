@@ -1,7 +1,7 @@
 module.exports = {
   default: {
     paths: ['features/**/*.feature'],
-    require: ['allure-cucumberjs', 'src/steps/**/*.js'],
+    require: ['src/steps/**/*.js'],
     format: [
       'progress',
       'allure-cucumberjs/reporter',
