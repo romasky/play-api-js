@@ -8,6 +8,7 @@ Before(function (scenario) {
 
 // Data generation
 Given('Save string {string} as {string}',                    (value, key) => ctx.save(key, value));
+Given('Save context value {string} as {string}',             (srcKey, destKey) => ctx.save(destKey, ctx.get(srcKey, true)));
 Given('Generate email and save as {string}',                 (key) => ctx.save(key, gen.email()));
 Given('Generate username and save as {string}',              (key) => ctx.save(key, gen.username()));
 Given('Generate password and save as {string}',              (key) => ctx.save(key, gen.password()));
@@ -22,6 +23,7 @@ Given('Generate fake mongo id and save as {string}',         (key) => ctx.save(k
 Given('Generate fake uuid and save as {string}',             (key) => ctx.save(key, gen.fakeUuid()));
 Given('Generate phone number and save as {string}',          (key) => ctx.save(key, gen.phoneNumber()));
 Given('Generate string of length {int} and save as {string}',(n, key) => ctx.save(key, gen.alphanumericString(n)));
+Given('Generate local part and save as {string}',            (key) => ctx.save(key, gen.alphanumericString(10).toLowerCase()));
 Given('Get current date and save as {string}',               (key) => ctx.save(key, new Date().toISOString().split('T')[0]));
 
 // Status code

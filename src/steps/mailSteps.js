@@ -24,6 +24,12 @@ When('Create mailbox with local_part {string} and save response as {string}', as
   ctx.save(varName, res);
 });
 
+When('Create mailbox with context local_part {string} and save response as {string}', async (localPartKey, varName) => {
+  const body = createMailboxReq({ localPart: ctx.str(localPartKey) });
+  const res  = await client.post(paths.MAIL_CREATE, body);
+  ctx.save(varName, res);
+});
+
 When('Create mailbox with domain {string} local_part {string} and save response as {string}',
   async (domain, localPart, varName) => {
     const body = createMailboxReq({ domain, localPart });

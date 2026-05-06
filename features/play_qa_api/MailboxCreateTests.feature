@@ -12,9 +12,10 @@ Feature: Mailbox Create
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Create mailbox with custom local_part
-    When Create mailbox with local_part "mytestbox1" and save response as "response"
+    Given Generate local part and save as "localPart"
+    When Create mailbox with context local_part "localPart" and save response as "response"
     Then Get and check status code 201 from "response"
-    And Assert response body contains "mytestbox1" in "response"
+    And Assert response body contains "localPart" in "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario Outline: Create mailbox with valid domain
@@ -48,9 +49,10 @@ Feature: Mailbox Create
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create duplicate mailbox address returns 409
-    When Create mailbox with local_part "duplicate1" and save response as "firstRes"
+    Given Generate local part and save as "dupLocalPart"
+    When Create mailbox with context local_part "dupLocalPart" and save response as "firstRes"
     Then Get and check status code 201 from "firstRes"
-    When Create mailbox with local_part "duplicate1" and save response as "secondRes"
+    When Create mailbox with context local_part "dupLocalPart" and save response as "secondRes"
     Then Get and check status code 409 from "secondRes"
     And Assert error code is "ADDRESS_TAKEN" in mail response "secondRes"
 
@@ -79,7 +81,7 @@ Feature: Mailbox Create
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create mailbox with too-long local_part returns 400
     Given Generate string of length 31 and save as "longLocalPart"
-    When Create mailbox with local_part "longLocalPart" and save response as "response"
+    When Create mailbox with context local_part "longLocalPart" and save response as "response"
     Then Get and check status code 400 from "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario

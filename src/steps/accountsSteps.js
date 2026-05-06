@@ -80,6 +80,9 @@ When('Create user with full body and save response as {string}',
   }
 );
 
+Given('Set employment status {string}', (status) => ctx.save('employment', { status }));
+Given('Set theme {string}', (theme) => ctx.save('settings', { theme }));
+
 When('Create user with raw body {string} and save response as {string}', async (rawJson, varName) => {
   const body = JSON.parse(rawJson);
   const res = await client.post(paths.USERS_CREATE, body);

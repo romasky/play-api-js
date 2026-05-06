@@ -108,7 +108,7 @@ Feature: Create User
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create user with duplicate email returns 409
-    Given Save string "email_g" as "email"
+    Given Save context value "email_g" as "email"
     And Generate username and save as "username"
     And Generate password and save as "password"
     And Generate first name and save as "firstName"
@@ -124,14 +124,15 @@ Feature: Create User
     And Generate password and save as "password"
     And Generate first name and save as "firstName"
     And Generate last name and save as "lastName"
-    When Create user with raw body "{\"email\":\"<email_ph>\",\"username\":\"<user_ph>\",\"password\":\"Pass_test123!1\",\"profile\":{\"first_name\":\"John\",\"last_name\":\"Doe\",\"gender\":\"<gender>\"}}" and save response as "response"
+    And Save string "<gender>" as "gender"
+    When Create user with full body and save response as "response"
     Then Get and check status code 201 from "response"
     Examples:
-      | gender            | email_ph              | user_ph    |
-      | male              | m1@play-qa.com        | user_m1    |
-      | female            | f1@play-qa.com        | user_f1    |
-      | other             | o1@play-qa.com        | user_o1    |
-      | prefer_not_to_say | p1@play-qa.com        | user_p1    |
+      | gender            |
+      | male              |
+      | female            |
+      | other             |
+      | prefer_not_to_say |
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create user with invalid gender value returns 400
@@ -141,25 +142,37 @@ Feature: Create User
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario Outline: Create user with valid employment status
-    When Create user with raw body "{\"email\":\"<email_ph>\",\"username\":\"<user_ph>\",\"password\":\"Pass_test123!1\",\"profile\":{\"first_name\":\"John\",\"last_name\":\"Doe\"},\"employment\":{\"status\":\"<status>\"}}" and save response as "response"
+    Given Generate email and save as "email"
+    And Generate username and save as "username"
+    And Generate password and save as "password"
+    And Generate first name and save as "firstName"
+    And Generate last name and save as "lastName"
+    And Set employment status "<status>"
+    When Create user with full body and save response as "response"
     Then Get and check status code 201 from "response"
     Examples:
-      | status     | email_ph                | user_ph      |
-      | employed   | emp1@play-qa.com        | user_emp1    |
-      | unemployed | unemp1@play-qa.com      | user_unemp1  |
-      | student    | stud1@play-qa.com       | user_stud1   |
-      | retired    | ret1@play-qa.com        | user_ret1    |
-      | freelancer | free1@play-qa.com       | user_free1   |
+      | status     |
+      | employed   |
+      | unemployed |
+      | student    |
+      | retired    |
+      | freelancer |
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario Outline: Create user with valid theme setting
-    When Create user with raw body "{\"email\":\"<email_ph>\",\"username\":\"<user_ph>\",\"password\":\"Pass_test123!1\",\"profile\":{\"first_name\":\"John\",\"last_name\":\"Doe\"},\"settings\":{\"theme\":\"<theme>\"}}" and save response as "response"
+    Given Generate email and save as "email"
+    And Generate username and save as "username"
+    And Generate password and save as "password"
+    And Generate first name and save as "firstName"
+    And Generate last name and save as "lastName"
+    And Set theme "<theme>"
+    When Create user with full body and save response as "response"
     Then Get and check status code 201 from "response"
     Examples:
-      | theme  | email_ph              | user_ph     |
-      | light  | th1@play-qa.com       | user_th1    |
-      | dark   | th2@play-qa.com       | user_th2    |
-      | system | th3@play-qa.com       | user_th3    |
+      | theme  |
+      | light  |
+      | dark   |
+      | system |
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Response headers include x-request-id after create
