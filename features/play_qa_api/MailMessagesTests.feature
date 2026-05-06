@@ -48,7 +48,7 @@ Feature: Mail Messages
     Then Get and check status code 200 from "response"
     And Assert field "body" equals "Full body text" in response "response"
     And Assert response body contains "html_body" in "response"
-    And Assert response body contains "headers" in "response"
+    And Assert response body contains "received_at" in "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Get message with wrong mailbox token returns 404

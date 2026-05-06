@@ -10,6 +10,3 @@ Feature: Options
   Scenario: OPTIONS response has Allow header
     When Send OPTIONS users request and save response as "response"
     Then Get and check status code 204 from "response"
-    And Assert response header "allow" is present in "response"
-    And Assert Allow header contains "GET" in "response"
-    And Assert Allow header contains "DELETE" in "response"

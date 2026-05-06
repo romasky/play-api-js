@@ -43,6 +43,16 @@ function str(key) {
   return String(get(key));
 }
 
+function opt(key) {
+  const cleanKey = (key.endsWith('_g') || key.endsWith('_l')) ? key.slice(0, -2) : key;
+  const isGlobal = key.endsWith('_g');
+  const name = currentScenario?.pickle.name;
+  const value = isGlobal
+    ? globalCtx[cleanKey]
+    : (localCtx[name]?.[cleanKey] ?? globalCtx[cleanKey]);
+  return value;
+}
+
 function assertStatusCode(expected, varName) {
   const response = get(varName, true);
   const actual = response.status;
@@ -53,4 +63,4 @@ function assertStatusCode(expected, varName) {
   }
 }
 
-module.exports = { setScenario, save, get, str, assertStatusCode };
+module.exports = { setScenario, save, get, opt, str, assertStatusCode };
