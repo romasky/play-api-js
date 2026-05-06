@@ -1,0 +1,7 @@
+node_modules/
+allure-report/
+allure-results/*.json
+!allure-results/categories.json
+reports/
+docs/
+.env

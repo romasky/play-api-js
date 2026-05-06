@@ -1,0 +1,19 @@
+{
+  "name": "play-api-js",
+  "version": "1.0.0",
+  "description": "BDD API test framework for play-qa.com — JS port of play-api-java",
+  "scripts": {
+    "test": "npx cucumber-js",
+    "test:smoke": "npx cucumber-js --tags '@Smoke'",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^10.9.0",
+    "axios": "^1.6.8",
+    "allure-cucumberjs": "^3.0.10",
+    "allure-js-commons": "^3.0.10",
+    "dotenv": "^16.4.5",
+    "uuid": "^9.0.1"
+  }
+}
