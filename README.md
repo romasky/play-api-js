@@ -31,6 +31,7 @@
 | Node.js | 20+ | Runtime |
 | `@cucumber/cucumber` | ^10.9 | BDD runner + Gherkin parser |
 | `axios` | ^1.6 | HTTP client |
+| `allure` | ^3.8 | Allure Report 3 CLI (Awesome UI) |
 | `allure-cucumberjs` | ^3.8 | Allure formatter for Cucumber |
 | `allure-js-commons` | ^3.8 | Allure step/attachment API |
 | `dotenv` | ^16.4 | Environment config |
