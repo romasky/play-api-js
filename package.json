@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.9.0",
-    "allure-commandline": "^2.32.0",
-    "allure-cucumberjs": "^3.7.2",
-    "allure-js-commons": "^3.7.2",
+    "allure-commandline": "^2.40.0",
+    "allure-cucumberjs": "^3.8.0",
+    "allure-js-commons": "^3.8.0",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "uuid": "^9.0.1"

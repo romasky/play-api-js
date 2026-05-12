@@ -31,8 +31,8 @@
 | Node.js | 20+ | Runtime |
 | `@cucumber/cucumber` | ^10.9 | BDD runner + Gherkin parser |
 | `axios` | ^1.6 | HTTP client |
-| `allure-cucumberjs` | ^3.0 | Allure formatter for Cucumber |
-| `allure-js-commons` | ^3.0 | Allure step/attachment API |
+| `allure-cucumberjs` | ^3.8 | Allure formatter for Cucumber |
+| `allure-js-commons` | ^3.8 | Allure step/attachment API |
 | `dotenv` | ^16.4 | Environment config |
 | `uuid` | ^9.0 | UUID generation |
 
