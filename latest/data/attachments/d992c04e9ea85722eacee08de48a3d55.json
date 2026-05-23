@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "password is required"
+  },
+  "timestamp": "2026-05-23T09:55:16.412936404Z",
+  "request_id": "daee2cc9-e52e-4b5d-84ec-66ce3263dc38"
+}
