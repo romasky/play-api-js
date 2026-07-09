@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_DOMAIN",
+    "message": "Invalid domain. Use POST /mail/create without a domain field to get the default, or check the API docs for allowed domains.",
+    "details": "invalid domain"
+  },
+  "timestamp": "2026-07-09T10:59:17.936761976Z",
+  "request_id": "261f9dd2-ac71-4a2a-ad1f-f56af6ed6a8e"
+}
