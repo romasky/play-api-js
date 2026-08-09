@@ -1,0 +1,187 @@
+{
+  "users": [
+    {
+      "id": "6a783ded2ce78527e0ee3395",
+      "email": "txklefg60d@play-qa.com",
+      "username": "user_yt2avcwg",
+      "profile": {
+        "first_name": "Testbisebg",
+        "last_name": "Useruybiyr"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-08-09T08:44:29.504Z",
+        "updated_at": "2026-08-09T08:44:29.504Z",
+        "expires_at": "2026-08-10T08:44:29.504Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6a783deb2ce78527e0ee3394",
+      "email": "exu5pe6goe@play-qa.com",
+      "username": "user_cqhhz9s1",
+      "profile": {
+        "first_name": "Testrfcoeg",
+        "last_name": "Userftlgrc"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-08-09T08:44:27.328Z",
+        "updated_at": "2026-08-09T08:44:27.328Z",
+        "expires_at": "2026-08-10T08:44:27.328Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6a783de92ce78527e0ee3393",
+      "email": "4unive0hiq@play-qa.com",
+      "username": "user_gmcvlo6c",
+      "profile": {
+        "first_name": "Testxlpixc",
+        "last_name": "Userkhzwte"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-08-09T08:44:25.1Z",
+        "updated_at": "2026-08-09T08:44:25.1Z",
+        "expires_at": "2026-08-10T08:44:25.1Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6a783de72ce78527e0ee3392",
+      "email": "p1hjcctybm@play-qa.com",
+      "username": "user_zrbxhwla",
+      "profile": {
+        "first_name": "Testtoikie",
+        "last_name": "Userdncfms"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-08-09T08:44:23.704Z",
+        "updated_at": "2026-08-09T08:44:23.704Z",
+        "expires_at": "2026-08-10T08:44:23.704Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6a783de62ce78527e0ee3391",
+      "email": "my5qh1tg7s@play-qa.com",
+      "username": "user_lm40t2ma",
+      "profile": {
+        "first_name": "Testsxsmxq",
+        "last_name": "Userclpmrw",
+        "bio": "Test user bio",
+        "gender": "male"
+      },
+      "contacts": {
+        "phone": "+17901833587",
+        "phone_verified": false,
+        "telegram": "@testuser"
+      },
+      "address": {
+        "country": "US",
+        "city": "San Francisco"
+      },
+      "employment": {
+        "status": "employed",
+        "company": "Test Corp"
+      },
+      "settings": {
+        "language": "en",
+        "timezone": "America/Los_Angeles",
+        "theme": "dark",
+        "notifications_enabled": true,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-08-09T08:44:22.878Z",
+        "updated_at": "2026-08-09T08:44:22.878Z",
+        "expires_at": "2026-08-10T08:44:22.878Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    }
+  ],
+  "page": 1,
+  "per_page": 5,
+  "total_pages": 28
+}
