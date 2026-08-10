@@ -1,0 +1,19 @@
+{
+  "messages": [
+    {
+      "id": "6a7999262ce78527e0ee353c",
+      "from": "b@e.com",
+      "subject": "Second",
+      "body_preview": "Body 2",
+      "received_at": "2026-08-10T09:25:58.727Z"
+    },
+    {
+      "id": "6a7999262ce78527e0ee353b",
+      "from": "a@e.com",
+      "subject": "First",
+      "body_preview": "Body 1",
+      "received_at": "2026-08-10T09:25:58.607Z"
+    }
+  ],
+  "count": 2
+}
