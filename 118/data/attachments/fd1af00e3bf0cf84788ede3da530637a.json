@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "email must be a valid email address"
+  },
+  "timestamp": "2026-08-16T08:29:45.980493305Z",
+  "request_id": "7eabe2b5-0632-456f-8bbf-4c1156088973"
+}
