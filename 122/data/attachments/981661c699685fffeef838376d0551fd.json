@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "ADDRESS_TAKEN",
+    "message": "That email address is already in use. Please choose a different local part.",
+    "details": "email address already taken"
+  },
+  "timestamp": "2026-08-20T08:42:42.685497923Z",
+  "request_id": "7801d327-7c73-46b6-97dd-6f387b2ff87a"
+}
