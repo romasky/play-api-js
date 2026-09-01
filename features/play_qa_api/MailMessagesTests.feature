@@ -7,7 +7,7 @@ Feature: Mail Messages
     And Extract "token" from "createRes" and save as "mailToken"
     When Get messages for token "mailToken" and save response as "response"
     Then Get and check status code 200 from "response"
-    And Assert messages list has count field in "response"
+    And Assert field "count" is present in response "response"
     And Assert field "count" equals "0" in response "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
@@ -24,18 +24,18 @@ Feature: Mail Messages
   Scenario: List messages returns body_preview not full body
     When Create mailbox and save response as "createRes"
     And Extract "token" from "createRes" and save as "mailToken"
-    When Send message to token "mailToken" from "sender@example.com" subject "Test" body "Hello World" and save response as "sendRes"
+    When Send message to token "mailToken" with raw body "{\"from\":\"sender@example.com\",\"subject\":\"Test\",\"body\":\"Hello World\",\"html_body\":\"<p>Hello</p>\"}" and save response as "sendRes"
     Then Get and check status code 201 from "sendRes"
     When Get messages for token "mailToken" and save response as "listRes"
     Then Get and check status code 200 from "listRes"
-    And Assert response body contains "body_preview" in "listRes"
+    And Assert messages list "listRes" items have no full body
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: List messages for non-existent mailbox returns 404
     Given Generate fake uuid and save as "fakeToken"
     When Get messages for token "fakeToken" and save response as "response"
     Then Get and check status code 404 from "response"
-    And Assert error code is "MAILBOX_NOT_FOUND" in mail response "response"
+    And Assert error code is "MAILBOX_NOT_FOUND" in response "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Get single message returns full body and html_body
@@ -47,8 +47,8 @@ Feature: Mail Messages
     When Get message "msgId" for token "mailToken" and save response as "response"
     Then Get and check status code 200 from "response"
     And Assert field "body" equals "Full body text" in response "response"
-    And Assert response body contains "html_body" in "response"
-    And Assert response body contains "received_at" in "response"
+    And Assert field "html_body" equals "<p>HTML</p>" in response "response"
+    And Assert field "received_at" is not null in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Get message with wrong mailbox token returns 404
@@ -61,7 +61,7 @@ Feature: Mail Messages
     And Extract "id" from "sendRes" and save as "msgId"
     When Get message "msgId" for token "tokenB" and save response as "response"
     Then Get and check status code 404 from "response"
-    And Assert error code is "MESSAGE_NOT_FOUND" in mail response "response"
+    And Assert error code is "MESSAGE_NOT_FOUND" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Get message with fake message ID returns 404
@@ -70,6 +70,7 @@ Feature: Mail Messages
     And Generate fake mongo id and save as "fakeMsgId"
     When Get message "fakeMsgId" for token "mailToken" and save response as "response"
     Then Get and check status code 404 from "response"
+    And Assert error code is "MESSAGE_NOT_FOUND" in response "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Messages are sorted newest first
@@ -82,3 +83,4 @@ Feature: Mail Messages
     When Get messages for token "mailToken" and save response as "listRes"
     Then Get and check status code 200 from "listRes"
     And Assert field "count" equals "2" in response "listRes"
+    And Assert field "messages.0.subject" equals "Second" in response "listRes"

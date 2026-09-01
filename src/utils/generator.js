@@ -1,5 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
-
 const LATIN    = 'abcdefghijklmnopqrstuvwxyz';
 const NUMERIC  = '0123456789';
 const SPECIAL  = '!@#$%^&*()_+-=[]{}|;:,.<>?';
@@ -14,17 +12,13 @@ function randomFrom(chars, length) {
 }
 
 module.exports = {
-  latinString:       (n)      => randomFrom(LATIN, n),
-  numericString:     (n)      => randomFrom(NUMERIC, n),
   alphanumericString:(n)      => randomFrom(LATIN + NUMERIC, n),
 
   email:             ()       => randomFrom(LATIN + NUMERIC, 10) + '@play-qa.com',
-  emailWithDomain:   (domain) => randomFrom(LATIN + NUMERIC, 10) + '@' + domain,
   username:          ()       => 'user_' + randomFrom(LATIN + NUMERIC, 8).toLowerCase(),
   password:          ()       => 'Pass_' + randomFrom(LATIN + NUMERIC, 10) + '!1',
   firstName:         ()       => 'Test' + randomFrom(LATIN, 6),
   lastName:          ()       => 'User' + randomFrom(LATIN, 6),
-  uuid:              ()       => uuidv4(),
   phoneNumber:       ()       => '+1' + randomFrom(NUMERIC, 10),
   senderEmail:       ()       => randomFrom(LATIN + NUMERIC, 8).toLowerCase() + '@example.com',
   messageSubject:    ()       => 'Subject ' + randomFrom(LATIN + NUMERIC, 6),

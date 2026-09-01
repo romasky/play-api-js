@@ -16,9 +16,11 @@
 ## ✨ Key Highlights
 
 - **BDD scenarios** — Cucumber feature files with human-readable Gherkin covering positive, negative, and end-to-end flows
-- **128 scenarios across 16 feature files** — full coverage of all 18 API endpoints
+- **181 scenarios across 18 feature files** — covering 19 API endpoints, including Bearer and Basic auth
 - **Allure HTML reports** — step-level granularity, auto-published to GitHub Pages on every CI run
-- **Built-in Temp Mail** — leverages the play-qa.com mail API for end-to-end email testing without external services
+- **Token-security regression guards** — absent / empty / malformed `Authorization` headers and cross-account (IDOR) attempts; every negative scenario asserts **both** the HTTP status and `error.code`
+- **Typed response assertions** — dotted-path, own-property checks (`Assert field "x.y" is absent …`) instead of substring matching
+- **Temp-mail API coverage** — mailbox and message endpoints exercised through the same Gherkin steps, no external mail service needed
 - **Rate-limit pacing** — `Before` hooks pre-emptively sleep to respect server-enforced rate limits
 - **Scenario context** — global (`_g`) / local scoping system for cross-scenario data dependencies
 
@@ -35,7 +37,6 @@
 | `allure-cucumberjs` | ^3.8 | Allure formatter for Cucumber |
 | `allure-js-commons` | ^3.8 | Allure step/attachment API |
 | `dotenv` | ^16.4 | Environment config |
-| `uuid` | ^9.0 | UUID generation |
 
 ---
 
@@ -44,7 +45,7 @@
 ```
 play-api-js/
 ├── cucumber.js                    # Cucumber config (runner, formatters, tag filter)
-├── .env                           # Base URL and timeouts
+├── .env                           # Base URL and request timeout (git-ignored)
 ├── .github/workflows/test.yml     # CI — GitHub Actions
 ├── allure-results/
 │   └── categories.json            # Allure failure categories
@@ -52,24 +53,27 @@ play-api-js/
 │   ├── config/config.js           # Reads .env (dotenv wrapper)
 │   ├── api/
 │   │   ├── apiPaths.js            # All endpoint paths as constants / functions
-│   │   └── restClient.js          # axios wrapper with Allure step attachments
-│   ├── utils/generator.js         # Random data generators (email, username, etc.)
+│   │   └── restClient.js          # axios wrapper — one Allure step per request, headers passed verbatim
+│   ├── utils/
+│   │   ├── generator.js           # Random data generators (email, username, etc.)
+│   │   └── jsonPath.js            # getPath / hasPath — typed dotted-path body checks
 │   ├── models/
 │   │   ├── createUserReq.js       # Request builders (strips undefined → no null fields)
 │   │   ├── loginReq.js
 │   │   ├── createMailboxReq.js
 │   │   ├── sendMessageReq.js
-│   │   ├── userResponse.js        # Response accessors + assertions
+│   │   ├── userResponse.js        # Typed response accessors + assertions (used by steps)
 │   │   ├── loginResponse.js
 │   │   ├── mailboxResponse.js
 │   │   ├── usersListResponse.js
 │   │   └── errorResponse.js
 │   ├── context/scenarioContext.js # Global/local variable store for Gherkin steps
 │   └── steps/
-│       ├── commonSteps.js         # Data generation, assertions, debug steps
-│       ├── accountsSteps.js       # Users, login, logout steps + rate-limit hooks
+│       ├── commonSteps.js         # Data generation, typed field/header/status assertions, debug
+│       ├── accountsSteps.js       # Users, login, logout steps (bearer / raw / no-auth variants) + rate-limit hooks
 │       ├── mailSteps.js           # Mailbox and message steps
 │       ├── healthSteps.js         # Health check steps
+│       ├── basicAuthSteps.js      # GET /auth/basic steps
 │       └── optionsSteps.js        # OPTIONS endpoint steps
 └── features/play_qa_api/
     ├── CreateUserTests.feature
@@ -81,6 +85,8 @@ play-api-js/
     ├── DeleteUserTests.feature
     ├── LoginTests.feature
     ├── LogoutTests.feature
+    ├── TokenSecurityTests.feature
+    ├── BasicAuthTests.feature
     ├── OptionsTests.feature
     ├── HealthTests.feature
     ├── MailboxCreateTests.feature
@@ -120,9 +126,10 @@ Copy `.env` and adjust if needed:
 
 ```
 BASE_URL=https://www.play-qa.com
-CONNECTION_TIMEOUT=20000
-SOCKET_TIMEOUT=20000
+REQUEST_TIMEOUT=20000
 ```
+
+`REQUEST_TIMEOUT` is the single axios deadline (connect + response, in ms) — axios has no separate connect timeout.
 
 Override at runtime: `BASE_URL=https://staging.play-qa.com npm test`
 
@@ -134,6 +141,7 @@ Override at runtime: `BASE_URL=https://staging.play-qa.com npm test`
 |---|---|---|---|
 | GET | `/api/v1/health` | HealthTests.feature | ✅ Tested |
 | POST | `/api/v1/login` | LoginTests.feature | ✅ Tested |
+| GET | `/api/v1/auth/basic` | BasicAuthTests.feature | ✅ Tested |
 | POST | `/api/v1/users/create` | CreateUserTests.feature | ✅ Tested |
 | GET | `/api/v1/users/list` | ListUsersTests.feature | ✅ Tested |
 | GET | `/api/v1/users/get/:id` | GetUserTests.feature | ✅ Tested |
@@ -144,12 +152,14 @@ Override at runtime: `BASE_URL=https://staging.play-qa.com npm test`
 | PATCH | `/api/v1/users/patch/:id` | PatchUserTests.feature | ✅ Tested |
 | DELETE | `/api/v1/users/delete/:id` | DeleteUserTests.feature | ✅ Tested |
 | POST | `/api/v1/users/logout/:id` | LogoutTests.feature | ✅ Tested |
+| PUT/PATCH/DELETE/POST | user mutation endpoints — auth hardening | TokenSecurityTests.feature | ✅ Tested |
 | POST | `/api/v1/mail/create` | MailboxCreateTests.feature | ✅ Tested |
 | GET | `/api/v1/mail/:token` | MailboxGetTests.feature | ✅ Tested |
 | DELETE | `/api/v1/mail/:token` | MailboxDeleteTests.feature | ✅ Tested |
 | GET | `/api/v1/mail/:token/messages` | MailMessagesTests.feature | ✅ Tested |
 | GET | `/api/v1/mail/:token/messages/:id` | MailMessagesTests.feature | ✅ Tested |
 | POST | `/api/v1/mail/:token/send` | MailSendTests.feature | ✅ Tested |
+| POST | `/api/v1/verify-recaptcha` | — | ⏭ Out of scope (needs a live Google reCAPTCHA token) |
 
 ---
 
@@ -170,25 +180,29 @@ Override at runtime: `BASE_URL=https://staging.play-qa.com npm test`
 
 ## 📈 Scenario Count
 
+Scenario Outlines are counted per example row.
+
 | Feature | Scenarios |
 |---|---|
-| CreateUserTests | ~28 |
-| LoginTests | 11 |
-| MailboxCreateTests | ~13 |
-| LogoutTests | 7 |
-| DeleteUserTests | 6 |
-| UpdateUserTests | 7 |
-| PatchUserTests | 7 |
-| MailboxDeleteTests | 7 |
-| MailSendTests | 7 |
+| CreateUserTests | 39 |
+| MailboxCreateTests | 18 |
+| ListUsersTests | 13 |
+| LoginTests | 13 |
+| TokenSecurityTests | 12 |
+| PatchUserTests | 10 |
+| DeleteUserTests | 8 |
+| LogoutTests | 8 |
 | MailMessagesTests | 8 |
-| UserExistsTests | 6 |
+| MailboxDeleteTests | 8 |
+| UpdateUserTests | 8 |
+| GetUserTests | 7 |
+| MailSendTests | 7 |
+| UserExistsTests | 7 |
+| BasicAuthTests | 6 |
+| HealthTests | 4 |
 | MailboxGetTests | 3 |
-| GetUserTests | 4 |
-| ListUsersTests | 5 |
-| HealthTests | 3 |
 | OptionsTests | 2 |
-| **Total** | **~128** |
+| **Total** | **181** |
 
 ---
 

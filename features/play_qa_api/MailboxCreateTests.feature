@@ -5,8 +5,8 @@ Feature: Mailbox Create
   Scenario: Create mailbox with empty body returns 201
     When Create mailbox and save response as "response"
     Then Get and check status code 201 from "response"
-    And Assert mailbox has token in "response"
-    And Assert mailbox has email_address in "response"
+    And Assert field "token" is not null in response "response"
+    And Assert field "email_address" is not null in response "response"
     And Assert field "domain" equals "play-qa.com" in response "response"
     And Assert field "expires_at" is not null in response "response"
 
@@ -15,7 +15,7 @@ Feature: Mailbox Create
     Given Generate local part and save as "localPart"
     When Create mailbox with context local_part "localPart" and save response as "response"
     Then Get and check status code 201 from "response"
-    And Assert response body contains "localPart" in "response"
+    And Assert field "email_address" contains "localPart" in response "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario Outline: Create mailbox with valid domain
@@ -29,23 +29,41 @@ Feature: Mailbox Create
       | temp.play-qa.com    |
       | inbox.play-qa.com   |
 
+  @Run @Positive @allure.label.story:Positive_Scenario
+  Scenario Outline: Create mailbox with local_part at length boundary <length> returns 201
+    Given Generate string of length <length> and save as "localPart"
+    When Create mailbox with context local_part "localPart" and save response as "response"
+    Then Get and check status code 201 from "response"
+    And Assert field "email_address" contains "localPart" in response "response"
+    Examples:
+      | length |
+      | 3      |
+      | 30     |
+
+  @Run @Positive @allure.label.story:Positive_Scenario
+  Scenario: Create mailbox with allowed special chars underscore and hyphen returns 201
+    Given Generate local part with underscore and hyphen and save as "localPart"
+    When Create mailbox with context local_part "localPart" and save response as "response"
+    Then Get and check status code 201 from "response"
+    And Assert field "email_address" contains "localPart" in response "response"
+
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create mailbox with invalid domain returns 400
     When Create mailbox with domain "invalid.example.com" and save response as "response"
     Then Get and check status code 400 from "response"
-    And Assert error code is "INVALID_DOMAIN" in mail response "response"
+    And Assert error code is "INVALID_DOMAIN" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create mailbox with too-short local_part returns 400
     When Create mailbox with local_part "ab" and save response as "response"
     Then Get and check status code 400 from "response"
-    And Assert error code is "INVALID_LOCAL_PART" in mail response "response"
+    And Assert error code is "INVALID_LOCAL_PART" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create mailbox with invalid chars in local_part returns 400
     When Create mailbox with local_part "My_Test_BOX!" and save response as "response"
     Then Get and check status code 400 from "response"
-    And Assert error code is "INVALID_LOCAL_PART" in mail response "response"
+    And Assert error code is "INVALID_LOCAL_PART" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create duplicate mailbox address returns 409
@@ -54,7 +72,7 @@ Feature: Mailbox Create
     Then Get and check status code 201 from "firstRes"
     When Create mailbox with context local_part "dupLocalPart" and save response as "secondRes"
     Then Get and check status code 409 from "secondRes"
-    And Assert error code is "ADDRESS_TAKEN" in mail response "secondRes"
+    And Assert error code is "ADDRESS_TAKEN" in response "secondRes"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Mailbox token is a UUID format
@@ -83,9 +101,10 @@ Feature: Mailbox Create
     Given Generate string of length 31 and save as "longLocalPart"
     When Create mailbox with context local_part "longLocalPart" and save response as "response"
     Then Get and check status code 400 from "response"
+    And Assert error code is "INVALID_LOCAL_PART" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Create mailbox with uppercase in local_part returns 400
     When Create mailbox with local_part "TestBox123" and save response as "response"
     Then Get and check status code 400 from "response"
-    And Assert error code is "INVALID_LOCAL_PART" in mail response "response"
+    And Assert error code is "INVALID_LOCAL_PART" in response "response"

@@ -9,7 +9,7 @@ Feature: Mailbox Get
     When Get mailbox with token "mailToken" and save response as "response"
     Then Get and check status code 200 from "response"
     And Assert field "token" equals "mailToken" in response "response"
-    And Assert mailbox has email_address in "response"
+    And Assert field "email_address" is not null in response "response"
     And Assert field "expires_at" is not null in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
@@ -17,7 +17,7 @@ Feature: Mailbox Get
     Given Generate fake uuid and save as "fakeToken"
     When Get mailbox with token "fakeToken" and save response as "response"
     Then Get and check status code 404 from "response"
-    And Assert error code is "MAILBOX_NOT_FOUND" in mail response "response"
+    And Assert error code is "MAILBOX_NOT_FOUND" in response "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Get mailbox response has all required fields

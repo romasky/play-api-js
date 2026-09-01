@@ -1,31 +1,10 @@
 /**
- * Helpers for the standard error envelope:
+ * Assertions for the standard error envelope:
  * { success, error: { code, message, details, field, validation }, timestamp, request_id }
  */
 
-function getCode(res) {
-  return res.data?.error?.code;
-}
-
-function getMessage(res) {
-  return res.data?.error?.message;
-}
-
-function getDetails(res) {
-  return res.data?.error?.details;
-}
-
-function getField(res) {
-  return res.data?.error?.field;
-}
-
-function getValidation(res) {
-  return res.data?.error?.validation ?? [];
-}
-
-function getRequestId(res) {
-  return res.data?.request_id;
-}
+const getCode      = (res) => res.data?.error?.code;
+const getRequestId = (res) => res.data?.request_id;
 
 function assertCode(res, expected) {
   const actual = getCode(res);
@@ -34,4 +13,11 @@ function assertCode(res, expected) {
   }
 }
 
-module.exports = { getCode, getMessage, getDetails, getField, getValidation, getRequestId, assertCode };
+function assertHasRequestId(res) {
+  const requestId = getRequestId(res);
+  if (typeof requestId !== 'string' || requestId.trim() === '') {
+    throw new Error(`Expected non-empty 'request_id' in error body. Body: ${JSON.stringify(res.data)}`);
+  }
+}
+
+module.exports = { assertCode, assertHasRequestId };

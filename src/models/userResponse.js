@@ -1,44 +1,16 @@
 /**
- * Helpers for extracting and asserting fields from user response objects.
- * All functions take an axios response and return typed values or throw on missing fields.
+ * Assertions for the UserResponse shape returned by create / get / update / patch.
  */
 
-function getId(res) {
-  return res.data?.id;
-}
+const CORE_FIELDS = ['id', 'email', 'username', 'profile', 'metadata'];
 
-function getEmail(res) {
-  return res.data?.email;
-}
+/** Typed presence check for the fields every UserResponse must carry. */
+function assertCoreFields(res) {
+  const missing = CORE_FIELDS.filter((field) => res.data?.[field] === undefined || res.data?.[field] === null);
 
-function getUsername(res) {
-  return res.data?.username;
-}
-
-function getAccessToken(res) {
-  return res.data?.access_token;
-}
-
-function getProfile(res) {
-  return res.data?.profile;
-}
-
-function getMetadata(res) {
-  return res.data?.metadata;
-}
-
-function assertNoPassword(res) {
-  const body = JSON.stringify(res.data);
-  if (body.includes('"password"')) {
-    throw new Error('Response should not contain password field');
+  if (missing.length > 0) {
+    throw new Error(`User response is missing core fields [${missing.join(', ')}]. Body: ${JSON.stringify(res.data)}`);
   }
 }
 
-function assertNoAccessToken(res) {
-  const body = JSON.stringify(res.data);
-  if (body.includes('"access_token"')) {
-    throw new Error('Response should not contain access_token field');
-  }
-}
-
-module.exports = { getId, getEmail, getUsername, getAccessToken, getProfile, getMetadata, assertNoPassword, assertNoAccessToken };
+module.exports = { assertCoreFields };

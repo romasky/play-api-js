@@ -4,8 +4,7 @@ const client = require('../api/restClient');
 const paths  = require('../api/apiPaths');
 
 When('Send OPTIONS users request and save response as {string}', async (varName) => {
-  const res = await client.options(paths.USERS_OPTIONS);
-  ctx.save(varName, res);
+  ctx.save(varName, await client.options(paths.USERS_OPTIONS));
 });
 
 Then('Assert options response has allowed_methods in {string}', (varName) => {

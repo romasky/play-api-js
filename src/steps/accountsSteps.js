@@ -4,7 +4,11 @@ const client = require('../api/restClient');
 const paths  = require('../api/apiPaths');
 const gen    = require('../utils/generator');
 const { createUserReq, profileReq, contactsReq, addressReq, employmentReq, settingsReq } = require('../models/createUserReq');
-const loginReq = require('../models/loginReq');
+const loginReq      = require('../models/loginReq');
+const userResponse  = require('../models/userResponse');
+const loginResponse = require('../models/loginResponse');
+const usersList     = require('../models/usersListResponse');
+const errorResponse = require('../models/errorResponse');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -16,19 +20,44 @@ Before({ tags: '@allure.label.subSuite:Login', timeout: 15000 }, async function 
   await sleep(13000);
 });
 
-// ─── Create user helpers ───────────────────────────────────────────────────
+// ─── Authorization header variants ────────────────────────────────────────
+// The BearerAuth middleware checks, in order:
+//   header missing            → 401 MISSING_TOKEN          → auth.none()
+//   not "Bearer <token>"      → 401 INVALID_TOKEN_FORMAT   → auth.raw(value)   (sent verbatim)
+//   token ≠ user's token      → 401 INVALID_TOKEN          → auth.bearer(key)  (normal path)
+
+//
+// `raw` values are passed to axios untouched; note axios (and RFC 7230 servers) trim
+// surrounding whitespace, so "Bearer " and "Bearer" are the same request on the wire.
+
+const auth = {
+  bearer: (tokenKey) => ({ Authorization: client.bearerHeader(ctx.str(tokenKey)) }),
+  raw:    (value)    => ({ Authorization: value }),
+  none:   ()         => ({}),
+};
+
+// ─── Request-body builders ────────────────────────────────────────────────
+
+const minimalProfile = () => profileReq({ firstName: gen.firstName(), lastName: gen.lastName() });
+
+/** Valid random bodies for scenarios that test auth, not payload validation. */
+const randomUpdateBody = () => createUserReq({ email: gen.email(), username: gen.username(), profile: minimalProfile() });
+const randomPatchBody  = () => ({ username: gen.username() });
+
+/** Bodies assembled from context variables set by earlier Given steps. */
+const contextUpdateBody = () => createUserReq({
+  email:    ctx.str('email'),
+  username: ctx.str('username'),
+  profile:  profileReq({ firstName: ctx.str('firstName'), lastName: ctx.str('lastName') }),
+});
+
+// ─── Create user ──────────────────────────────────────────────────────────
 
 Given('Create minimal user and save response as {string}', async (varName) => {
   const email    = gen.email();
   const password = gen.password();
-  const body = createUserReq({
-    email,
-    username: gen.username(),
-    password,
-    profile: profileReq({ firstName: gen.firstName(), lastName: gen.lastName() }),
-  });
-  const res = await client.post(paths.USERS_CREATE, body);
-  ctx.save(varName, res);
+  const body = createUserReq({ email, username: gen.username(), password, profile: minimalProfile() });
+  ctx.save(varName, await client.post(paths.USERS_CREATE, body));
   ctx.save('generatedEmail', email);
   ctx.save('generatedPassword', password);
 });
@@ -36,234 +65,210 @@ Given('Create minimal user and save response as {string}', async (varName) => {
 When('Create user with body and save response as {string}',
   { timeout: 30000 },
   async function (varName) {
-    const email    = ctx.str('email');
-    const password = ctx.str('password');
     const body = createUserReq({
-      email,
+      email:    ctx.str('email'),
       username: ctx.str('username'),
-      password,
-      profile: profileReq({
-        firstName: ctx.str('firstName'),
-        lastName:  ctx.str('lastName'),
-      }),
+      password: ctx.str('password'),
+      profile:  profileReq({ firstName: ctx.str('firstName'), lastName: ctx.str('lastName') }),
     });
-    const res = await client.post(paths.USERS_CREATE, body);
-    ctx.save(varName, res);
+    ctx.save(varName, await client.post(paths.USERS_CREATE, body));
   }
 );
 
 When('Create user with full body and save response as {string}',
   { timeout: 30000 },
   async function (varName) {
-    const email    = ctx.str('email');
-    const password = ctx.str('password');
     const body = createUserReq({
-      email,
+      email:    ctx.str('email'),
       username: ctx.str('username'),
-      password,
+      password: ctx.str('password'),
       profile: profileReq({
         firstName:   ctx.str('firstName'),
         lastName:    ctx.str('lastName'),
         gender:      ctx.opt('gender'),
-        bio:         ctx.opt('bio'),
+        bio:         ctx.opt('profileBio'),
         dateOfBirth: ctx.opt('dateOfBirth'),
         interests:   ctx.opt('interests'),
         avatarUrl:   ctx.opt('avatarUrl'),
       }),
-      contacts: ctx.opt('contacts') ? contactsReq(ctx.opt('contacts')) : undefined,
-      address:  ctx.opt('address')  ? addressReq(ctx.opt('address'))   : undefined,
+      contacts:   ctx.opt('contacts')   ? contactsReq(ctx.opt('contacts'))     : undefined,
+      address:    ctx.opt('address')    ? addressReq(ctx.opt('address'))       : undefined,
       employment: ctx.opt('employment') ? employmentReq(ctx.opt('employment')) : undefined,
-      settings: ctx.opt('settings') ? settingsReq(ctx.opt('settings')) : undefined,
+      settings:   ctx.opt('settings')   ? settingsReq(ctx.opt('settings'))     : undefined,
     });
-    const res = await client.post(paths.USERS_CREATE, body);
-    ctx.save(varName, res);
+    ctx.save(varName, await client.post(paths.USERS_CREATE, body));
   }
 );
 
-Given('Set employment status {string}', (status) => ctx.save('employment', { status }));
-Given('Set theme {string}', (theme) => ctx.save('settings', { theme }));
+When('Create user with all optional fields and save response as {string}', async (varName) => {
+  const body = createUserReq({
+    email:    gen.email(),
+    username: gen.username(),
+    password: gen.password(),
+    profile: profileReq({
+      firstName: gen.firstName(), lastName: gen.lastName(), middleName: 'Michael',
+      gender: 'other', bio: 'Short bio here.', dateOfBirth: '1990-01-15',
+      interests: ['coding', 'travel'], avatarUrl: 'https://example.com/avatar.jpg',
+    }),
+    contacts: contactsReq({
+      phone: gen.phoneNumber(), telegram: '@tester', whatsapp: gen.phoneNumber(),
+      linkedin: 'https://linkedin.com/in/tester', github: 'https://github.com/tester', website: 'https://tester.dev',
+    }),
+    address: addressReq({
+      country: 'US', state: 'California', city: 'San Francisco', street: 'Market St',
+      building: '100', apartment: '5A', zipCode: '94105', coordinates: { latitude: 37.7749, longitude: -122.4194 },
+    }),
+    employment: employmentReq({
+      status: 'employed', company: 'Acme Inc', position: 'Engineer', department: 'R&D',
+      startDate: '2020-03-01', salary: { amount: 120000, currency: 'USD' },
+    }),
+    settings: settingsReq({
+      language: 'en', timezone: 'America/Los_Angeles', theme: 'dark',
+      notificationsEnabled: true, twoFactorEnabled: false, privateProfile: false,
+    }),
+  });
+  ctx.save(varName, await client.post(paths.USERS_CREATE, body));
+});
 
 When('Create user with raw body {string} and save response as {string}', async (rawJson, varName) => {
-  const body = JSON.parse(rawJson);
-  const res = await client.post(paths.USERS_CREATE, body);
-  ctx.save(varName, res);
+  ctx.save(varName, await client.post(paths.USERS_CREATE, JSON.parse(rawJson)));
 });
 
-// ─── Extract fields from response ─────────────────────────────────────────
-
-Then('Extract {string} from {string} and save as {string}', (field, varName, saveAs) => {
-  const data = ctx.get(varName, true).data;
-  const parts = field.split('.');
-  let value = data;
-  for (const part of parts) {
-    value = value?.[part];
-  }
-  if (value === undefined || value === null) {
-    throw new Error(`Field '${field}' not found in response. Body: ${JSON.stringify(data)}`);
-  }
-  ctx.save(saveAs, String(value));
-});
+// Optional-field inputs consumed by "Create user with full body"
+Given('Set employment status {string}', (status) => ctx.save('employment', { status }));
+Given('Set theme {string}',             (theme)  => ctx.save('settings', { theme }));
+Given('Set interests {string}',         (csv)    => ctx.save('interests', csv === '' ? [] : csv.split(',')));
+// saved as 'profileBio' so the literal "bio" stays usable in assertions (ctx.str resolves context keys first)
+Given('Set bio of length {int}',        (n)      => ctx.save('profileBio', gen.string(n, { spaces: true })));
+Given('Generate username of length {int} and save as {string}', (n, key) => ctx.save(key, gen.alphanumericString(n)));
 
 // ─── Get user ─────────────────────────────────────────────────────────────
 
 When('Send GET user request for {string} and save response as {string}', async (idKey, varName) => {
-  const id = ctx.str(idKey);
-  const res = await client.get(paths.usersGet(id));
-  ctx.save(varName, res);
+  ctx.save(varName, await client.get(paths.usersGet(ctx.str(idKey))));
 });
 
 // ─── List users ───────────────────────────────────────────────────────────
 
 When('Send GET users list request and save response as {string}', async (varName) => {
-  const res = await client.get(paths.USERS_LIST);
-  ctx.save(varName, res);
+  ctx.save(varName, await client.get(paths.USERS_LIST));
 });
 
-When('Send GET users list request with page {int} per_page {int} and save response as {string}', async (page, perPage, varName) => {
-  const res = await client.get(paths.USERS_LIST, { page, per_page: perPage });
-  ctx.save(varName, res);
-});
-
-Then('Assert users list has {string} field in {string}', (field, varName) => {
-  const body = ctx.get(varName, true).data;
-  if (!(field in body)) throw new Error(`Field '${field}' not found in list response. Body: ${JSON.stringify(body)}`);
-});
+// String-typed so boundary rows can pass non-numeric values (abc, -5, xyz)
+When('Send GET users list request with page {string} per_page {string} and save response as {string}',
+  async (page, perPage, varName) => {
+    ctx.save(varName, await client.get(paths.USERS_LIST, { page, per_page: perPage }));
+  }
+);
 
 Then('Assert users list is not empty in {string}', (varName) => {
-  const users = ctx.get(varName, true).data?.users;
-  if (!Array.isArray(users) || users.length === 0) {
-    throw new Error('Expected non-empty users array');
-  }
+  usersList.assertNotEmpty(ctx.get(varName, true));
+});
+
+Then('Assert users list items have no {string} field in {string}', (field, varName) => {
+  usersList.assertItemsHaveNoField(ctx.get(varName, true), field);
 });
 
 // ─── User exists ──────────────────────────────────────────────────────────
 
 When('Send HEAD exists request for {string} and save response as {string}', async (idKey, varName) => {
-  const id = ctx.str(idKey);
-  const res = await client.head(paths.usersExists(id));
-  ctx.save(varName, res);
+  ctx.save(varName, await client.head(paths.usersExists(ctx.str(idKey))));
 });
 
 When('Send GET exists request for {string} and save response as {string}', async (idKey, varName) => {
-  const id = ctx.str(idKey);
-  const res = await client.get(paths.usersExists(id));
-  ctx.save(varName, res);
+  ctx.save(varName, await client.get(paths.usersExists(ctx.str(idKey))));
 });
 
 // ─── Update user (PUT) ────────────────────────────────────────────────────
 
-When('Update user {string} with token {string} and save response as {string}', async (idKey, tokenKey, varName) => {
-  const id    = ctx.str(idKey);
-  const token = ctx.str(tokenKey);
-  const body  = createUserReq({
-    email:    ctx.str('email'),
-    username: ctx.str('username'),
-    profile:  profileReq({ firstName: ctx.str('firstName'), lastName: ctx.str('lastName') }),
-  });
-  const res = await client.put(paths.usersUpdate(id), body, {
-    Authorization: client.bearerHeader(token),
-  });
-  ctx.save(varName, res);
-});
+async function updateUser(idKey, body, headers, varName) {
+  ctx.save(varName, await client.put(paths.usersUpdate(ctx.str(idKey)), body, headers));
+}
+
+When('Update user {string} with token {string} and save response as {string}',
+  (idKey, tokenKey, varName) => updateUser(idKey, contextUpdateBody(), auth.bearer(tokenKey), varName));
 
 When('Update user {string} with raw body {string} token {string} and save response as {string}',
-  async (idKey, rawJson, tokenKey, varName) => {
-    const id    = ctx.str(idKey);
-    const token = ctx.str(tokenKey);
-    const body  = JSON.parse(rawJson);
-    const res   = await client.put(paths.usersUpdate(id), body, {
-      Authorization: client.bearerHeader(token),
-    });
-    ctx.save(varName, res);
-  }
-);
+  (idKey, rawJson, tokenKey, varName) => updateUser(idKey, JSON.parse(rawJson), auth.bearer(tokenKey), varName));
+
+When('Update user {string} with raw auth header {string} and save response as {string}',
+  (idKey, header, varName) => updateUser(idKey, randomUpdateBody(), auth.raw(header), varName));
+
+When('Update user {string} with no auth token and save response as {string}',
+  (idKey, varName) => updateUser(idKey, randomUpdateBody(), auth.none(), varName));
 
 // ─── Patch user (PATCH) ───────────────────────────────────────────────────
 
+async function patchUser(idKey, body, headers, varName) {
+  ctx.save(varName, await client.patch(paths.usersPatch(ctx.str(idKey)), body, headers));
+}
+
 When('Patch user {string} with field {string} value {string} token {string} and save response as {string}',
-  async (idKey, field, value, tokenKey, varName) => {
-    const id    = ctx.str(idKey);
-    const token = ctx.str(tokenKey);
-    const body  = { [field]: ctx.str(value) };
-    const res   = await client.patch(paths.usersPatch(id), body, {
-      Authorization: client.bearerHeader(token),
-    });
-    ctx.save(varName, res);
-  }
-);
+  (idKey, field, value, tokenKey, varName) => patchUser(idKey, { [field]: ctx.str(value) }, auth.bearer(tokenKey), varName));
 
 When('Patch user {string} with raw body {string} token {string} and save response as {string}',
-  async (idKey, rawJson, tokenKey, varName) => {
-    const id    = ctx.str(idKey);
-    const token = ctx.str(tokenKey);
-    const body  = JSON.parse(rawJson);
-    const res   = await client.patch(paths.usersPatch(id), body, {
-      Authorization: client.bearerHeader(token),
-    });
-    ctx.save(varName, res);
-  }
-);
+  (idKey, rawJson, tokenKey, varName) => patchUser(idKey, JSON.parse(rawJson), auth.bearer(tokenKey), varName));
+
+When('Patch user {string} with empty body token {string} and save response as {string}',
+  (idKey, tokenKey, varName) => patchUser(idKey, {}, auth.bearer(tokenKey), varName));
+
+When('Patch user {string} with raw auth header {string} and save response as {string}',
+  (idKey, header, varName) => patchUser(idKey, randomPatchBody(), auth.raw(header), varName));
+
+When('Patch user {string} with no auth token and save response as {string}',
+  (idKey, varName) => patchUser(idKey, randomPatchBody(), auth.none(), varName));
 
 // ─── Delete user ──────────────────────────────────────────────────────────
 
-When('Delete user {string} with token {string} and save response as {string}', async (idKey, tokenKey, varName) => {
-  const id    = ctx.str(idKey);
-  const token = ctx.str(tokenKey);
-  const res   = await client.del(paths.usersDelete(id), {
-    Authorization: client.bearerHeader(token),
-  });
-  ctx.save(varName, res);
-});
+async function deleteUser(idKey, headers, varName) {
+  ctx.save(varName, await client.del(paths.usersDelete(ctx.str(idKey)), headers));
+}
+
+When('Delete user {string} with token {string} and save response as {string}',
+  (idKey, tokenKey, varName) => deleteUser(idKey, auth.bearer(tokenKey), varName));
+
+When('Delete user {string} with raw auth header {string} and save response as {string}',
+  (idKey, header, varName) => deleteUser(idKey, auth.raw(header), varName));
+
+When('Delete user {string} with no auth token and save response as {string}',
+  (idKey, varName) => deleteUser(idKey, auth.none(), varName));
 
 // ─── Login ────────────────────────────────────────────────────────────────
 
 When('Login with {string} and {string} and save response as {string}', async (emailKey, passwordKey, varName) => {
   const body = loginReq({ email: ctx.str(emailKey), password: ctx.str(passwordKey) });
-  const res  = await client.post(paths.LOGIN, body);
-  ctx.save(varName, res);
+  ctx.save(varName, await client.post(paths.LOGIN, body));
 });
 
 When('Login with raw body {string} and save response as {string}', async (rawJson, varName) => {
-  const body = JSON.parse(rawJson);
-  const res  = await client.post(paths.LOGIN, body);
-  ctx.save(varName, res);
+  ctx.save(varName, await client.post(paths.LOGIN, JSON.parse(rawJson)));
 });
 
 // ─── Logout ───────────────────────────────────────────────────────────────
 
-When('Logout user {string} with token {string} and save response as {string}', async (idKey, tokenKey, varName) => {
-  const id    = ctx.str(idKey);
-  const token = ctx.str(tokenKey);
-  const res   = await client.postNoBody(paths.usersLogout(id), {
-    Authorization: client.bearerHeader(token),
-  });
-  ctx.save(varName, res);
-});
+async function logoutUser(idKey, headers, varName) {
+  ctx.save(varName, await client.postNoBody(paths.usersLogout(ctx.str(idKey)), headers));
+}
 
-// ─── Response field assertions ────────────────────────────────────────────
+When('Logout user {string} with token {string} and save response as {string}',
+  (idKey, tokenKey, varName) => logoutUser(idKey, auth.bearer(tokenKey), varName));
 
-Then('Assert field {string} equals {string} in response {string}', (field, expected, varName) => {
-  const data = ctx.get(varName, true).data;
-  const parts = field.split('.');
-  let actual = data;
-  for (const part of parts) actual = actual?.[part];
-  const resolved = ctx.str(expected);
-  if (String(actual) !== resolved) {
-    throw new Error(`Field '${field}': expected '${resolved}' but got '${actual}'`);
-  }
-});
+When('Logout user {string} with raw auth header {string} and save response as {string}',
+  (idKey, header, varName) => logoutUser(idKey, auth.raw(header), varName));
 
-Then('Assert field {string} is not null in response {string}', (field, varName) => {
-  const data = ctx.get(varName, true).data;
-  const parts = field.split('.');
-  let actual = data;
-  for (const part of parts) actual = actual?.[part];
-  if (actual === undefined || actual === null) {
-    throw new Error(`Field '${field}' is null/undefined. Body: ${JSON.stringify(data)}`);
-  }
-});
+When('Logout user {string} with no auth token and save response as {string}',
+  (idKey, varName) => logoutUser(idKey, auth.none(), varName));
+
+// ─── Typed response assertions ────────────────────────────────────────────
 
 Then('Assert error code is {string} in response {string}', (code, varName) => {
-  const actual = ctx.get(varName, true).data?.error?.code;
-  if (actual !== code) throw new Error(`Expected error code '${code}' but got '${actual}'`);
+  errorResponse.assertCode(ctx.get(varName, true), code);
+});
+
+Then('Assert user response has all core fields in {string}', (varName) => {
+  userResponse.assertCoreFields(ctx.get(varName, true));
+});
+
+Then('Assert login response is successful in {string}', (varName) => {
+  loginResponse.assertSuccessful(ctx.get(varName, true));
 });
