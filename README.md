@@ -206,6 +206,18 @@ Scenario Outlines are counted per example row.
 
 ---
 
+## 📚 Documentation
+
+Full documentation lives in the [project wiki](https://github.com/romasky/play-api-js/wiki):
+[Getting Started](https://github.com/romasky/play-api-js/wiki/Getting-Started) ·
+[Architecture](https://github.com/romasky/play-api-js/wiki/Architecture) ·
+[Step Definitions Reference](https://github.com/romasky/play-api-js/wiki/Step-Definitions-Reference) ·
+[Authorization Header Testing](https://github.com/romasky/play-api-js/wiki/Authorization-Header-Testing) ·
+[Feature Files & Coverage](https://github.com/romasky/play-api-js/wiki/Feature-Files-and-Coverage) ·
+[Comparison: JS vs Java](https://github.com/romasky/play-api-js/wiki/Comparison-JS-vs-Java)
+
+---
+
 ## 🔗 Related
 
 - [play-api-java](https://github.com/romasky/play-api-java) — Java version of this framework
