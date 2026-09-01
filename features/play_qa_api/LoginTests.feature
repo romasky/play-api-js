@@ -5,12 +5,9 @@ Feature: Login
   Scenario: Login with valid credentials returns 200 with token
     Given Create minimal user and save response as "createRes"
     And Extract "email" from "createRes" and save as "userEmail"
-    And Save string "generatedPassword" as "userPass"
     When Login with "userEmail" and "generatedPassword" and save response as "response"
     Then Get and check status code 200 from "response"
-    And Assert field "success" equals "true" in response "response"
-    And Assert field "access_token" is not null in response "response"
-    And Assert field "user_id" is not null in response "response"
+    And Assert login response is successful in "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Login response includes correct user info
@@ -42,6 +39,7 @@ Feature: Login
     And Extract "access_token" from "loginRes" and save as "secondToken"
     When Patch user "userId" with field "username" value "user_newname1" token "firstToken" and save response as "patchRes"
     Then Get and check status code 401 from "patchRes"
+    And Assert error code is "INVALID_TOKEN" in response "patchRes"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Login with wrong password returns 401
@@ -59,6 +57,23 @@ Feature: Login
     When Login with "fakeEmail" and "somePass" and save response as "response"
     Then Get and check status code 401 from "response"
     And Assert error code is "INVALID_CREDENTIALS" in response "response"
+
+  @Run @Negative @allure.label.story:Negative_Scenario
+  Scenario: Login error response contains request_id in body
+    Given Generate email and save as "fakeEmail"
+    And Save string "somepassword123" as "somePass"
+    When Login with "fakeEmail" and "somePass" and save response as "response"
+    Then Get and check status code 401 from "response"
+    And Assert error code is "INVALID_CREDENTIALS" in response "response"
+    And Assert response has request_id in "response"
+
+  @Run @Negative @allure.label.story:Negative_Scenario
+  Scenario: Login error response has x-request-id header
+    Given Generate email and save as "fakeEmail"
+    And Save string "somepassword123" as "somePass"
+    When Login with "fakeEmail" and "somePass" and save response as "response"
+    Then Get and check status code 401 from "response"
+    And Assert response header "x-request-id" is present in "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Login with missing email returns 400

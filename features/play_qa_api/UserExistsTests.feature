@@ -43,3 +43,14 @@ Feature: User Exists
     And Extract "id" from "createRes" and save as "userId"
     When Send HEAD exists request for "userId" and save response as "response"
     Then Assert response header "x-user-exists" is present in "response"
+
+  @Run @Flow @allure.label.story:End_to_End_Flow
+  Scenario: After delete user exists returns false
+    Given Create minimal user and save response as "createRes"
+    And Extract "id" from "createRes" and save as "userId"
+    And Extract "access_token" from "createRes" and save as "token"
+    When Delete user "userId" with token "token" and save response as "deleteRes"
+    Then Get and check status code 204 from "deleteRes"
+    When Send HEAD exists request for "userId" and save response as "existsRes"
+    Then Get and check status code 404 from "existsRes"
+    And Assert response header "x-user-exists" equals "false" in "existsRes"

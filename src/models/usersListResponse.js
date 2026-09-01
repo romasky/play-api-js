@@ -1,22 +1,10 @@
+const { hasPath } = require('../utils/jsonPath');
+
 /**
- * Helpers for GET /users/list response shape.
+ * Assertions for GET /users/list response shape: { users: [...], page, per_page, total_pages }
  */
 
-function getUsers(res) {
-  return res.data?.users ?? [];
-}
-
-function getPage(res) {
-  return res.data?.page;
-}
-
-function getPerPage(res) {
-  return res.data?.per_page;
-}
-
-function getTotalPages(res) {
-  return res.data?.total_pages;
-}
+const getUsers = (res) => res.data?.users ?? [];
 
 function assertNotEmpty(res) {
   const users = getUsers(res);
@@ -25,4 +13,12 @@ function assertNotEmpty(res) {
   }
 }
 
-module.exports = { getUsers, getPage, getPerPage, getTotalPages, assertNotEmpty };
+/** Every list item must NOT expose `field` (e.g. access_token, password). */
+function assertItemsHaveNoField(res, field) {
+  const offenders = getUsers(res).filter((user) => hasPath(user, field));
+  if (offenders.length > 0) {
+    throw new Error(`${offenders.length} user(s) in list expose '${field}'. First: ${JSON.stringify(offenders[0])}`);
+  }
+}
+
+module.exports = { assertNotEmpty, assertItemsHaveNoField };

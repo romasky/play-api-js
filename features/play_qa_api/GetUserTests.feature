@@ -10,7 +10,16 @@ Feature: Get User
     And Assert field "id" equals "userId" in response "response"
     And Assert field "email" is not null in response "response"
     And Assert field "username" is not null in response "response"
-    And Assert response body does not contain "access_token" in "response"
+    And Assert field "access_token" is absent in response "response"
+
+  @Run @Positive @allure.label.story:Positive_Scenario
+  Scenario: Get user by ID returns the same id and all core fields
+    Given Create minimal user and save response as "createRes"
+    And Extract "id" from "createRes" and save as "userId"
+    When Send GET user request for "userId" and save response as "response"
+    Then Get and check status code 200 from "response"
+    And Assert user response has all core fields in "response"
+    And Assert field "id" equals "userId" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Get user with non-existent ID returns 404
@@ -36,4 +45,4 @@ Feature: Get User
     And Extract "id" from "createRes" and save as "userId"
     When Send GET user request for "userId" and save response as "response"
     Then Get and check status code 200 from "response"
-    And Assert response body does not contain "password" in "response"
+    And Assert field "password" is absent in response "response"

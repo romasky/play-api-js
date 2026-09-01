@@ -5,9 +5,8 @@ Feature: Health Check
   Scenario: Health endpoint returns 200 with ok status
     When Send GET health request and save as "response"
     Then Get and check status code 200 from "response"
-    And Assert health response has status field in "response"
-    And Assert health response has time field in "response"
-    And Assert response body contains "ok" in "response"
+    And Assert field "status" equals "ok" in response "response"
+    And Assert field "time" is not null in response "response"
 
   @Run @Positive @allure.label.story:Positive_Scenario
   Scenario: Health endpoint returns correct content type
@@ -20,3 +19,10 @@ Feature: Health Check
     When Send GET health request and save as "response"
     Then Get and check status code 200 from "response"
     And Assert response header "x-request-id" is present in "response"
+
+  @Run @Positive @allure.label.story:Positive_Scenario
+  Scenario: Health endpoint echoes provided X-Request-ID header
+    Given Save string "my-custom-request-id-123" as "myRequestId"
+    When Send GET health request with X-Request-ID "myRequestId" and save as "response"
+    Then Get and check status code 200 from "response"
+    And Assert response header "x-request-id" equals "myRequestId" in "response"

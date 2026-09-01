@@ -21,7 +21,7 @@ Feature: Mail Send
     And Extract "token" from "createRes" and save as "mailToken"
     When Send message to token "mailToken" with raw body "{\"from\":\"test@example.com\",\"subject\":\"HTML Test\",\"body\":\"Plain body\",\"html_body\":\"<b>Bold</b>\"}" and save response as "response"
     Then Get and check status code 201 from "response"
-    And Assert response body contains "html_body" in "response"
+    And Assert field "html_body" is present in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Send message without from field returns 400
@@ -29,7 +29,7 @@ Feature: Mail Send
     And Extract "token" from "createRes" and save as "mailToken"
     When Send message to token "mailToken" with raw body "{\"subject\":\"Test\",\"body\":\"Body\"}" and save response as "response"
     Then Get and check status code 400 from "response"
-    And Assert error code is "VALIDATION_ERROR" in mail response "response"
+    And Assert error code is "VALIDATION_ERROR" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Send message without subject returns 400
@@ -37,7 +37,7 @@ Feature: Mail Send
     And Extract "token" from "createRes" and save as "mailToken"
     When Send message to token "mailToken" with raw body "{\"from\":\"test@example.com\",\"body\":\"Body\"}" and save response as "response"
     Then Get and check status code 400 from "response"
-    And Assert error code is "VALIDATION_ERROR" in mail response "response"
+    And Assert error code is "VALIDATION_ERROR" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Send message without body returns 400
@@ -45,14 +45,14 @@ Feature: Mail Send
     And Extract "token" from "createRes" and save as "mailToken"
     When Send message to token "mailToken" with raw body "{\"from\":\"test@example.com\",\"subject\":\"Test\"}" and save response as "response"
     Then Get and check status code 400 from "response"
-    And Assert error code is "VALIDATION_ERROR" in mail response "response"
+    And Assert error code is "VALIDATION_ERROR" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Send message to non-existent mailbox returns 404
     Given Generate fake uuid and save as "fakeToken"
     When Send message to token "fakeToken" with raw body "{\"from\":\"test@example.com\",\"subject\":\"Test\",\"body\":\"Body\"}" and save response as "response"
     Then Get and check status code 404 from "response"
-    And Assert error code is "MAILBOX_NOT_FOUND" in mail response "response"
+    And Assert error code is "MAILBOX_NOT_FOUND" in response "response"
 
   @Run @Flow @allure.label.story:End_to_End_Flow
   Scenario: Send message then retrieve it from messages list

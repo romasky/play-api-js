@@ -1,64 +1,32 @@
+const { hasPath } = require('../utils/jsonPath');
+
 /**
- * Helpers for mailbox and message response shapes.
+ * Assertions for GET /mail/:token/messages → { messages: [...], count }
  */
 
-// POST /mail/create → 201 and GET /mail/:token → 200
-function getToken(res) {
-  return res.data?.token;
+const getMessages = (res) => res.data?.messages ?? [];
+
+const FULL_BODY_FIELDS = ['body', 'html_body', 'headers'];
+
+/**
+ * List items carry only `body_preview`; the full `body` / `html_body` / `headers`
+ * belong to the single-message endpoint. A substring check cannot express this
+ * (`body_preview` contains the substring `body`), so check own-properties instead.
+ */
+function assertListItemsHaveNoFullBody(res) {
+  const messages = getMessages(res);
+  if (messages.length === 0) {
+    throw new Error('Expected at least one message in the list to check its shape');
+  }
+  messages.forEach((message, index) => {
+    if (!hasPath(message, 'body_preview')) {
+      throw new Error(`messages[${index}] has no 'body_preview'. Item: ${JSON.stringify(message)}`);
+    }
+    const leaked = FULL_BODY_FIELDS.filter((field) => hasPath(message, field));
+    if (leaked.length > 0) {
+      throw new Error(`messages[${index}] exposes full-body fields [${leaked.join(', ')}]. Item: ${JSON.stringify(message)}`);
+    }
+  });
 }
 
-function getEmailAddress(res) {
-  return res.data?.email_address;
-}
-
-function getDomain(res) {
-  return res.data?.domain;
-}
-
-function getMailboxId(res) {
-  return res.data?.id;
-}
-
-function getExpiresAt(res) {
-  return res.data?.expires_at;
-}
-
-// GET /mail/:token/messages → 200
-function getMessages(res) {
-  return res.data?.messages ?? [];
-}
-
-function getCount(res) {
-  return res.data?.count;
-}
-
-// GET /mail/:token/messages/:id → 200 and POST /mail/:token/send → 201
-function getMessageId(res) {
-  return res.data?.id;
-}
-
-function getFrom(res) {
-  return res.data?.from;
-}
-
-function getSubject(res) {
-  return res.data?.subject;
-}
-
-function getBody(res) {
-  return res.data?.body;
-}
-
-function getHtmlBody(res) {
-  return res.data?.html_body;
-}
-
-function getBodyPreview(res) {
-  return res.data?.body_preview;
-}
-
-module.exports = {
-  getToken, getEmailAddress, getDomain, getMailboxId, getExpiresAt,
-  getMessages, getCount,
-  getMessageId, getFrom, getSubject, getBody, getHtmlBody, getBodyPreview,
-};
+module.exports = { assertListItemsHaveNoFullBody };
