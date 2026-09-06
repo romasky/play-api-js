@@ -1,0 +1,6 @@
+label,header,code
+garbage token,Bearer notarealtoken,INVALID_TOKEN
+missing Bearer prefix,deadbeefdeadbeef,INVALID_TOKEN_FORMAT
+wrong scheme Basic,Basic dXNlcjpwYXNz,INVALID_TOKEN_FORMAT
+Bearer only no space,Bearer,INVALID_TOKEN_FORMAT
+numeric junk,Bearer 000000000000,INVALID_TOKEN
