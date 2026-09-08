@@ -1,0 +1,184 @@
+{
+  "users": [
+    {
+      "id": "6aa00291c4b08a8e2ba75dee",
+      "email": "ifzawh1nel@play-qa.com",
+      "username": "user_99fkpjn2",
+      "profile": {
+        "first_name": "Timothy",
+        "last_name": "Chan",
+        "gender": "female"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-09-08T12:41:53.003Z",
+        "updated_at": "2026-09-08T12:41:53.003Z",
+        "expires_at": "2026-09-09T12:41:53.003Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6aa0028fc4b08a8e2ba75ded",
+      "email": "7hv3ng0di7@play-qa.com",
+      "username": "user_gwvg4b79",
+      "profile": {
+        "first_name": "Testfzhueh",
+        "last_name": "Useryfcngy"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-09-08T12:41:51.83Z",
+        "updated_at": "2026-09-08T12:41:51.83Z",
+        "expires_at": "2026-09-09T12:41:51.83Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6aa0028ec4b08a8e2ba75dec",
+      "email": "z1chnivfeu@play-qa.com",
+      "username": "user_ishie8dy",
+      "profile": {
+        "first_name": "Samantha",
+        "last_name": "Gutierrez",
+        "gender": "male"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-09-08T12:41:50.808Z",
+        "updated_at": "2026-09-08T12:41:50.808Z",
+        "expires_at": "2026-09-09T12:41:50.808Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6aa0028dc4b08a8e2ba75deb",
+      "email": "s9swhmq97u@play-qa.com",
+      "username": "user_tzm2yqn1",
+      "profile": {
+        "first_name": "Testfcaxxc",
+        "last_name": "Userhiccsg"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-09-08T12:41:49.433Z",
+        "updated_at": "2026-09-08T12:41:49.433Z",
+        "expires_at": "2026-09-09T12:41:49.433Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6aa0028cc4b08a8e2ba75dea",
+      "email": "h2ncargwqk@play-qa.com",
+      "username": "user_koiurco1",
+      "profile": {
+        "first_name": "Tiffany",
+        "last_name": "Thomas",
+        "interests": [
+          "coding",
+          "travel",
+          "music"
+        ]
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-09-08T12:41:48.596Z",
+        "updated_at": "2026-09-08T12:41:48.596Z",
+        "expires_at": "2026-09-09T12:41:48.596Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    }
+  ],
+  "page": 1,
+  "per_page": 5,
+  "total_pages": 80
+}
