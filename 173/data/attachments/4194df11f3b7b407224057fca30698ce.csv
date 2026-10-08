@@ -1,0 +1,8 @@
+label,page,per_page
+per_page zero,1,0
+per_page negative,1,-5
+page zero,0,10
+page negative,-1,10
+per_page over max,1,100000
+page non-numeric,abc,10
+perPage non-num,1,xyz
