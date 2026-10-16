@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "theme must be one of: light dark system"
+  },
+  "timestamp": "2026-10-16T13:04:08.780181416Z",
+  "request_id": "8d79a089-b757-42a5-85c7-5190c6ee744d"
+}
