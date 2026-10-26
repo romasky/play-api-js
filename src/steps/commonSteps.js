@@ -1,12 +1,8 @@
-const { Before, Given, When, Then } = require('@cucumber/cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 const ctx = require('../context/scenarioContext');
 const gen = require('../utils/generator');
 const { getPath, hasPath } = require('../utils/jsonPath');
 const errorResponse = require('../models/errorResponse');
-
-Before(function (scenario) {
-  ctx.setScenario(scenario);
-});
 
 const responseOf = (varName) => ctx.get(varName, true);
 const bodyOf     = (varName) => responseOf(varName).data;

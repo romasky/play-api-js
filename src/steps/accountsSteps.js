@@ -1,4 +1,4 @@
-const { Before, Given, When, Then } = require('@cucumber/cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 const ctx    = require('../context/scenarioContext');
 const client = require('../api/restClient');
 const paths  = require('../api/apiPaths');
@@ -9,16 +9,6 @@ const userResponse  = require('../models/userResponse');
 const loginResponse = require('../models/loginResponse');
 const usersList     = require('../models/usersListResponse');
 const errorResponse = require('../models/errorResponse');
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Rate-limit pacing
-Before({ tags: '@allure.label.suite:User_Management' }, async function () {
-  await sleep(2000);
-});
-Before({ tags: '@allure.label.subSuite:Login', timeout: 15000 }, async function () {
-  await sleep(13000);
-});
 
 // ─── Authorization header variants ────────────────────────────────────────
 // The BearerAuth middleware checks, in order:

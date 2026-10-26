@@ -1,66 +1,23 @@
-const globalCtx = {};
-const localCtx  = {};
+/**
+ * Transitional facade over the current scenario's World (support/world.js) for step files that still use
+ * arrow functions. Removed once every step file uses `this` (function steps).
+ */
+const { show } = require('../http/attach');
 
-let currentScenario = null;
+let world = null;
 
-function setScenario(scenario) {
-  currentScenario = scenario;
-}
+const bind = (w) => { world = w; };
 
-function save(key, value) {
-  if (key.endsWith('_g')) {
-    const cleanKey = key.slice(0, -2);
-    globalCtx[cleanKey] = value;
-  } else {
-    const cleanKey = key.endsWith('_l') ? key.slice(0, -2) : key;
-    const name = currentScenario.pickle.name;
-    if (!localCtx[name]) localCtx[name] = {};
-    localCtx[name][cleanKey] = value;
-  }
-}
-
-function get(key, failIfMissing = false) {
-  const isGlobal = key.endsWith('_g');
-  const isLocal  = key.endsWith('_l');
-  const cleanKey = (isGlobal || isLocal) ? key.slice(0, -2) : key;
-
-  let value;
-  if (isGlobal) {
-    value = globalCtx[cleanKey];
-  } else {
-    const name = currentScenario.pickle.name;
-    value = localCtx[name]?.[cleanKey];
-    if (value === undefined) value = globalCtx[cleanKey];
-  }
-
-  if (value === undefined && failIfMissing) {
-    throw new Error(`Context variable '${cleanKey}' not found`);
-  }
-  return value !== undefined ? value : key;
-}
-
-function str(key) {
-  return String(get(key));
-}
-
-function opt(key) {
-  const cleanKey = (key.endsWith('_g') || key.endsWith('_l')) ? key.slice(0, -2) : key;
-  const isGlobal = key.endsWith('_g');
-  const name = currentScenario?.pickle.name;
-  const value = isGlobal
-    ? globalCtx[cleanKey]
-    : (localCtx[name]?.[cleanKey] ?? globalCtx[cleanKey]);
-  return value;
-}
+const save = (key, value) => world.save(key, value);
+const get  = (key, failIfMissing = false) => world.get(key, failIfMissing);
+const opt  = (key) => world.opt(key);
+const str  = (key) => world.str(key);
 
 function assertStatusCode(expected, varName) {
-  const response = get(varName, true);
-  const actual = response.status;
-  if (actual !== expected) {
-    throw new Error(
-      `Expected status ${expected} but got ${actual}. Body: ${JSON.stringify(response.data)}`
-    );
+  const response = world.res(varName);
+  if (response.status !== expected) {
+    throw new Error(`Expected status ${expected} but got ${response.status}. Body: ${show(response.data)}`);
   }
 }
 
-module.exports = { setScenario, save, get, opt, str, assertStatusCode };
+module.exports = { bind, save, get, opt, str, assertStatusCode };
