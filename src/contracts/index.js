@@ -15,7 +15,12 @@ const ENTRIES = [
   ...require('./system').CONTRACTS_2XX,
   ...require('./users').CONTRACTS_2XX,
   ...require('./auth').CONTRACTS_2XX,
+  ...require('./admin').CONTRACTS_2XX,
   ...require('./mail').CONTRACTS_2XX,
+  ...require('./files').CONTRACTS_2XX,
+  ...require('./webhooks').CONTRACTS_2XX,
+  ...require('./bugs').CONTRACTS_2XX,
+  ...require('./challenges').CONTRACTS_2XX,
 ].map((e) => ({ ...e, validate: ajv.compile(e.schema) }));
 
 /** A 2xx body broke its contract. `response` is the real response, so callers can still clean up. */

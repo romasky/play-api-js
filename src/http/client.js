@@ -17,7 +17,7 @@ const { scrub, attach, attachJson } = require('./attach');
  *   set `contentType`, default application/json) or `form` (a FormData — multipart).
  * - The response body is read as bytes (`res.raw`); `res.data` is the parsed JSON, the text, or '' when empty.
  * - Every 2xx JSON body is validated against its registered contract. A violation throws ContractError,
- *   which carries the response — so `onResponse` (cleanup registration) runs BEFORE the check.
+ *   which carries the response — so a create step can still register its cleanup (support/cleanup.js).
  * - `timeout` (ms) is a hard wall-clock deadline. A timeout is recorded inside the step (which stays green)
  *   and re-thrown after it: timeout scenarios catch it (see `timed()`).
  */
@@ -89,7 +89,7 @@ async function attachResponse(res) {
 }
 
 async function request(method, path, opts = {}) {
-  const { contentType = 'application/json', form, params, follow = false, timeout, onResponse } = opts;
+  const { contentType = 'application/json', form, params, follow = false, timeout } = opts;
   const verbatim = opts.json instanceof RawJson;
   const json = verbatim ? undefined : opts.json;
   const content = verbatim ? opts.json.text : opts.content;
@@ -122,7 +122,6 @@ async function request(method, path, opts = {}) {
     response.data = parseBody(response);
     s.parameter('status', String(response.status));
     await attachResponse(response);
-    if (onResponse) await onResponse(response);
     if (response.status >= 200 && response.status < 300 && isJson(response.data)) {
       contracts.check(method, path, response, response.data);
     }

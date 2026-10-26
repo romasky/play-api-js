@@ -27,6 +27,8 @@ module.exports = {
   shortPassword:     ()       => randomFrom(LATIN + NUMERIC, 4),
   fakeMongoId:       ()       => randomFrom(NUMERIC, 24),
   fakeUuid:          ()       => '00000000-0000-0000-0000-' + randomFrom(NUMERIC, 12),
+  // a random exact-match address.country (1-64 chars) — no other client of the shared API uses it
+  uniqueCountry:     ()       => 'Country' + randomFrom(LATIN + NUMERIC, 12),
 
   string: (length, { cyrillic = false, latin = true, numeric = false, spaces = false, special = false } = {}) => {
     let pool = '';

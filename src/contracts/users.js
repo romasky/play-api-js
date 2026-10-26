@@ -16,4 +16,4 @@ const CONTRACTS_2XX = [
   entry('POST',  '/users/logout/[^/]+', 'LogoutResponse',    LogoutResponse),
 ];
 
-module.exports = { CONTRACTS_2XX };
+module.exports = { CONTRACTS_2XX, UserResponse, UsersListResponse };
