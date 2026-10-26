@@ -1,0 +1,6 @@
+index,query,code
+50,seed=1,INVALID_INDEX
+-1,seed=1,INVALID_INDEX
+50,,INVALID_INDEX
+0,,SEED_REQUIRED
+0,seed=x,INVALID_SEED

@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid params",
+    "details": "invalid params: params must be a JSON object"
+  },
+  "timestamp": "2026-10-26T14:55:29.253432475Z",
+  "request_id": "1bff9b94-16b8-4b08-8d08-a875192bd546"
+}
