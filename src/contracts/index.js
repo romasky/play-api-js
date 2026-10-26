@@ -60,4 +60,4 @@ function assertContract(name, body) {
   if (message) throw new Error(message);
 }
 
-module.exports = { check, contractFor, assertContract, ContractError };
+module.exports = { check, assertContract, ContractError };

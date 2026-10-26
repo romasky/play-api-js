@@ -16,7 +16,7 @@ function upload(world, varName, headers, file, opts) {
 }
 
 When('Upload sample {string} with token {string} and save response as {string}', function (name, tokenKey, varName) {
-  return upload(this, varName, auth.bearer(this.str(tokenKey)), sample(name));
+  return upload(this, varName, this.bearer(tokenKey), sample(name));
 });
 
 When('Upload sample {string} anonymously and save response as {string}', function (name, varName) {
@@ -36,7 +36,7 @@ When('Upload sample {string} in multipart field {string} anonymously and save re
 });
 
 When('Upload sample {string} with raw auth header {string} and save response as {string}', function (name, header, varName) {
-  return upload(this, varName, auth.raw(this.render(header)), sample(name));
+  return upload(this, varName, this.rawAuth(header), sample(name));
 });
 
 When('Upload a multipart body without a file part and save response as {string}', function (varName) {
@@ -51,11 +51,11 @@ When('Upload a JSON body instead of multipart and save response as {string}', as
 // ─── List / metadata / download / delete ──────────────────────────────────
 
 When('List my files with token {string} and save response as {string}', async function (tokenKey, varName) {
-  this.save(varName, await files.listMine(auth.bearer(this.str(tokenKey))));
+  this.save(varName, await files.listMine(this.bearer(tokenKey)));
 });
 
 When('List my files with query {string} and token {string} and save response as {string}', async function (query, tokenKey, varName) {
-  this.save(varName, await files.listMine(auth.bearer(this.str(tokenKey)), new URLSearchParams(this.render(query))));
+  this.save(varName, await files.listMine(this.bearer(tokenKey), this.query(query)));
 });
 
 When('List my files with no auth token and save response as {string}', async function (varName) {
@@ -67,7 +67,7 @@ When('Get file {string} metadata and save response as {string}', async function 
 });
 
 When('Get file {string} metadata with raw auth header {string} and save response as {string}', async function (idKey, header, varName) {
-  this.save(varName, await files.metadata(this.str(idKey), auth.raw(this.render(header))));
+  this.save(varName, await files.metadata(this.str(idKey), this.rawAuth(header)));
 });
 
 When('Download file {string} and save response as {string}', async function (idKey, varName) {
@@ -75,11 +75,11 @@ When('Download file {string} and save response as {string}', async function (idK
 });
 
 When('Download file {string} with query {string} and save response as {string}', async function (idKey, query, varName) {
-  this.save(varName, await files.download(this.str(idKey), new URLSearchParams(this.render(query))));
+  this.save(varName, await files.download(this.str(idKey), this.query(query)));
 });
 
 When('Delete file {string} with token {string} and save response as {string}', async function (idKey, tokenKey, varName) {
-  this.save(varName, await files.delete(this.str(idKey), auth.bearer(this.str(tokenKey))));
+  this.save(varName, await files.delete(this.str(idKey), this.bearer(tokenKey)));
 });
 
 When('Delete file {string} anonymously and save response as {string}', async function (idKey, varName) {

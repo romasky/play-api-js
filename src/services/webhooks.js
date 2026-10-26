@@ -2,15 +2,7 @@
 const { request } = require('../http/client');
 const paths = require('../http/paths');
 
-/** `[[name, value], …]` → axios headers; a repeated name becomes an array, sent as separate header lines. */
-function headerLines(pairs) {
-  const headers = {};
-  for (const [name, value] of pairs) headers[name] = name in headers ? [].concat(headers[name], value) : value;
-  return headers;
-}
-
 module.exports = {
-  headerLines,
   createInbox: ()           => request('POST',   paths.WEBHOOKS_INBOX),
   getInbox:    (token)      => request('GET',    paths.webhook(token)),
   deleteInbox: (token)      => request('DELETE', paths.webhook(token)),

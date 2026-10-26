@@ -36,8 +36,8 @@ When('Send POST to webhook ingest {string} with JSON body {string} and save resp
 
 When('Send POST to webhook ingest {string} with header {string} values {string} and {string} and query {string} and save response as {string}',
   async function (ingestKey, name, first, second, query, varName) {
-    const headers = webhooks.headerLines([[name, first], [name, second]]);
-    this.save(varName, await webhooks.ingest(this.str(ingestKey), 'POST', { headers, params: new URLSearchParams(query) }));
+    const headers = { [name]: [first, second] }; // an array is sent as two header lines
+    this.save(varName, await webhooks.ingest(this.str(ingestKey), 'POST', { headers, params: this.query(query) }));
   });
 
 When('Send POST to webhook ingest {string} with header {string} value {string} and save response as {string}',
@@ -67,7 +67,7 @@ When('List webhook events of {string} and save response as {string}', async func
 });
 
 When('List webhook events of {string} with query {string} and save response as {string}', async function (tokenKey, query, varName) {
-  this.save(varName, await webhooks.listEvents(this.str(tokenKey), new URLSearchParams(this.render(query))));
+  this.save(varName, await webhooks.listEvents(this.str(tokenKey), this.query(query)));
 });
 
 When('Get webhook event {string} of {string} and save response as {string}', async function (eventKey, tokenKey, varName) {

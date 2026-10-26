@@ -1,6 +1,5 @@
 const { When, Then } = require('@cucumber/cucumber');
 const users = require('../../services/users');
-const auth = require('../../support/auth');
 const { assertContract } = require('../../contracts');
 const { items, assertEveryItem, assertTotalPages } = require('../../assertions/body');
 const { show } = require('../../http/attach');
@@ -15,12 +14,12 @@ When('Send GET user request for {string} and save response as {string}', async f
 
 When('Send GET user request for {string} with raw auth header {string} and save response as {string}',
   async function (idKey, header, varName) {
-    this.save(varName, await users.get(this.str(idKey), auth.raw(this.render(header))));
+    this.save(varName, await users.get(this.str(idKey), this.rawAuth(header)));
   });
 
 When('Send GET user request for {string} with token {string} and save response as {string}',
   async function (idKey, tokenKey, varName) {
-    this.save(varName, await users.get(this.str(idKey), auth.bearer(this.str(tokenKey))));
+    this.save(varName, await users.get(this.str(idKey), this.bearer(tokenKey)));
   });
 
 When('Send HEAD exists request for {string} and save response as {string}', async function (idKey, varName) {
@@ -47,22 +46,18 @@ When('Send GET users list request with page {string} per_page {string} and save 
     this.save(varName, await users.list({ page, per_page: perPage }));
   });
 
-// `query` is a raw query string with ${key} placeholders: repeated keys and present-but-empty values survive
-// (the API answers `search=` with 400, but an absent `search` with the default)
-const query = (world, text) => new URLSearchParams(world.render(text));
-
 When('Send GET users list request with query {string} and save response as {string}', async function (text, varName) {
-  this.save(varName, await users.list(query(this, text)));
+  this.save(varName, await users.list(this.query(text)));
 });
 
 When('Send GET users list request with query {string} and raw auth header {string} and save response as {string}',
   async function (text, header, varName) {
-    this.save(varName, await users.list(query(this, text), auth.raw(this.render(header))));
+    this.save(varName, await users.list(this.query(text), this.rawAuth(header)));
   });
 
 When('Send GET users list request with query {string} and token {string} and save response as {string}',
   async function (text, tokenKey, varName) {
-    this.save(varName, await users.list(query(this, text), auth.bearer(this.str(tokenKey))));
+    this.save(varName, await users.list(this.query(text), this.bearer(tokenKey)));
   });
 
 Then('Assert users list total_pages matches total and per_page in {string}', function (varName) {

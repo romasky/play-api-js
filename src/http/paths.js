@@ -2,6 +2,7 @@
 const BASE = '/api/v1';
 
 module.exports = {
+  BASE,
   HEALTH:             `${BASE}/health`,
   LOGIN:              `${BASE}/login`,
   AUTH_BASIC:         `${BASE}/auth/basic`,

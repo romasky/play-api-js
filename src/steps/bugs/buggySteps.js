@@ -28,7 +28,7 @@ When('Get buggy catalog and save response as {string}', async function (varName)
 });
 
 When('Get buggy items with query {string} and save response as {string}', async function (query, varName) {
-  this.save(varName, await bugs.items(new URLSearchParams(this.render(query))));
+  this.save(varName, await bugs.items(this.query(query)));
 });
 
 Then('Assert item ids are {string} in response {string}', function (ids, varName) {
@@ -67,5 +67,5 @@ Then('Assert cart total is {string} in response {string}', function (amount, var
 });
 
 When('Get buggy schedule with query {string} and save response as {string}', async function (query, varName) {
-  this.save(varName, await bugs.schedule(new URLSearchParams(this.render(query))));
+  this.save(varName, await bugs.schedule(this.query(query)));
 });

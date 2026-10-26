@@ -109,7 +109,7 @@ async function request(method, path, opts = {}) {
 
   let timedOut = false;
   const res = await step(`${method} ${path.split('?')[0]}`, async (s) => {
-    s.parameter('path', path);
+    s.parameter('path', scrub(path));
     await attachRequest(s, { params, headers: opts.headers, json, content, form });
     await throttle(method, path);
     const started = Date.now();
@@ -118,7 +118,8 @@ async function request(method, path, opts = {}) {
     try {
       response = await http.request({
         method, url: path, params, headers,
-        data: form ?? content ?? json,
+        // a string goes as bytes: axios would re-stringify a JSON-typed string ('{"a":' → '"{\"a\":"')
+        data: form ?? (typeof content === 'string' ? Buffer.from(content) : content) ?? json,
         maxRedirects: follow ? 20 : 0,
         beforeRedirect: () => { redirects += 1; },
         signal: AbortSignal.timeout(deadline),
@@ -155,4 +156,4 @@ async function timed(call) {
   }
 }
 
-module.exports = { request, timed, rawBody, RawJson, RequestTimeout };
+module.exports = { request, timed, rawBody };

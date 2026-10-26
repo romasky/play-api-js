@@ -25,11 +25,11 @@ Then('Assert login response is successful in {string}', function (varName) {
 // ─── Logout ───────────────────────────────────────────────────────────────
 
 When('Logout user {string} with token {string} and save response as {string}', async function (idKey, tokenKey, varName) {
-  this.save(varName, await users.logout(this.str(idKey), auth.bearer(this.str(tokenKey))));
+  this.save(varName, await users.logout(this.str(idKey), this.bearer(tokenKey)));
 });
 
 When('Logout user {string} with raw auth header {string} and save response as {string}', async function (idKey, header, varName) {
-  this.save(varName, await users.logout(this.str(idKey), auth.raw(this.render(header))));
+  this.save(varName, await users.logout(this.str(idKey), this.rawAuth(header)));
 });
 
 When('Logout user {string} with no auth token and save response as {string}', async function (idKey, varName) {

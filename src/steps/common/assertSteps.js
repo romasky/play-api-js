@@ -2,7 +2,7 @@ const { When, Then } = require('@cucumber/cucumber');
 const { getPath, hasPath } = require('../../utils/jsonPath');
 const { show } = require('../../http/attach');
 const {
-  asText, items, assertEveryItem, assertEveryItemEquals, assertSorted, assertErrorCode, assertHasRequestId,
+  items, assertEveryItem, assertEveryItemEquals, assertSorted, assertErrorCode, assertHasRequestId,
 } = require('../../assertions/body');
 const { header, link } = require('../../assertions/headers');
 
@@ -53,7 +53,7 @@ Then('Assert response header {string} is absent in {string}', function (name, va
 });
 Then('Assert header {string} equals field {string} in response {string}', function (name, field, varName) {
   const actual = header(this.res(varName), name);
-  const expected = asText(getPath(this.body(varName), field));
+  const expected = String(getPath(this.body(varName), field));
   if (actual !== expected) throw new Error(`Header '${name}' = '${actual}' but body '${field}' = '${expected}'`);
 });
 

@@ -16,7 +16,7 @@ When('Submit a perfect {string} bug report anonymously and save response as {str
 });
 
 When('Submit a perfect {string} bug report with token {string} and save response as {string}', async function (bugId, tokenKey, varName) {
-  this.save(varName, await bugs.submitReport(perfectBugReport(bugId), auth.bearer(this.str(tokenKey))));
+  this.save(varName, await bugs.submitReport(perfectBugReport(bugId), this.bearer(tokenKey)));
 });
 
 When('Submit a {string} bug report with severity {string} anonymously and save response as {string}', async function (bugId, severity, varName) {
@@ -28,7 +28,7 @@ When('Submit a {string} bug report anonymously and save response as {string}', a
 });
 
 When('Submit a perfect {string} bug report with raw auth header {string} and save response as {string}', async function (bugId, header, varName) {
-  this.save(varName, await bugs.submitReport(perfectBugReport(bugId), auth.raw(this.render(header))));
+  this.save(varName, await bugs.submitReport(perfectBugReport(bugId), this.rawAuth(header)));
 });
 
 When('Submit a bug report with raw body {string} anonymously and save response as {string}', async function (rawJson, varName) {
@@ -36,11 +36,11 @@ When('Submit a bug report with raw body {string} anonymously and save response a
 });
 
 When('List my bug reports with token {string} and save response as {string}', async function (tokenKey, varName) {
-  this.save(varName, await bugs.listReports(auth.bearer(this.str(tokenKey))));
+  this.save(varName, await bugs.listReports(this.bearer(tokenKey)));
 });
 
 When('List my bug reports with query {string} and token {string} and save response as {string}', async function (query, tokenKey, varName) {
-  this.save(varName, await bugs.listReports(auth.bearer(this.str(tokenKey)), new URLSearchParams(this.render(query))));
+  this.save(varName, await bugs.listReports(this.bearer(tokenKey), this.query(query)));
 });
 
 When('List my bug reports with no auth token and save response as {string}', async function (varName) {
@@ -48,7 +48,7 @@ When('List my bug reports with no auth token and save response as {string}', asy
 });
 
 When('Get bug report {string} with token {string} and save response as {string}', async function (idKey, tokenKey, varName) {
-  this.save(varName, await bugs.getReport(this.str(idKey), auth.bearer(this.str(tokenKey))));
+  this.save(varName, await bugs.getReport(this.str(idKey), this.bearer(tokenKey)));
 });
 
 When('Get bug report {string} with no auth token and save response as {string}', async function (idKey, varName) {

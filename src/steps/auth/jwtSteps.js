@@ -6,6 +6,7 @@ const { sharedJwtSession } = require('../../support/session');
 const { rawBody } = require('../../http/client');
 const jwtTools = require('../../utils/jwtTools');
 const { choose } = require('../../utils/lookup');
+const { show } = require('../../http/attach');
 
 // ─── Shared JWT session (one rate-limited JWT login pair per run, see support/session.js) ──
 
@@ -36,7 +37,7 @@ When('JWT login with raw body {string} and save response as {string}', async fun
 
 const OVERSIZED = { login: jwt.login, refresh: jwt.refresh, decode: jwt.decode };
 
-// deliberately not a request model: one oversized field is all the 413 check needs
+// deliberately not a real JWT body: one oversized field is all the 413 check needs
 When('Send JWT {string} request with an oversized body and save response as {string}', async function (endpoint, varName) {
   this.save(varName, await choose(OVERSIZED, endpoint, 'JWT endpoint')({ padding: 'x'.repeat(jwt.BODY_LIMIT + 1) }));
 });
@@ -44,11 +45,11 @@ When('Send JWT {string} request with an oversized body and save response as {str
 // ─── /jwt/me ──────────────────────────────────────────────────────────────
 
 When('Get JWT me with token {string} and save response as {string}', async function (tokenKey, varName) {
-  this.save(varName, await jwt.me(auth.bearer(this.str(tokenKey))));
+  this.save(varName, await jwt.me(this.bearer(tokenKey)));
 });
 
 When('Get JWT me with raw auth header {string} and save response as {string}', async function (header, varName) {
-  this.save(varName, await jwt.me(auth.raw(this.render(header))));
+  this.save(varName, await jwt.me(this.rawAuth(header)));
 });
 
 When('Get JWT me with no auth token and save response as {string}', async function (varName) {
@@ -63,7 +64,7 @@ When('Refresh JWT with token {string} and save response as {string}', async func
 
 When('Refresh JWT with token {string} in the Authorization header only and save response as {string}',
   async function (tokenKey, varName) {
-    this.save(varName, await jwt.refresh({}, auth.bearer(this.str(tokenKey))));
+    this.save(varName, await jwt.refresh({}, this.bearer(tokenKey)));
   });
 
 When('Refresh JWT with raw body {string} and save response as {string}', async function (rawJson, varName) {
@@ -86,13 +87,13 @@ Then('Assert JWT {string} has claim {string} equals {string}', function (tokenKe
   const [, payload] = jwtTools.parts(this.str(tokenKey));
   const actual = String(payload[claim]);
   const resolved = this.str(expected);
-  if (actual !== resolved) throw new Error(`JWT claim '${claim}': expected '${resolved}' but got '${actual}'. Payload: ${JSON.stringify(payload)}`);
+  if (actual !== resolved) throw new Error(`JWT claim '${claim}': expected '${resolved}' but got '${actual}'. Payload: ${show(payload)}`);
 });
 
 Then('Assert JWT {string} lifetime is {int} seconds', function (tokenKey, seconds) {
   const [, payload] = jwtTools.parts(this.str(tokenKey));
   const lifetime = payload.exp - payload.iat;
-  if (lifetime !== seconds) throw new Error(`JWT exp - iat = ${lifetime}, expected ${seconds}. Payload: ${JSON.stringify(payload)}`);
+  if (lifetime !== seconds) throw new Error(`JWT exp - iat = ${lifetime}, expected ${seconds}. Payload: ${show(payload)}`);
 });
 
 // ─── /store/login (personas, password secret_sauce) ───────────────────────

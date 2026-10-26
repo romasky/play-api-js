@@ -1,4 +1,5 @@
 const { World, setWorldConstructor } = require('@cucumber/cucumber');
+const auth = require('./auth');
 
 const PLACEHOLDER = /\$\{(\w+)\}/g;
 
@@ -51,6 +52,24 @@ class PlayWorld extends World {
     return template.replace(PLACEHOLDER, (_, name) => String(this.get(name, true)));
   }
 
+  /**
+   * A step's raw query string (`${key}` placeholders interpolated) as URLSearchParams: repeated keys and
+   * present-but-empty values survive (the API answers `search=` with 400, but an absent `search` with the default).
+   */
+  query(text) {
+    return new URLSearchParams(this.render(text));
+  }
+
+  /** `Authorization: Bearer <token>` for a context token key. */
+  bearer(tokenKey) {
+    return auth.bearer(this.str(tokenKey));
+  }
+
+  /** A verbatim `Authorization` value from step text, `${key}` placeholders interpolated. */
+  rawAuth(text) {
+    return auth.raw(this.render(text));
+  }
+
   /** A saved HTTP response (fails loudly when missing). */
   res(key) {
     const res = this.get(key, true);
@@ -65,5 +84,3 @@ class PlayWorld extends World {
 }
 
 setWorldConstructor(PlayWorld);
-
-module.exports = { PlayWorld };

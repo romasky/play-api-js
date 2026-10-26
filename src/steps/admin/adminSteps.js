@@ -46,34 +46,34 @@ When('Send admin {string} request with no auth token and save response as {strin
 });
 
 When('Send admin {string} request with raw auth header {string} and save response as {string}', async function (route, header, varName) {
-  this.save(varName, await choose(ROUTES, route, 'route')(auth.raw(this.render(header))));
+  this.save(varName, await choose(ROUTES, route, 'route')(this.rawAuth(header)));
 });
 
 When('Send admin {string} request with token {string} and save response as {string}', async function (route, tokenKey, varName) {
-  this.save(varName, await choose(ROUTES, route, 'route')(auth.bearer(this.str(tokenKey))));
+  this.save(varName, await choose(ROUTES, route, 'route')(this.bearer(tokenKey)));
 });
 
 // ─── Routes ───────────────────────────────────────────────────────────────
 
 When('Get admin stats with token {string} and save response as {string}', async function (tokenKey, varName) {
-  this.save(varName, await admin.stats(auth.bearer(this.str(tokenKey))));
+  this.save(varName, await admin.stats(this.bearer(tokenKey)));
 });
 
 When('Get admin users with query {string} and token {string} and save response as {string}', async function (query, tokenKey, varName) {
-  this.save(varName, await admin.listUsers(auth.bearer(this.str(tokenKey)), new URLSearchParams(this.render(query))));
+  this.save(varName, await admin.listUsers(this.bearer(tokenKey), this.query(query)));
 });
 
 When('Set role {string} for user {string} with token {string} and save response as {string}', async function (role, idKey, tokenKey, varName) {
-  this.save(varName, await admin.setRole(this.str(idKey), { role }, auth.bearer(this.str(tokenKey))));
+  this.save(varName, await admin.setRole(this.str(idKey), { role }, this.bearer(tokenKey)));
 });
 
 When('Set role for user {string} with raw body {string} token {string} and save response as {string}',
   async function (idKey, rawJson, tokenKey, varName) {
-    this.save(varName, await admin.setRole(this.str(idKey), rawBody(this.render(rawJson)), auth.bearer(this.str(tokenKey))));
+    this.save(varName, await admin.setRole(this.str(idKey), rawBody(this.render(rawJson)), this.bearer(tokenKey)));
   });
 
 When('Admin delete user {string} with token {string} and save response as {string}', async function (idKey, tokenKey, varName) {
-  this.save(varName, await admin.deleteUser(this.str(idKey), auth.bearer(this.str(tokenKey))));
+  this.save(varName, await admin.deleteUser(this.str(idKey), this.bearer(tokenKey)));
 });
 
 /** One aggregation, so the parts add up; the caller's own admin account is counted. */

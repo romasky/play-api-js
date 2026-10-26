@@ -7,6 +7,8 @@
  *   obj({ id: str }, { bio: str })   → `id` required, `bio` optional
  *   nullable(bool)                   → present, boolean or null (keys that are "always present, maybe null")
  */
+const { BASE } = require('../http/paths');
+
 const str  = { type: 'string' };
 const int  = { type: 'integer' };
 const num  = { type: 'number' };
@@ -22,7 +24,7 @@ const obj      = (required, optional = {}) => ({
   required: Object.keys(required),
 });
 
-/** A registry row: one documented 2xx JSON shape of `method` + path (regex under /api/v1, anchored at the end). */
-const entry = (method, pathRegex, name, schema) => ({ method, re: new RegExp(`/api/v1${pathRegex}$`), name, schema });
+/** A registry row: one documented 2xx JSON shape of `method` + path (regex under BASE, anchored at the end). */
+const entry = (method, pathRegex, name, schema) => ({ method, re: new RegExp(`${BASE}${pathRegex}$`), name, schema });
 
 module.exports = { str, int, num, bool, any, object, arr, nullable, obj, entry };

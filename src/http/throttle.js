@@ -11,11 +11,15 @@
  * CI matrix (one runner = one IP = its own buckets).
  */
 
-// [method, path regex under /api/v1, bucket name, minimum ms between two calls]
+const paths = require('./paths');
+
+const exactly = (path) => new RegExp(`^${path}$`);
+
+// [method, path regex (end-anchored), bucket name, minimum ms between two calls]
 const BUCKETS = [
   ['POST', /\/users\/create(-admin)?$/,      'create-user',   700],   // 1 per 600 ms, burst 100 (shared)
   ['POST', /\/challenges\/[^/]+\/start$/,    'create-user',   700],   // creates a sandbox user → same bucket
-  ['POST', /\/api\/v1\/login$/,              'login',         12500], // 1 per 12 s, burst 5
+  ['POST', exactly(paths.LOGIN),             'login',         12500], // 1 per 12 s, burst 5
   ['POST', /\/jwt\/login$/,                  'jwt-login',     12500], // separate bucket from /login; 400s count too
   ['POST', /\/jwt\/decode$/,                 'jwt-decode',    2100],  // 1 per 2 s, burst 10
   ['POST', /\/files\/upload$/,               'file-upload',   6100],  // 10 per minute, burst 5

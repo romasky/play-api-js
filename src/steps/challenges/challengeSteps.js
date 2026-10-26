@@ -20,7 +20,7 @@ const routes = (id) => ({
 });
 
 When('List challenges with query {string} and save response as {string}', async function (query, varName) {
-  this.save(varName, await challenges.catalog(new URLSearchParams(query)));
+  this.save(varName, await challenges.catalog(this.query(query)));
 });
 
 When('Get hints of challenge {string} and save response as {string}', async function (id, varName) {
@@ -28,7 +28,7 @@ When('Get hints of challenge {string} and save response as {string}', async func
 });
 
 When('Get challenge progress with token {string} and save response as {string}', async function (tokenKey, varName) {
-  this.save(varName, await challenges.progress(auth.bearer(this.str(tokenKey))));
+  this.save(varName, await challenges.progress(this.bearer(tokenKey)));
 });
 
 When('Send challenge {string} request for {string} with no auth token and save response as {string}', async function (route, id, varName) {
@@ -37,15 +37,15 @@ When('Send challenge {string} request for {string} with no auth token and save r
 
 When('Send challenge {string} request for {string} with raw auth header {string} and save response as {string}',
   async function (route, id, header, varName) {
-    this.save(varName, await choose(routes(id), route, 'route')(auth.raw(this.render(header))));
+    this.save(varName, await choose(routes(id), route, 'route')(this.rawAuth(header)));
   });
 
 When('Start challenge {string} with token {string} and save response as {string}', async function (id, tokenKey, varName) {
-  this.save(varName, await challenges.start(id, auth.bearer(this.str(tokenKey))));
+  this.save(varName, await challenges.start(id, this.bearer(tokenKey)));
 });
 
 When('Start challenge {string} with query {string} and token {string} and save response as {string}', async function (id, query, tokenKey, varName) {
-  this.save(varName, await challenges.start(id, auth.bearer(this.str(tokenKey)), new URLSearchParams(query)));
+  this.save(varName, await challenges.start(id, this.bearer(tokenKey), this.query(query)));
 });
 
 /** sandboxId / sandboxToken / sandboxEmail / sandboxPassword from a fresh (201) start. */
@@ -56,19 +56,19 @@ When('Extract the sandbox from {string}', function (varName) {
 });
 
 When('Verify challenge {string} with token {string} and save response as {string}', async function (id, tokenKey, varName) {
-  this.save(varName, await challenges.verify(id, auth.bearer(this.str(tokenKey))));
+  this.save(varName, await challenges.verify(id, this.bearer(tokenKey)));
 });
 
 When('Verify challenge {string} with raw body {string} and token {string} and save response as {string}',
   async function (id, rawJson, tokenKey, varName) {
-    this.save(varName, await challenges.verify(id, auth.bearer(this.str(tokenKey)), rawBody(this.render(rawJson))));
+    this.save(varName, await challenges.verify(id, this.bearer(tokenKey), rawBody(this.render(rawJson))));
   });
 
 When('Reveal hint {int} of challenge {string} with token {string} and save response as {string}', async function (level, id, tokenKey, varName) {
-  this.save(varName, await challenges.reveal(id, { level }, auth.bearer(this.str(tokenKey))));
+  this.save(varName, await challenges.reveal(id, { level }, this.bearer(tokenKey)));
 });
 
 When('Reveal a hint of challenge {string} with raw body {string} and token {string} and save response as {string}',
   async function (id, rawJson, tokenKey, varName) {
-    this.save(varName, await challenges.reveal(id, rawBody(this.render(rawJson)), auth.bearer(this.str(tokenKey))));
+    this.save(varName, await challenges.reveal(id, rawBody(this.render(rawJson)), this.bearer(tokenKey)));
   });

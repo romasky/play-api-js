@@ -8,29 +8,7 @@ const { step } = require('allure-js-commons');
 const config = require('../config/config');
 const paths = require('../http/paths');
 const { request } = require('../http/client');
-const { attach, attachJson } = require('../http/attach');
-
-/** `event: x` / `data: {…}` pairs of an SSE body → [{ event, data }]. */
-function parseSse(text) {
-  const events = [];
-  let event = 'message';
-  for (const line of text.split(/\r?\n/)) {
-    if (line.startsWith('event:')) event = line.slice(6).trim();
-    else if (line.startsWith('data:')) {
-      events.push({ event, data: JSON.parse(line.slice(5).trim()) });
-      event = 'message';
-    }
-  }
-  return events;
-}
-
-async function sseProgress(params) {
-  const res = await request('GET', paths.SSE_PROGRESS, { params });
-  if (res.status !== 200) throw new Error(`SSE stream answered ${res.status}`);
-  const events = parseSse(res.raw.toString('utf8'));
-  await step('SSE events', () => attachJson('SSE events', events));
-  return events;
-}
+const { attach } = require('../http/attach');
 
 /** One WebSocket connection; frames are queued as they arrive so none is lost between steps. */
 class WsSession {
@@ -87,9 +65,8 @@ function wsConnect() {
 }
 
 module.exports = {
-  sseProgress,
-  // non-streaming call — for the 400 validation answers
-  sseProgressResponse: (params) => request('GET', paths.SSE_PROGRESS, { params }),
+  // the stream closes after its `done` event, so the whole body arrives in one response (utils/sse.js parses it)
+  sseProgress: (params) => request('GET', paths.SSE_PROGRESS, { params }),
   wsConnect,
   // an ordinary HTTP GET without the Upgrade handshake → 426 UPGRADE_REQUIRED
   wsPlainGet: () => request('GET', paths.WS_ECHO),

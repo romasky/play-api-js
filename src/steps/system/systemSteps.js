@@ -21,7 +21,7 @@ When('Download the API document {string} and save response as {string}', async f
 });
 
 When('Download the API document {string} with query {string} and save response as {string}', async function (name, query, varName) {
-  this.save(varName, await system.document(name, new URLSearchParams(this.render(query))));
+  this.save(varName, await system.document(name, this.query(query)));
 });
 
 Then('Assert Postman variable {string} is defined in response {string}', function (key, varName) {

@@ -1,16 +1,20 @@
 /** Streaming steps — Server-Sent Events and the WebSocket echo (all transport in services/realtime.js). */
 const { When, Then } = require('@cucumber/cucumber');
 const realtime = require('../../services/realtime');
+const { parseSse } = require('../../utils/sse');
 const { show } = require('../../http/attach');
 
 // ─── Server-Sent Events ───────────────────────────────────────────────────
 
 When('Stream SSE progress with query {string} and save the events as {string}', async function (query, key) {
-  this.save(key, await realtime.sseProgress(new URLSearchParams(this.render(query))));
+  const res = await realtime.sseProgress(this.query(query));
+  if (res.status !== 200) throw new Error(`SSE stream answered ${res.status}: ${show(res.data)}`);
+  this.save(key, parseSse(res.raw.toString('utf8')));
 });
 
+// for the 400 validation answers
 When('Request SSE progress with query {string} and save response as {string}', async function (query, varName) {
-  this.save(varName, await realtime.sseProgressResponse(new URLSearchParams(this.render(query))));
+  this.save(varName, await realtime.sseProgress(this.query(query)));
 });
 
 /** `count` progress events, steps 1..count, each with total == count, the last at 100 %. */

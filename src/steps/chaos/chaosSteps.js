@@ -15,8 +15,6 @@ async function saveTimed(world, varName, call) {
   world.save(`${varName}Seconds`, outcome.ms / 1000);
 }
 
-const query = (text) => new URLSearchParams(text);
-
 // ─── Cache (conditional requests) ─────────────────────────────────────────
 
 When('Get chaos cache and save response as {string}', async function (varName) {
@@ -48,12 +46,12 @@ When('Get chaos delay {string} with a read timeout of {int} second and save resp
 });
 
 When('Get chaos timeout with query {string} and save response as {string}', function (text, varName) {
-  return saveTimed(this, varName, () => chaos.timeout(query(text)));
+  return saveTimed(this, varName, () => chaos.timeout(this.query(text)));
 });
 
 When('Get chaos timeout with query {string} and a read timeout of {int} second and save response as {string}',
   function (text, limit, varName) {
-    return saveTimed(this, varName, () => chaos.timeout(query(text), limit * 1000));
+    return saveTimed(this, varName, () => chaos.timeout(this.query(text), limit * 1000));
   });
 
 Then('Assert request {string} timed out', function (varName) {
@@ -69,7 +67,7 @@ Then('Assert request {string} took between {int} and {int} seconds', function (v
 // ─── Echo ─────────────────────────────────────────────────────────────────
 
 When('Send {string} chaos echo with query {string} and save response as {string}', async function (method, text, varName) {
-  this.save(varName, await chaos.echo(method, { params: query(text) }));
+  this.save(varName, await chaos.echo(method, { params: this.query(text) }));
 });
 
 When('Send GET chaos echo with header {string} value {string} and save response as {string}', async function (name, value, varName) {
@@ -92,15 +90,15 @@ When('Post chaos echo with a text body of {int} bytes and save response as {stri
 // ─── Flaky (seeded) ───────────────────────────────────────────────────────
 
 When('Get chaos flaky with query {string} and save response as {string}', async function (text, varName) {
-  this.save(varName, await chaos.flaky(query(text)));
+  this.save(varName, await chaos.flaky(this.query(text)));
 });
 
 When('Get chaos flaky sequence with query {string} and save response as {string}', async function (text, varName) {
-  this.save(varName, await chaos.flakySequence(query(text)));
+  this.save(varName, await chaos.flakySequence(this.query(text)));
 });
 
 When('Get chaos flaky step {string} with query {string} and save response as {string}', async function (index, text, varName) {
-  this.save(varName, await chaos.flakyStep(index, query(text)));
+  this.save(varName, await chaos.flakyStep(index, this.query(text)));
 });
 
 Then('Assert flaky plan statuses are {string} in response {string}', function (statuses, varName) {
@@ -112,7 +110,7 @@ Then('Assert flaky plan statuses are {string} in response {string}', function (s
 When('Retry chaos flaky steps of plan {string} with query {string} until success and save as {string}', async function (planVar, text, key) {
   const plan = getPath(this.body(planVar), 'steps');
   for (const [number, planned] of plan.entries()) {
-    const res = await chaos.flakyStep(String(planned.index), query(text));
+    const res = await chaos.flakyStep(String(planned.index), this.query(text));
     if (res.status !== planned.status) throw new Error(`step ${planned.index} answered ${res.status}, the plan says ${planned.status}`);
     if (res.status === 200) {
       this.save(key, String(number + 1));
@@ -138,12 +136,12 @@ When('Read the raw chaos gzip body with Accept-Encoding {string} and save its fi
 // ─── Redirect (status = `type`; 301/302 turn POST into GET, 307/308 keep it) ──
 
 When('Send {string} chaos redirect {string} with query {string} and save response as {string}', async function (method, hops, text, varName) {
-  this.save(varName, await chaos.redirect(method, hops, { params: query(text) }));
+  this.save(varName, await chaos.redirect(method, hops, { params: this.query(text) }));
 });
 
 When('Send {string} chaos redirect {string} with query {string} and body {string} following redirects and save response as {string}',
   async function (method, hops, text, body, varName) {
-    this.save(varName, await chaos.redirect(method, hops, { params: query(text), content: body || undefined, follow: true }));
+    this.save(varName, await chaos.redirect(method, hops, { params: this.query(text), content: body || undefined, follow: true }));
   });
 
 When('Send {string} directly to chaos redirect done and save response as {string}', async function (method, varName) {

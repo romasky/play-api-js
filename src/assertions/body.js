@@ -6,9 +6,6 @@
 const { getPath, hasPath } = require('../utils/jsonPath');
 const { show } = require('../http/attach');
 
-/** JS `String()` of a field — booleans `true`/`false`, numbers as written. */
-const asText = (value) => String(value);
-
 function fail(message) {
   throw new Error(message);
 }
@@ -31,7 +28,7 @@ function assertEveryItem(body, listPath, field, { present = true } = {}) {
 function assertEveryItemEquals(body, listPath, field, expected) {
   const rows = items(body, listPath);
   if (rows.length === 0) fail(`'${listPath}' is empty — nothing to check. Body: ${show(body)}`);
-  const wrong = rows.map((row) => getPath(row, field)).filter((value) => asText(value) !== expected);
+  const wrong = rows.map((row) => getPath(row, field)).filter((value) => String(value) !== expected);
   if (wrong.length > 0) fail(`${wrong.length} item(s) of '${listPath}' have '${field}' != '${expected}': ${show(wrong.slice(0, 5))}`);
 }
 
@@ -63,5 +60,5 @@ function assertHasRequestId(body) {
 }
 
 module.exports = {
-  asText, items, assertEveryItem, assertEveryItemEquals, assertSorted, assertTotalPages, assertErrorCode, assertHasRequestId,
+  items, assertEveryItem, assertEveryItemEquals, assertSorted, assertTotalPages, assertErrorCode, assertHasRequestId,
 };

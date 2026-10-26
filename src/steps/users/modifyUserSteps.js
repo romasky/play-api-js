@@ -15,16 +15,16 @@ When('Update user {string} with token {string} and save response as {string}', a
     username: this.str('username'),
     profile:  profileReq({ firstName: this.str('firstName'), lastName: this.str('lastName') }),
   });
-  this.save(varName, await users.update(this.str(idKey), body, auth.bearer(this.str(tokenKey))));
+  this.save(varName, await users.update(this.str(idKey), body, this.bearer(tokenKey)));
 });
 
 When('Update user {string} with raw body {string} token {string} and save response as {string}',
   async function (idKey, rawJson, tokenKey, varName) {
-    this.save(varName, await users.update(this.str(idKey), rawBody(this.render(rawJson)), auth.bearer(this.str(tokenKey))));
+    this.save(varName, await users.update(this.str(idKey), rawBody(this.render(rawJson)), this.bearer(tokenKey)));
   });
 
 When('Update user {string} with raw auth header {string} and save response as {string}', async function (idKey, header, varName) {
-  this.save(varName, await users.update(this.str(idKey), randomUpdateBody(), auth.raw(this.render(header))));
+  this.save(varName, await users.update(this.str(idKey), randomUpdateBody(), this.rawAuth(header)));
 });
 
 When('Update user {string} with no auth token and save response as {string}', async function (idKey, varName) {
@@ -35,20 +35,20 @@ When('Update user {string} with no auth token and save response as {string}', as
 
 When('Patch user {string} with field {string} value {string} token {string} and save response as {string}',
   async function (idKey, field, value, tokenKey, varName) {
-    this.save(varName, await users.patch(this.str(idKey), { [field]: this.str(value) }, auth.bearer(this.str(tokenKey))));
+    this.save(varName, await users.patch(this.str(idKey), { [field]: this.str(value) }, this.bearer(tokenKey)));
   });
 
 When('Patch user {string} with raw body {string} token {string} and save response as {string}',
   async function (idKey, rawJson, tokenKey, varName) {
-    this.save(varName, await users.patch(this.str(idKey), rawBody(this.render(rawJson)), auth.bearer(this.str(tokenKey))));
+    this.save(varName, await users.patch(this.str(idKey), rawBody(this.render(rawJson)), this.bearer(tokenKey)));
   });
 
 When('Patch user {string} with empty body token {string} and save response as {string}', async function (idKey, tokenKey, varName) {
-  this.save(varName, await users.patch(this.str(idKey), {}, auth.bearer(this.str(tokenKey))));
+  this.save(varName, await users.patch(this.str(idKey), {}, this.bearer(tokenKey)));
 });
 
 When('Patch user {string} with raw auth header {string} and save response as {string}', async function (idKey, header, varName) {
-  this.save(varName, await users.patch(this.str(idKey), randomPatchBody(), auth.raw(this.render(header))));
+  this.save(varName, await users.patch(this.str(idKey), randomPatchBody(), this.rawAuth(header)));
 });
 
 When('Patch user {string} with no auth token and save response as {string}', async function (idKey, varName) {
@@ -58,11 +58,11 @@ When('Patch user {string} with no auth token and save response as {string}', asy
 // ─── Delete ───────────────────────────────────────────────────────────────
 
 When('Delete user {string} with token {string} and save response as {string}', async function (idKey, tokenKey, varName) {
-  this.save(varName, await users.delete(this.str(idKey), auth.bearer(this.str(tokenKey))));
+  this.save(varName, await users.delete(this.str(idKey), this.bearer(tokenKey)));
 });
 
 When('Delete user {string} with raw auth header {string} and save response as {string}', async function (idKey, header, varName) {
-  this.save(varName, await users.delete(this.str(idKey), auth.raw(this.render(header))));
+  this.save(varName, await users.delete(this.str(idKey), this.rawAuth(header)));
 });
 
 When('Delete user {string} with no auth token and save response as {string}', async function (idKey, varName) {
