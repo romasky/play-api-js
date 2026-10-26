@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "WRONG_TOKEN_TYPE",
+    "message": "Wrong token type",
+    "details": "This endpoint requires a refresh token, not an access token"
+  },
+  "timestamp": "2026-10-26T12:36:21.030135604Z",
+  "request_id": "035a1952-8068-4514-bc5a-562313f70588"
+}

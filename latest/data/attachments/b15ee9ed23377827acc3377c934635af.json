@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_SORT_DIR",
+    "message": "sort direction must be asc or desc",
+    "details": "sort direction must be asc or desc: got \"ASC\" (use asc or desc)"
+  },
+  "timestamp": "2026-10-26T12:33:45.120695913Z",
+  "request_id": "eef41488-95d3-4718-a8bc-de409bd00b6c"
+}

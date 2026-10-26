@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "challenge_id": "login-rotates-token",
+  "already_solved": false,
+  "attempt_id": "6adf48af8a6e647a79dcb603",
+  "status": "open",
+  "started_at": "2026-10-26T12:33:51.926268411Z",
+  "expires_at": "2026-10-27T12:33:51.274Z",
+  "target": {
+    "user_id": "6adf48af8a6e647a79dcb602",
+    "email": "sandbox-d6d494025c0b4fc816ef71fe2170ad1e@play-qa.com",
+    "username": "sandbox_d6d494025c0b4fc816ef",
+    "password": "1402418c12de63e19a9f754f",
+    "access_token": "usr_1793018031_e8bf9632fb63b4470d6d46baf977a867"
+  }
+}

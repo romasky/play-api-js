@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "id": "6adf489e8a6e647a79dcb5d6",
+      "email": "u9pv16bhgf@play-qa.com",
+      "username": "user_zgz7zovo",
+      "profile": {
+        "first_name": "Testfpnjpt",
+        "last_name": "Userzuryys"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-10-26T12:33:34.383Z",
+        "updated_at": "2026-10-26T12:33:34.383Z",
+        "expires_at": "2026-10-27T12:33:34.383Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6adf489e8a6e647a79dcb5d5",
+      "email": "asj97r7iei@play-qa.com",
+      "username": "user_y0oy27lx",
+      "profile": {
+        "first_name": "Testpvdjhk",
+        "last_name": "Uservpaehi"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-10-26T12:33:34.345Z",
+        "updated_at": "2026-10-26T12:33:34.345Z",
+        "expires_at": "2026-10-27T12:33:34.345Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      }
+    }
+  ],
+  "page": 1,
+  "per_page": 2,
+  "total": 4027,
+  "total_pages": 2014
+}

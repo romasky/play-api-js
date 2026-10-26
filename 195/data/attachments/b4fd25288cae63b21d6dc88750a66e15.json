@@ -1,0 +1,152 @@
+{
+  "users": [
+    {
+      "id": "6adf48848a6e647a79dcb5a6",
+      "email": "87timjmz0g@play-qa.com",
+      "username": "user_qucpnenf",
+      "profile": {
+        "first_name": "Testspciby",
+        "last_name": "Userhbrnsp"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-10-26T12:33:08.03Z",
+        "updated_at": "2026-10-26T12:33:08.03Z",
+        "expires_at": "2026-10-27T12:33:08.03Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6adf48838a6e647a79dcb5a5",
+      "email": "ptoz6btihd@play-qa.com",
+      "username": "user_mea3cmxt",
+      "profile": {
+        "first_name": "Testfqwyji",
+        "last_name": "Userzkjkjh"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {
+        "status": "freelancer"
+      },
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-10-26T12:33:07.972Z",
+        "updated_at": "2026-10-26T12:33:07.972Z",
+        "expires_at": "2026-10-27T12:33:07.972Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6adf48838a6e647a79dcb5a4",
+      "email": "93946p8wus@play-qa.com",
+      "username": "user_jyaz5qe0",
+      "profile": {
+        "first_name": "Testbaaasn",
+        "last_name": "Userobzoia"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {
+        "status": "retired"
+      },
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-10-26T12:33:07.292Z",
+        "updated_at": "2026-10-26T12:33:07.292Z",
+        "expires_at": "2026-10-27T12:33:07.292Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6adf48828a6e647a79dcb5a3",
+      "email": "qv1zehehr0@play-qa.com",
+      "username": "user_xq5tt1t6",
+      "profile": {
+        "first_name": "Testpczacz",
+        "last_name": "Userexsoil"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-10-26T12:33:06.768Z",
+        "updated_at": "2026-10-26T12:33:06.768Z",
+        "expires_at": "2026-10-27T12:33:06.768Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    }
+  ],
+  "page": 1,
+  "per_page": 4,
+  "total": 3995,
+  "total_pages": 999
+}
