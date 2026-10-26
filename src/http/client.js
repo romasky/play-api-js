@@ -1,3 +1,4 @@
+const zlib = require('zlib');
 const axios = require('axios');
 const { step } = require('allure-js-commons');
 const config = require('../config/config');
@@ -16,6 +17,8 @@ const { scrub, attach, attachJson } = require('./attach');
  * - Bodies: `json` (any JSON value, or a RawJson sent verbatim), `content` (raw text or bytes, sent as is;
  *   set `contentType`, default application/json) or `form` (a FormData — multipart).
  * - The response body is read as bytes (`res.raw`); `res.data` is the parsed JSON, the text, or '' when empty.
+ *   `decompress: false` keeps a gzip body as sent on the wire. `res.elapsedMs` and `res.redirects` (hops
+ *   followed) are recorded too.
  * - Every 2xx JSON body is validated against its registered contract. A violation throws ContractError,
  *   which carries the response — so a create step can still register its cleanup (support/cleanup.js).
  * - `timeout` (ms) is a hard wall-clock deadline. A timeout is recorded inside the step (which stays green)
@@ -27,8 +30,14 @@ const http = axios.create({
   responseType: 'arraybuffer',
   transformResponse: [(data) => data],
   paramsSerializer: { indexes: null }, // { filter: ['a', 'b'] } → filter=a&filter=b (repeated key, no [])
-  headers: { 'Accept-Encoding': 'identity' },
+  // Accept */* (not axios' "application/json, …"): with a JSON Accept, Cloudflare passes the origin's 502/504
+  // JSON through; with */* it substitutes its own error page — the behaviour every other client sees.
+  headers: { 'Accept': '*/*', 'Accept-Encoding': 'identity' },
+  // axios would strip Content-Encoding when it decodes; decode in parseBody instead, keeping the header
+  decompress: false,
 });
+
+const DECODERS = { gzip: zlib.gunzipSync, deflate: zlib.inflateSync, br: zlib.brotliDecompressSync };
 
 /** A `json` value sent VERBATIM as application/json — deliberately malformed (truncated) payloads, or `null`. */
 class RawJson {
@@ -54,8 +63,10 @@ class RequestTimeout extends Error {
   }
 }
 
-function parseBody(res) {
-  const raw = Buffer.from(res.data ?? []);
+function parseBody(res, decompress) {
+  const encoded = Buffer.from(res.data ?? []);
+  const decode = decompress && encoded.length > 0 ? DECODERS[String(res.headers['content-encoding'] ?? '').trim()] : undefined;
+  const raw = decode ? decode(encoded) : encoded;
   res.raw = raw;
   if (raw.length === 0) return '';
   const type = String(res.headers['content-type'] ?? '');
@@ -89,7 +100,7 @@ async function attachResponse(res) {
 }
 
 async function request(method, path, opts = {}) {
-  const { contentType = 'application/json', form, params, follow = false, timeout } = opts;
+  const { contentType = 'application/json', form, params, follow = false, timeout, decompress = true } = opts;
   const verbatim = opts.json instanceof RawJson;
   const json = verbatim ? undefined : opts.json;
   const content = verbatim ? opts.json.text : opts.content;
@@ -102,12 +113,14 @@ async function request(method, path, opts = {}) {
     await attachRequest(s, { params, headers: opts.headers, json, content, form });
     await throttle(method, path);
     const started = Date.now();
+    let redirects = 0;
     let response;
     try {
       response = await http.request({
         method, url: path, params, headers,
         data: form ?? content ?? json,
         maxRedirects: follow ? 20 : 0,
+        beforeRedirect: () => { redirects += 1; },
         signal: AbortSignal.timeout(deadline),
       });
     } catch (err) {
@@ -118,8 +131,8 @@ async function request(method, path, opts = {}) {
       return undefined;
     }
     response.elapsedMs = Date.now() - started;
-    response.redirects = response.request?._redirectable?._redirectCount ?? 0;
-    response.data = parseBody(response);
+    response.redirects = redirects;
+    response.data = parseBody(response, decompress);
     s.parameter('status', String(response.status));
     await attachResponse(response);
     if (response.status >= 200 && response.status < 300 && isJson(response.data)) {

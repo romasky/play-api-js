@@ -21,6 +21,7 @@ const ENTRIES = [
   ...require('./webhooks').CONTRACTS_2XX,
   ...require('./bugs').CONTRACTS_2XX,
   ...require('./challenges').CONTRACTS_2XX,
+  ...require('./chaos').CONTRACTS_2XX,
 ].map((e) => ({ ...e, validate: ajv.compile(e.schema) }));
 
 /** A 2xx body broke its contract. `response` is the real response, so callers can still clean up. */
