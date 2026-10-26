@@ -13,17 +13,14 @@ When('Create mailbox with domain {string} and save response as {string}', async 
   this.save(varName, await mail.createMailbox(createMailboxReq({ domain })));
 });
 
+// local_part is a context key or, when no such key exists, the literal value ("TestBox123")
 When('Create mailbox with local_part {string} and save response as {string}', async function (localPart, varName) {
-  this.save(varName, await mail.createMailbox(createMailboxReq({ localPart })));
-});
-
-When('Create mailbox with context local_part {string} and save response as {string}', async function (localPartKey, varName) {
-  this.save(varName, await mail.createMailbox(createMailboxReq({ localPart: this.str(localPartKey) })));
+  this.save(varName, await mail.createMailbox(createMailboxReq({ localPart: this.str(localPart) })));
 });
 
 When('Create mailbox with domain {string} local_part {string} and save response as {string}',
   async function (domain, localPart, varName) {
-    this.save(varName, await mail.createMailbox(createMailboxReq({ domain, localPart })));
+    this.save(varName, await mail.createMailbox(createMailboxReq({ domain, localPart: this.str(localPart) })));
   });
 
 When('Create mailbox with raw body {string} and save response as {string}', async function (rawJson, varName) {
