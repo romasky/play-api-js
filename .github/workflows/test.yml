@@ -10,43 +10,119 @@ on:
   workflow_dispatch:
     inputs:
       tags:
-        description: 'Cucumber tag filter'
+        description: 'Cucumber tag expression (combined with each job''s epics)'
         required: false
-        default: '@Run'
+        default: '@Run and not @Ignore and not @Bug and not @NotImplemented'
 
 permissions:
   contents: write
   pages: write
   id-token: write
 
+env:
+  TAGS: ${{ github.event.inputs.tags || '@Run and not @Ignore and not @Bug and not @NotImplemented' }}
+  BASE_URL: ${{ vars.BASE_URL || 'https://www.play-qa.com' }}
+
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-
       - run: npm ci
-
-      - name: Run tests
+      - name: Offline step check (every step defined, none ambiguous)
+        run: npm run test:dry
+      - name: Every Allure epic is in the test matrix (a missing one would silently drop its scenarios)
         run: |
-          TAG="${{ github.event.inputs.tags || '@Run' }}"
-          BASE_URL="${{ vars.BASE_URL || 'https://www.play-qa.com' }}"
-          BASE_URL=$BASE_URL npx cucumber-js --tags "$TAG"
+          for epic in $(grep -rho 'allure.label.epic:[A-Za-z_]*' features | sort -u | cut -d: -f2); do
+            grep -qE -- "@allure.label.epic:$epic\b" .github/workflows/test.yml || { echo "epic $epic is not in the test matrix"; exit 1; }
+          done
+
+  # The live Swagger vs the committed spec/openapi.json snapshot. Does not block the tests (they still tell
+  # what broke), but fails the workflow so a spec change is noticed — then update features + snapshot.
+  spec-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run spec:drift
+
+  # One job per epic group: every runner has its own IP, hence its own server-side rate-limit buckets
+  # (the suite paces per endpoint, so wall time is dominated by /login, /jwt/login, uploads and inboxes).
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: users
+            epics: '@allure.label.epic:User_Lifecycle'
+          - group: auth
+            epics: '@allure.label.epic:Authentication'
+          - group: admin-challenges-system
+            epics: '@allure.label.epic:Administration or @allure.label.epic:Challenges or @allure.label.epic:System'
+          - group: files
+            epics: '@allure.label.epic:File_Storage'
+          - group: webhooks
+            epics: '@allure.label.epic:Webhooks'
+          - group: mail-bugs-chaos
+            epics: '@allure.label.epic:Mail_Service or @allure.label.epic:Bug_Hunting or @allure.label.epic:Chaos_Engineering'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Run tests (${{ matrix.group }})
+        run: npx cucumber-js --tags "($TAGS) and (${{ matrix.epics }})"
+      - name: Upload allure-results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.group }}-${{ github.run_attempt }}
+          path: allure-results
+          retention-days: 30
+
+  report:
+    needs: test
+    if: always() && needs.test.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4  # brings the committed allure-results/categories.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          # every attempt of every group: after "Re-run failed jobs" the groups that passed keep their attempt-1
+          # artifact; result files have unique names, so a re-run group simply shows up as a retry in Allure
+          pattern: allure-results-*
+          path: allure-results
+          merge-multiple: true
+      - name: Spec coverage (every Swagger operation called at least once)
+        if: env.TAGS == '@Run and not @Ignore and not @Bug and not @NotImplemented'
+        run: npm run spec:coverage -- --min 100
 
       - name: Generate Allure report
         if: always()
         run: npx allure generate allure-results -o allure-report
 
-      - name: Upload allure-results
+      - name: Upload merged allure-results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ github.run_number }}
+          name: allure-merged-${{ github.run_number }}-${{ github.run_attempt }}  # outside the allure-results-* pattern
           path: allure-results
           retention-days: 30
 

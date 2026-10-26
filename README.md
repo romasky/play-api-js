@@ -3,7 +3,7 @@
 [![API Tests — play-qa.com](https://github.com/romasky/play-api-js/workflows/API%20Tests%20%E2%80%94%20play-qa.com/badge.svg)](https://github.com/romasky/play-api-js/actions)
 [![Allure Report](https://img.shields.io/badge/Allure-Report-brightgreen?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMSAxNEg5VjhINnYtMmg2djJoLTF2OHptNS0yaC0ydi04aDJ2OHoiLz48L3N2Zz4=)](https://romasky.github.io/play-api-js/latest/)
 
-**play-api-js** is a comprehensive API test automation framework for [play-qa.com](https://www.play-qa.com), built with JavaScript, Cucumber (BDD), Allure reporting, and axios. It is the JavaScript port of [play-api-java](https://github.com/romasky/play-api-java).
+**play-api-js** is a comprehensive API test automation framework for [play-qa.com](https://www.play-qa.com), built with JavaScript, Cucumber (BDD), Allure reporting, and axios. It is the JavaScript sibling of [play-api-java](https://github.com/romasky/play-api-java) and [play-api-python](https://github.com/romasky/play-api-python), which share its 45 feature files.
 
 ---
 
@@ -15,14 +15,14 @@
 
 ## ✨ Key Highlights
 
-- **BDD scenarios** — Cucumber feature files with human-readable Gherkin covering positive, negative, and end-to-end flows
-- **181 scenarios across 18 feature files** — covering 19 API endpoints, including Bearer and Basic auth
-- **Allure HTML reports** — step-level granularity, auto-published to GitHub Pages on every CI run
-- **Token-security regression guards** — absent / empty / malformed `Authorization` headers and cross-account (IDOR) attempts; every negative scenario asserts **both** the HTTP status and `error.code`
-- **Typed response assertions** — dotted-path, own-property checks (`Assert field "x.y" is absent …`) instead of substring matching
-- **Temp-mail API coverage** — mailbox and message endpoints exercised through the same Gherkin steps, no external mail service needed
-- **Rate-limit pacing** — `Before` hooks pre-emptively sleep to respect server-enforced rate limits
-- **Scenario context** — global (`_g`) / local scoping system for cross-scenario data dependencies
+- **799 BDD scenarios across 45 feature files, calling all 79 operations of the Swagger spec** — users, auth (opaque token, Basic, JWT, store personas), admin, temp mail + SMTP simulator, files, webhooks, the intentionally buggy API, chaos endpoints, challenges, SSE / WebSocket and the API documents
+- **Every negative scenario asserts both the HTTP status and `error.code`**; token-security guards cover absent / empty / malformed `Authorization` headers and cross-account attempts (`403 FORBIDDEN`)
+- **Strict 2xx contracts** — every 2xx JSON body is validated against a JSON Schema (ajv, strict types) registered per `(method, path)`, whatever the scenario asserts afterwards
+- **Per-endpoint rate-limit pacing** in the HTTP client — the server's per-IP token buckets are paced at their refill rate, never retried
+- **Clean-up after every scenario** — uploads and webhook inboxes a scenario creates are deleted in an `After` hook, pass or fail
+- **Allure HTML reports** — one nested step per HTTP call with scrubbed attachments (`whsec_` signing secrets masked), auto-published to GitHub Pages
+- **Spec tooling** — `spec:drift` compares the live Swagger with the committed snapshot; `spec:coverage` fails CI below 100 % of operations called
+- **CI matrix by epic** — six jobs, one runner (one IP, its own rate-limit buckets) each: ≈ 8 min wall time instead of ≈ 21 min serially (Authentication is the long pole)
 
 ---
 
@@ -30,9 +30,10 @@
 
 | Tool | Version | Role |
 |---|---|---|
-| Node.js | 20+ | Runtime |
+| Node.js | 22+ | Runtime (native `FormData`, `WebSocket`, `AbortSignal.timeout`) |
 | `@cucumber/cucumber` | ^10.9 | BDD runner + Gherkin parser |
 | `axios` | ^1.6 | HTTP client |
+| `ajv` | ^8 | 2xx response contracts (JSON Schema) |
 | `allure` | ^3.8 | Allure Report 3 CLI (Awesome UI) |
 | `allure-cucumberjs` | ^3.8 | Allure formatter for Cucumber |
 | `allure-js-commons` | ^3.8 | Allure step/attachment API |
@@ -44,56 +45,32 @@
 
 ```
 play-api-js/
-├── cucumber.js                    # Cucumber config (runner, formatters, tag filter)
-├── .env                           # Base URL and request timeout (git-ignored)
-├── .github/workflows/test.yml     # CI — GitHub Actions
-├── allure-results/
-│   └── categories.json            # Allure failure categories
+├── cucumber.js                    # Cucumber config (runner, formatters, tag filter, parallel: 1)
+├── spec/openapi.json              # Swagger 2.0 snapshot the expectations are written against (79 operations)
+├── tools/
+│   ├── spec.js                    # shared snapshot loader for the two tools below
+│   ├── spec-drift.js              # live Swagger vs snapshot — operations and response codes that moved
+│   └── spec-coverage.js           # which operations a run called (from allure-results), --min 100 in CI
 ├── src/
-│   ├── config/config.js           # Reads .env (dotenv wrapper)
-│   ├── api/
-│   │   ├── apiPaths.js            # All endpoint paths as constants / functions
-│   │   └── restClient.js          # axios wrapper — one Allure step per request, headers passed verbatim
-│   ├── utils/
-│   │   ├── generator.js           # Random data generators (email, username, etc.)
-│   │   └── jsonPath.js            # getPath / hasPath — typed dotted-path body checks
-│   ├── models/
-│   │   ├── createUserReq.js       # Request builders (strips undefined → no null fields)
-│   │   ├── loginReq.js
-│   │   ├── createMailboxReq.js
-│   │   ├── sendMessageReq.js
-│   │   ├── userResponse.js        # Typed response accessors + assertions (used by steps)
-│   │   ├── loginResponse.js
-│   │   ├── mailboxResponse.js
-│   │   ├── usersListResponse.js
-│   │   └── errorResponse.js
-│   ├── context/scenarioContext.js # Global/local variable store for Gherkin steps
-│   └── steps/
-│       ├── commonSteps.js         # Data generation, typed field/header/status assertions, debug
-│       ├── accountsSteps.js       # Users, login, logout steps (bearer / raw / no-auth variants) + rate-limit hooks
-│       ├── mailSteps.js           # Mailbox and message steps
-│       ├── healthSteps.js         # Health check steps
-│       ├── basicAuthSteps.js      # GET /auth/basic steps
-│       └── optionsSteps.js        # OPTIONS endpoint steps
-└── features/play_qa_api/
-    ├── CreateUserTests.feature
-    ├── GetUserTests.feature
-    ├── ListUsersTests.feature
-    ├── UserExistsTests.feature
-    ├── UpdateUserTests.feature
-    ├── PatchUserTests.feature
-    ├── DeleteUserTests.feature
-    ├── LoginTests.feature
-    ├── LogoutTests.feature
-    ├── TokenSecurityTests.feature
-    ├── BasicAuthTests.feature
-    ├── OptionsTests.feature
-    ├── HealthTests.feature
-    ├── MailboxCreateTests.feature
-    ├── MailboxGetTests.feature
-    ├── MailboxDeleteTests.feature
-    ├── MailSendTests.feature
-    └── MailMessagesTests.feature
+│   ├── config/config.js           # BASE_URL, REQUEST_TIMEOUT, ADMIN_SEED_CODE (.env)
+│   ├── http/
+│   │   ├── client.js              # the ONE choke point: Allure step per call, bodies, timeouts, contracts
+│   │   ├── throttle.js            # per-endpoint rate-limit pacing
+│   │   ├── attach.js              # the only Allure attach path — scrubs secrets
+│   │   └── paths.js               # every endpoint path
+│   ├── contracts/<domain>.js      # 2xx JSON Schemas + the (method, path) registry (index.js)
+│   ├── services/<domain>.js       # one module per API domain; plain values in, raw response out
+│   ├── builders/                  # request bodies (users, mail, bug reports, carts)
+│   ├── assertions/                # typed body / header assertions (lists, sorting, Link, error envelope)
+│   ├── support/
+│   │   ├── world.js               # per-scenario World: context store, ${key} interpolation, deferred cleanups
+│   │   ├── hooks.js               # 60 s step timeout, After → run cleanups
+│   │   ├── auth.js                # bearer / raw / none / basic Authorization headers
+│   │   ├── cleanup.js             # saveCreated — register deletion even on a contract violation
+│   │   └── session.js             # one shared JWT session per run
+│   ├── utils/                     # generator, jsonPath, jwtTools, samples, webhookSign, lookup
+│   └── steps/<domain>/*.js        # step definitions (function steps on the World)
+└── features/play_qa_api/          # 45 feature files, one Allure epic each (see below)
 ```
 
 ---
@@ -101,65 +78,57 @@ play-api-js/
 ## 🚀 Quick Start
 
 ```bash
-# Install dependencies
 npm install
 
-# Run all tests
-npm test
+npm test                    # the whole suite (≈ 21 min serially — rate limits)
+npm run test:smoke          # critical path only
+npm run test:dry            # offline: every step defined, none ambiguous
 
-# Run smoke tests only
-npm run test:smoke
+# one epic (what each CI matrix job runs)
+npx cucumber-js --tags "@Run and @allure.label.epic:Webhooks"
 
-# Run with custom tag filter
-npx cucumber-js --tags "@Positive and @allure.label.subSuite:Create_User"
+npm run spec:drift          # live Swagger vs spec/openapi.json (--update accepts the live spec)
+npm run spec:coverage       # operations called by the last run (reads allure-results/)
 
-# Generate and open Allure report locally
-npm run allure:generate
-npm run allure:open
+npm run allure:generate && npm run allure:open
 ```
 
 ---
 
 ## ⚙️ Configuration
 
-Copy `.env` and adjust if needed:
-
 ```
 BASE_URL=https://www.play-qa.com
 REQUEST_TIMEOUT=20000
+ADMIN_SEED_CODE=play-qa-admin
 ```
 
-`REQUEST_TIMEOUT` is the single axios deadline (connect + response, in ms) — axios has no separate connect timeout.
-
-Override at runtime: `BASE_URL=https://staging.play-qa.com npm test`
+`REQUEST_TIMEOUT` is the single axios deadline (connect + response, in ms). `ADMIN_SEED_CODE` is published on
+purpose in the play-qa.com UI. Keep `parallel: 1`: rate limits are per IP and paced in-process — scale through
+the CI matrix instead.
 
 ---
 
 ## 🗂 API Coverage
 
-| Method | Endpoint | Feature File | Status |
-|---|---|---|---|
-| GET | `/api/v1/health` | HealthTests.feature | ✅ Tested |
-| POST | `/api/v1/login` | LoginTests.feature | ✅ Tested |
-| GET | `/api/v1/auth/basic` | BasicAuthTests.feature | ✅ Tested |
-| POST | `/api/v1/users/create` | CreateUserTests.feature | ✅ Tested |
-| GET | `/api/v1/users/list` | ListUsersTests.feature | ✅ Tested |
-| GET | `/api/v1/users/get/:id` | GetUserTests.feature | ✅ Tested |
-| HEAD | `/api/v1/users/exists/:id` | UserExistsTests.feature | ✅ Tested |
-| GET | `/api/v1/users/exists/:id` | UserExistsTests.feature | ✅ Tested |
-| OPTIONS | `/api/v1/users/options` | OptionsTests.feature | ✅ Tested |
-| PUT | `/api/v1/users/update/:id` | UpdateUserTests.feature | ✅ Tested |
-| PATCH | `/api/v1/users/patch/:id` | PatchUserTests.feature | ✅ Tested |
-| DELETE | `/api/v1/users/delete/:id` | DeleteUserTests.feature | ✅ Tested |
-| POST | `/api/v1/users/logout/:id` | LogoutTests.feature | ✅ Tested |
-| PUT/PATCH/DELETE/POST | user mutation endpoints — auth hardening | TokenSecurityTests.feature | ✅ Tested |
-| POST | `/api/v1/mail/create` | MailboxCreateTests.feature | ✅ Tested |
-| GET | `/api/v1/mail/:token` | MailboxGetTests.feature | ✅ Tested |
-| DELETE | `/api/v1/mail/:token` | MailboxDeleteTests.feature | ✅ Tested |
-| GET | `/api/v1/mail/:token/messages` | MailMessagesTests.feature | ✅ Tested |
-| GET | `/api/v1/mail/:token/messages/:id` | MailMessagesTests.feature | ✅ Tested |
-| POST | `/api/v1/mail/:token/send` | MailSendTests.feature | ✅ Tested |
-| POST | `/api/v1/verify-recaptcha` | — | ⏭ Out of scope (needs a live Google reCAPTCHA token) |
+All 79 operations of [`spec/openapi.json`](spec/openapi.json) are called (`npm run spec:coverage`).
+
+| Epic | Feature files | Scenarios |
+|---|---|---|
+| User_Lifecycle | 10 | 189 |
+| Authentication | 9 | 128 |
+| Administration | 2 | 55 |
+| Mail_Service | 6 | 95 |
+| File_Storage | 2 | 38 |
+| Webhooks | 2 | 39 |
+| Bug_Hunting | 2 | 79 |
+| Chaos_Engineering | 6 | 109 |
+| Challenges | 2 | 39 |
+| System | 4 | 28 |
+| **Total** | **45** | **799** |
+
+Scenario Outlines are counted per example row. Deliberately not tested: 429 responses (they would drain the
+shared per-IP buckets), 503 "not configured", a real reCAPTCHA pass, the WebSocket 1009 close.
 
 ---
 
@@ -178,34 +147,6 @@ Override at runtime: `BASE_URL=https://staging.play-qa.com npm test`
 
 ---
 
-## 📈 Scenario Count
-
-Scenario Outlines are counted per example row.
-
-| Feature | Scenarios |
-|---|---|
-| CreateUserTests | 39 |
-| MailboxCreateTests | 18 |
-| ListUsersTests | 13 |
-| LoginTests | 13 |
-| TokenSecurityTests | 12 |
-| PatchUserTests | 10 |
-| DeleteUserTests | 8 |
-| LogoutTests | 8 |
-| MailMessagesTests | 8 |
-| MailboxDeleteTests | 8 |
-| UpdateUserTests | 8 |
-| GetUserTests | 7 |
-| MailSendTests | 7 |
-| UserExistsTests | 7 |
-| BasicAuthTests | 6 |
-| HealthTests | 4 |
-| MailboxGetTests | 3 |
-| OptionsTests | 2 |
-| **Total** | **181** |
-
----
-
 ## 📚 Documentation
 
 Full documentation lives in the [project wiki](https://github.com/romasky/play-api-js/wiki):
@@ -221,5 +162,6 @@ Full documentation lives in the [project wiki](https://github.com/romasky/play-a
 ## 🔗 Related
 
 - [play-api-java](https://github.com/romasky/play-api-java) — Java version of this framework
+- [play-api-python](https://github.com/romasky/play-api-python) — Python version (the reference for the whole-Swagger suite)
 - [play-qa.com](https://www.play-qa.com) — The API under test
 - [Swagger UI](https://play-qa.com/swagger/index.html) — Interactive API docs
