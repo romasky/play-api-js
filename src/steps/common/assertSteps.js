@@ -85,6 +85,11 @@ Then('Assert field {string} is not null in response {string}', function (field, 
     throw new Error(`Field '${field}' is null/undefined. Body: ${show(this.body(varName))}`);
   }
 });
+Then('Assert field {string} of {string} equals field {string} of {string}', function (field, varName, otherField, otherVar) {
+  const actual = getPath(this.body(varName), field);
+  const expected = getPath(this.body(otherVar), otherField);
+  if (actual == null || actual !== expected) throw new Error(`'${varName}'.${field} = ${actual}, '${otherVar}'.${otherField} = ${expected}`);
+});
 // code points, not UTF-16 units: the server counts runes
 Then('Assert field {string} has length {int} in response {string}', function (field, n, varName) {
   const value = getPath(this.body(varName), field);
