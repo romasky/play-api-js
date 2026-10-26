@@ -22,7 +22,7 @@
 - **Clean-up after every scenario** — uploads and webhook inboxes a scenario creates are deleted in an `After` hook, pass or fail
 - **Allure HTML reports** — one nested step per HTTP call with scrubbed attachments (`whsec_` signing secrets masked), auto-published to GitHub Pages
 - **Spec tooling** — `spec:drift` compares the live Swagger with the committed snapshot; `spec:coverage` fails CI below 100 % of operations called
-- **CI matrix by epic** — six jobs, one runner (one IP, its own rate-limit buckets) each, instead of ≈ 21 min serially
+- **CI matrix by epic** — six jobs, one runner (one IP, its own rate-limit buckets) each: ≈ 8 min wall time instead of ≈ 21 min serially (Authentication is the long pole)
 
 ---
 
