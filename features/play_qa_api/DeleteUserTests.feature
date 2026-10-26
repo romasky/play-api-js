@@ -47,16 +47,25 @@ Feature: Delete User
     And Assert error code is "INVALID_TOKEN" in response "response"
 
   @Run @Negative @allure.label.severity:critical @allure.label.story:Negative_Scenario
-  Scenario: Delete with another user token returns 401 INVALID_TOKEN
+  Scenario: Delete with another user token returns 403 FORBIDDEN
     Given Create minimal user and save response as "userARes"
     And Extract "id" from "userARes" and save as "userAId"
     And Create minimal user and save response as "userBRes"
     And Extract "access_token" from "userBRes" and save as "userBToken"
     When Delete user "userAId" with token "userBToken" and save response as "response"
-    Then Get and check status code 401 from "response"
-    And Assert error code is "INVALID_TOKEN" in response "response"
+    Then Get and check status code 403 from "response"
+    And Assert error code is "FORBIDDEN" in response "response"
     When Send HEAD exists request for "userAId" and save response as "existsRes"
     Then Get and check status code 200 from "existsRes"
+
+  @Run @Negative @allure.label.story:Negative_Scenario
+  Scenario: Delete a non-existent id with a valid token returns 403 FORBIDDEN, not 404
+    Given Create minimal user and save response as "createRes"
+    And Extract "access_token" from "createRes" and save as "token"
+    And Generate fake mongo id and save as "fakeId"
+    When Delete user "fakeId" with token "token" and save response as "response"
+    Then Get and check status code 403 from "response"
+    And Assert error code is "FORBIDDEN" in response "response"
 
   @Run @Negative @allure.label.story:Negative_Scenario
   Scenario: Delete non-existent user returns 401 INVALID_TOKEN (no valid token)
