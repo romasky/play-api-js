@@ -21,21 +21,33 @@ const { option, flag } = require('./lib/args');
 
 const BASELINE = path.join(ROOT, 'quality', 'crap-baseline.json');
 
-/** file → (line → hits) */
+/** file → { lines: line → hits, calls: start line → [calls of each function starting there] } */
 function parseLcov(text) {
   const files = new Map();
-  let lines;
+  let file;
+  let startOf;
   for (const row of text.split('\n')) {
-    if (row.startsWith('SF:')) files.set(row.slice(3), (lines = new Map()));
-    const da = /^DA:(\d+),(\d+)/.exec(row);
-    if (da) lines.set(Number(da[1]), Number(da[2]));
+    if (row.startsWith('SF:')) {
+      file = { lines: new Map(), calls: new Map() };
+      startOf = new Map(); // FN name → start line, for the FNDA rows that follow
+      files.set(row.slice(3), file);
+    }
+    const [, kind, a, b] = /^(DA|FN|FNDA):(\d+|[^,]*),(.*)$/.exec(row) ?? [];
+    if (kind === 'DA') file.lines.set(Number(a), Number(b));
+    if (kind === 'FN') startOf.set(b, Number(a));
+    if (kind === 'FNDA') file.calls.set(startOf.get(b), [...(file.calls.get(startOf.get(b)) ?? []), Number(a)]);
   }
   return files;
 }
 
-/** Share of the function's instrumented lines that ran (0 when its file was never loaded). */
-function lineCoverage({ start, end }, lines) {
-  const span = [...(lines ?? [])].filter(([line]) => line >= start && line <= end);
+/**
+ * Share of the function's instrumented lines that ran (0 when its file was never loaded). A line runs when ANY code
+ * on it does, so a function whose start line holds only never-called functions is uncovered whatever DA says —
+ * `const f = (a) => …;` runs its line at module load without ever calling f.
+ */
+function lineCoverage({ start, end }, file) {
+  if (file?.calls.get(start)?.every((calls) => calls === 0)) return 0;
+  const span = [...(file?.lines ?? [])].filter(([line]) => line >= start && line <= end);
   return span.length === 0 ? 0 : span.filter(([, hits]) => hits > 0).length / span.length;
 }
 

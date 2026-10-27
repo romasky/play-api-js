@@ -4,16 +4,18 @@ const { parseLcov, lineCoverage, crap, offenders } = require('../../tools/crap')
 
 const LCOV = ['SF:src/a.js', 'DA:1,1', 'DA:2,0', 'DA:3,4', 'DA:4,0', 'end_of_record', 'SF:src/b.js', 'DA:1,0', 'end_of_record'].join('\n');
 
-test('lcov is read into hit counts per file and line', () => {
+test('lcov is read into hit counts per file and line, and calls per function start line', () => {
   const lcov = parseLcov(LCOV);
-  assert.equal(lcov.get('src/a.js').get(3), 4);
-  assert.equal(lcov.get('src/b.js').get(1), 0);
+  assert.equal(lcov.get('src/a.js').lines.get(3), 4);
+  assert.equal(lcov.get('src/b.js').lines.get(1), 0);
+  const calls = parseLcov('SF:src/c.js\nFN:1,f\nFN:1,anonymous_0\nFNDA:0,f\nFNDA:3,anonymous_0\nend_of_record').get('src/c.js').calls;
+  assert.deepEqual(calls.get(1), [0, 3]);
 });
 
 test('a function is covered by the share of its lines that ran', () => {
-  const lines = parseLcov(LCOV).get('src/a.js');
-  assert.equal(lineCoverage({ start: 1, end: 4 }, lines), 0.5);
-  assert.equal(lineCoverage({ start: 3, end: 3 }, lines), 1);
+  const file = parseLcov(LCOV).get('src/a.js');
+  assert.equal(lineCoverage({ start: 1, end: 4 }, file), 0.5);
+  assert.equal(lineCoverage({ start: 3, end: 3 }, file), 1);
 });
 
 test('a file the tests never loaded is not covered', () => {
@@ -43,4 +45,17 @@ test('a function scoring exactly the limit offends; offenders come worst first',
   ];
   // six: 4 + 2 = 6; twelve: 9 + 3 = 12
   assert.deepEqual(offenders(fns, parseLcov(LCOV), 6).map((row) => row.key), ['src/b.js::twelve', 'src/b.js::six']);
+});
+
+test('a one-line function never called is uncovered, though its line ran when the module loaded', () => {
+  // const f = (a) => (a ? 1 : 2);   — line 1 runs at load (DA:1,1), the function never does (FNDA:0)
+  const file = parseLcov('SF:src/c.js\nFN:1,f\nFNDA:0,f\nDA:1,1\nend_of_record').get('src/c.js');
+  assert.equal(lineCoverage({ start: 1, end: 1 }, file), 0);
+  const called = parseLcov('SF:src/c.js\nFN:1,f\nFNDA:2,f\nDA:1,1\nend_of_record').get('src/c.js');
+  assert.equal(lineCoverage({ start: 1, end: 1 }, called), 1);
+});
+
+test('when another function on the same line ran, the line coverage decides', () => {
+  const file = parseLcov('SF:src/c.js\nFN:1,f\nFN:1,g\nFNDA:0,f\nFNDA:1,g\nDA:1,1\nend_of_record').get('src/c.js');
+  assert.equal(lineCoverage({ start: 1, end: 1 }, file), 1);
 });
