@@ -23,6 +23,10 @@ test('an Outline title selects every row: each <placeholder> matches the value f
   assert.ok(!matches(outline, 'Events page 0 is rejected (only page is validated)'));
 });
 
+test('an Outline row whose Examples cell is empty is selected too', () => {
+  assert.ok(matches('Login with username "<username>" returns 400', 'Login with username "" returns 400'));
+});
+
 test('the scenario count is read from the summary formatter', () => {
   assert.equal(scenarioCount('1 scenario (1 skipped)\n2 steps (2 skipped)'), 1);
   assert.equal(scenarioCount('3 scenarios (3 skipped)\n'), 3);
@@ -66,7 +70,7 @@ test('--dry only counts', () => {
   const { code, calls, printed } = cli(['Events with page=<page> returns 400', '--dry'], { selected: 4 });
   assert.equal(code, 0);
   assert.equal(calls.length, 1);
-  assert.equal(printed[0], '4 scenario(s) match ^Events with page=.+? returns 400$');
+  assert.equal(printed[0], '4 scenario(s) match ^Events with page=.*? returns 400$');
 });
 
 test('no title is a usage error', () => {

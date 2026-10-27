@@ -7,7 +7,8 @@
  *   whole suite against the live API;
  * - `--name` is a regex matched against the name with Outline placeholders filled in, so a title with ( ) + . ?
  *   or a <placeholder> silently matches nothing — and a run of 0 scenarios exits 0, i.e. reads as green.
- * This tool escapes the title, turns each <placeholder> into a wildcard, dry-runs first and refuses 0 matches.
+ * This tool escapes the title, turns each <placeholder> into a wildcard (empty Examples cells included), dry-runs
+ * first and refuses 0 matches.
  *
  *   node tools/scenario.js "Get user with non-existent ID returns 404"
  *   node tools/scenario.js "Events with page=<page> returns 400 VALIDATION_ERROR"   # every row of the Outline
@@ -24,7 +25,7 @@ const PLACEHOLDER = /<[^<>]+>/g;
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** The --name regex selecting exactly this title; each Outline <placeholder> matches the value filled in. */
-const namePattern = (title) => `^${title.split(PLACEHOLDER).map(escape).join('.+?')}$`;
+const namePattern = (title) => `^${title.split(PLACEHOLDER).map(escape).join('.*?')}$`;
 
 /** Scenarios selected, from the summary formatter's "N scenario(s)" line. */
 const scenarioCount = (summary) => Number(/^(\d+) scenarios?\b/m.exec(summary)?.[1] ?? 0);
