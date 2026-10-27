@@ -193,6 +193,7 @@ new or worse, so the baseline only goes down (`--update --accept` records offend
 
 The rules themselves — layers, scenario conventions, idempotent cleanup, the remedies per gate — live in one place,
 [`.claude/skills/ub-mode/SKILL.md`](.claude/skills/ub-mode/SKILL.md); the agents and this section refer to it.
+A one-page guide to the agents in Russian: [`.claude/AGENTS.ru.md`](.claude/AGENTS.ru.md).
 
 ---
 
