@@ -174,7 +174,7 @@ Run `/ub-mode` in Claude Code; the skill routes work to four agents in `.claude/
 
 | Agent | Role |
 |---|---|
-| `ub-scenario-author` | Scenario → dry run → (new phrase only: contract / builder / path → step) → live check (red for the expected reason, or each outcome assertion shown to bite with a deliberately wrong value) → builder / path changed only if the check needs it; a contract added for every JSON 2xx response missing from `CONTRACTS_2XX` → green |
+| `ub-scenario-author` | Scenario → dry run → (new phrase only: contract / builder / path → step) → live check (red for the expected reason, or each outcome assertion shown to bite with a deliberately wrong value) → builder / path changed only if the check needs it; a contract added for every 2xx response with a JSON body (not 204 / empty, not binary downloads) missing from `CONTRACTS_2XX` → green |
 | `ub-unit-tdd` | `node:test` red-green-refactor for pure `src/` and `tools/` code, proven with `gate:mutate` |
 | `ub-gatekeeper` | CRAP / duplication / mutation gates; refactors pin → change → prove; shrinks the baselines |
 | `ub-reviewer` | Diff review (`--staged` before a commit, a branch range before a merge) against the layers, tags, cleanup and gate rules; edits no tracked file — `file:line` findings and a verdict |

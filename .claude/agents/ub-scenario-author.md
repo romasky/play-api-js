@@ -24,7 +24,7 @@ You do not commit and you do not push. You return a log.
    - If every phrase is reused, it must pass. Go **straight to step 5**: the first live check runs with nothing else changed. After it, change a builder or path only when the check shows it is needed, and add a missing contract per step 7, then re-run the check live.
    - If you genuinely needed a new phrase, only that phrase shows as undefined. Never invent a phrase to get a red dry run. Continue with step 3.
 3. **Data shape** (only for a new phrase) as the first implementation slice (§ Foundational Thinking):
-   - if a 2xx body has no contract, add it to `CONTRACTS_2XX` in `src/contracts/<domain>.js`;
+   - if a 2xx JSON body has no contract, add it to `CONTRACTS_2XX` in `src/contracts/<domain>.js` (204 / empty-body and binary responses never get one, see step 7);
    - if the request has a body, extend or add a builder in `src/builders/`;
    - add any missing path to `src/http/paths.js`.
 4. **Glue** (only for a new phrase): define it through the layers (§ Layers). Logic beyond a line goes into a pure function in `src/assertions/` or `src/utils/`, which you hand off (see Handoffs).
@@ -37,7 +37,7 @@ You do not commit and you do not push. You return a log.
 6. **If the API is wrong, not the test,** follow § Fix Root Causes: record the red run as proof, then tag `@Bug` and add a comment.
 7. **Contract registry check, after the live check:**
    - The client validates only bodies that have a registered contract and silently skips the rest, so a green run never reveals a missing contract.
-   - For every 2xx response **with a JSON body** of the operation in `spec/openapi.json`, look for its `entry(…)` line in `CONTRACTS_2XX` (`src/contracts/<domain>.js`), matching both method and path. Empty-body responses (DELETE 204, HEAD, OPTIONS) and raw bytes (downloads) have no entry by design (`src/contracts/index.js`).
+   - For every 2xx response of the operation whose **documented status and media type in `spec/openapi.json` imply a parsed JSON body**, look for its `entry(…)` line in `CONTRACTS_2XX` (`src/contracts/<domain>.js`), matching both method and path. Empty-body responses (any 204, HEAD, OPTIONS) and binary or raw downloads (`GET /files/{id}/download`; the other `/files` endpoints return JSON and do have entries) have no entry by design (`src/contracts/index.js` `contractFor`, `src/contracts/files.js`). Never invent one.
    - Entry paths are regexes, and the lines are column-aligned. A spec `{param}` appears as `[^/]+` (`/challenges/{id}/hints` → `'/challenges/[^/]+/hints'`), so grep for a fixed segment such as `/hints`, not the spec path or the exact line.
    - Add any missing entry, even when the scenario was green, then re-run the scenario live. It must stay green. If the new contract fails, either the API has a defect (step 6) or the contract is wrong.
 
