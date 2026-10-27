@@ -1,9 +1,4 @@
 {
-  "src/assertions/body.js::assertEveryItem": 20,
-  "src/assertions/body.js::assertEveryItemEquals": 12,
-  "src/assertions/body.js::assertHasRequestId": 12,
-  "src/assertions/body.js::assertSorted": 30,
-  "src/assertions/body.js::assertTotalPages": 42,
   "src/assertions/headers.js::link": 30,
   "src/builders/bugs.js::perfectBugReport": 12,
   "src/contracts/index.js::assertContract": 12,
@@ -56,8 +51,6 @@
   "src/support/world.js::PlayWorld.get": 12,
   "src/support/world.js::PlayWorld.str": 12,
   "src/utils/generator.js::string": 56,
-  "src/utils/jsonPath.js::hasPath": 30,
-  "src/utils/sse.js::parseSse": 20,
   "tools/crap.js::main": 20,
   "tools/crap.js::measure": 12,
   "tools/spec-coverage.js::called": 30,
