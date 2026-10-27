@@ -5,9 +5,12 @@ const os = require('os');
 const path = require('path');
 const { compare, gate } = require('../../../tools/lib/baseline');
 
+/** The gate's exit code, its printed lines in `printed`. */
+let printed;
 const quietly = (fn) => {
   const log = console.log;
-  console.log = () => {};
+  printed = [];
+  console.log = (line) => printed.push(line);
   try { return fn(); } finally { console.log = log; }
 };
 const tempBaseline = () => path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'baseline-')), 'baseline.json');
@@ -31,6 +34,7 @@ test('a baseline entry that no longer offends is reported fixed, so the baseline
 
 test('the gate fails on an offender beyond the baseline, and a missing baseline accepts nothing', () => {
   assert.equal(quietly(() => gate(tempBaseline(), { a: 12 })), 1);
+  assert.deepEqual(printed, ['NEW    12  a', '1 offender(s) beyond the baseline']);
 });
 
 test('--update records today\'s offenders, sorted, after which the same offenders pass', () => {
@@ -38,5 +42,9 @@ test('--update records today\'s offenders, sorted, after which the same offender
   assert.equal(quietly(() => gate(file, { b: 11, a: 12 }, { update: true })), 0);
   assert.deepEqual(Object.keys(JSON.parse(fs.readFileSync(file, 'utf8'))), ['a', 'b']);
   assert.equal(quietly(() => gate(file, { a: 12 })), 0);
+  assert.deepEqual(printed, ['FIXED  b  (run with --update to shrink the baseline)', 'OK — no offender beyond the baseline (2 accepted)']);
   assert.equal(quietly(() => gate(file, { a: 13 })), 1);
+  assert.equal(printed[0], 'WORSE  12 → 13  a');
+  assert.equal(quietly(() => gate(file, { a: 13, c: 10 })), 1);
+  assert.equal(printed.at(-1), '2 offender(s) beyond the baseline');
 });

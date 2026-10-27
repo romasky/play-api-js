@@ -35,3 +35,12 @@ test('offenders are the functions at or above the limit, keyed file::name, worst
   // branchy: 2 of 3 lines ran → 16 × (1/3)³ + 4 ≈ 4.6; untested: 9 + 3 = 12
   assert.deepEqual(offenders(fns, parseLcov(LCOV), 10), [{ key: 'src/b.js::untested', complexity: 3, coverage: 0, crap: 12 }]);
 });
+
+test('a function scoring exactly the limit offends; offenders come worst first', () => {
+  const fns = [
+    { file: 'src/b.js', name: 'six', start: 1, end: 1, complexity: 2 },
+    { file: 'src/b.js', name: 'twelve', start: 1, end: 1, complexity: 3 },
+  ];
+  // six: 4 + 2 = 6; twelve: 9 + 3 = 12
+  assert.deepEqual(offenders(fns, parseLcov(LCOV), 6).map((row) => row.key), ['src/b.js::twelve', 'src/b.js::six']);
+});

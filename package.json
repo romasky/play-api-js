@@ -13,7 +13,8 @@
     "allure:generate": "npx allure generate allure-results -o allure-report",
     "allure:open": "npx allure open allure-report",
     "gate:crap": "node tools/crap.js",
-    "gate:dry": "node tools/dry.js"
+    "gate:dry": "node tools/dry.js",
+    "gate:mutate": "node tools/mutate.js"
   },
   "engines": {
     "node": ">=22"

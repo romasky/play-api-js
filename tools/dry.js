@@ -52,16 +52,14 @@ const nested = (a, b) => a.file === b.file && a.start <= b.start && b.end <= a.e
 function duplicates(units, { threshold, minTokens }) {
   const big = units.filter((u) => u.tokens.length >= minTokens)
     .map((u) => ({ ...u, id: `${u.file}::${u.name}`, shingles: shingles(u.tokens) }))
-    .map((u) => ({ ...u, size: size(u.shingles) }))
     .sort((a, b) => a.id.localeCompare(b.id));
   const pairs = [];
   big.forEach((a, i) => big.slice(i + 1).forEach((b) => {
-    if ((2 * Math.min(a.size, b.size)) / (a.size + b.size) < threshold) return; // cannot reach the threshold
     if (nested(a, b) || nested(b, a)) return;
     const score = Math.round(dice(a.shingles, b.shingles) * 100) / 100;
     if (score >= threshold) pairs.push({ key: `${a.id} ~ ${b.id}`, similarity: score });
   }));
-  return pairs.sort((a, b) => b.similarity - a.similarity || a.key.localeCompare(b.key));
+  return pairs.sort((a, b) => b.similarity - a.similarity); // stable: equal scores keep their key order
 }
 
 function main(argv) {

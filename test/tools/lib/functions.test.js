@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { functions } = require('../../../tools/lib/functions');
+const { functions, sourceFiles, allFunctions } = require('../../../tools/lib/functions');
 
 const only = (source) => functions(source)[0];
 
@@ -61,4 +61,16 @@ test('line spans are 1-based and inclusive', () => {
 test('assigned functions and method-call callbacks are named too', () => {
   const source = "exports.run = function () {};\nhandler = () => {};\nemitter.on('close', () => {});";
   assert.deepEqual(functions(source).map((f) => f.name), ['run', 'handler', "on 'close'"]);
+});
+
+test('a CLI script with a hashbang parses', () => {
+  assert.equal(only('#!/usr/bin/env node\nfunction main() {}').name, 'main');
+});
+
+test('the gates judge every .js under src/ and tools/, nested folders included, and nothing else', () => {
+  const files = sourceFiles();
+  assert.ok(files.includes('src/http/client.js') && files.includes('tools/lib/functions.js'));
+  assert.ok(files.every((file) => /^(src|tools)\/.*\.js$/.test(file)));
+  const mine = allFunctions().find((fn) => fn.file === 'tools/lib/functions.js' && fn.name === 'functions');
+  assert.match(mine.source, /^\/\*\*/);
 });
