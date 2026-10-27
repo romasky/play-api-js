@@ -7,7 +7,8 @@
  * counts as uncovered. Fails on an offender (CRAP ≥ --max) beyond quality/crap-baseline.json (tools/lib/baseline.js).
  *
  *   node tools/crap.js                    # run the unit tests with coverage, then gate
- *   node tools/crap.js --update           # accept today's offenders as the baseline
+ *   node tools/crap.js --update           # shrink the baseline (refused while anything is new or worse)
+ *   node tools/crap.js --update --accept  # record today's offenders — say why in the commit
  *   node tools/crap.js --lcov <file>      # reuse a coverage report instead of running the tests
  */
 const fs = require('fs');
@@ -16,6 +17,7 @@ const { spawnSync } = require('child_process');
 const { ROOT } = require('./spec');
 const { allFunctions } = require('./lib/functions');
 const { gate } = require('./lib/baseline');
+const { option, flag } = require('./lib/args');
 
 const BASELINE = path.join(ROOT, 'quality', 'crap-baseline.json');
 
@@ -67,15 +69,14 @@ function measure() {
 }
 
 function main(argv) {
-  const arg = (name) => argv[argv.indexOf(name) + 1];
-  const max = argv.includes('--max') ? Number(arg('--max')) : 10;
-  const lcovFile = argv.includes('--lcov') ? arg('--lcov') : measure();
+  const max = option(argv, '--max', 10, Number);
+  const lcovFile = option(argv, '--lcov') ?? measure();
   const rows = offenders(allFunctions(), parseLcov(fs.readFileSync(lcovFile, 'utf8')), max);
   console.log(`\nCRAP ≥ ${max}: ${rows.length} function(s)`);
   for (const row of rows) {
     console.log(`${String(row.crap).padStart(7)}  cc ${String(row.complexity).padStart(2)}  cov ${String(Math.round(row.coverage * 100)).padStart(3)}%  ${row.key}`);
   }
-  return gate(BASELINE, Object.fromEntries(rows.map((row) => [row.key, row.crap])), { update: argv.includes('--update') });
+  return gate(BASELINE, Object.fromEntries(rows.map((row) => [row.key, row.crap])), { update: flag(argv, '--update'), accept: flag(argv, '--accept') });
 }
 
 if (require.main === module) process.exitCode = main(process.argv.slice(2));

@@ -37,9 +37,9 @@ test('the gate fails on an offender beyond the baseline, and a missing baseline 
   assert.deepEqual(printed, ['NEW    12  a', '1 offender(s) beyond the baseline']);
 });
 
-test('--update records today\'s offenders, sorted, after which the same offenders pass', () => {
+test('--accept records today\'s offenders, sorted, after which the same offenders pass', () => {
   const file = tempBaseline();
-  assert.equal(quietly(() => gate(file, { b: 11, a: 12 }, { update: true })), 0);
+  assert.equal(quietly(() => gate(file, { b: 11, a: 12 }, { update: true, accept: true })), 0);
   assert.deepEqual(Object.keys(JSON.parse(fs.readFileSync(file, 'utf8'))), ['a', 'b']);
   assert.equal(quietly(() => gate(file, { a: 12 })), 0);
   assert.deepEqual(printed, ['FIXED  b  (run with --update to shrink the baseline)', 'OK — no offender beyond the baseline (2 accepted)']);
@@ -47,4 +47,20 @@ test('--update records today\'s offenders, sorted, after which the same offender
   assert.equal(printed[0], 'WORSE  12 → 13  a');
   assert.equal(quietly(() => gate(file, { a: 13, c: 10 })), 1);
   assert.equal(printed.at(-1), '2 offender(s) beyond the baseline');
+});
+
+test('--update refuses to accept a new or worse offender, so the baseline can only shrink', () => {
+  const file = tempBaseline();
+  quietly(() => gate(file, { a: 12, b: 11 }, { update: true, accept: true }));
+  assert.equal(quietly(() => gate(file, { a: 12, c: 10 }, { update: true })), 1);
+  assert.deepEqual(printed, ['NEW    10  c', 'FIXED  b  (run with --update to shrink the baseline)', 'refusing to update: 1 offender(s) beyond the baseline (fix them, or --accept with a reason in the commit)']);
+  assert.deepEqual(Object.keys(JSON.parse(fs.readFileSync(file, 'utf8'))), ['a', 'b']);
+  assert.equal(quietly(() => gate(file, { a: 12 }, { update: true })), 0);
+  assert.deepEqual(Object.keys(JSON.parse(fs.readFileSync(file, 'utf8'))), ['a']);
+});
+
+test('--accept records new offenders on purpose', () => {
+  const file = tempBaseline();
+  assert.equal(quietly(() => gate(file, { a: 12 }, { update: true, accept: true })), 0);
+  assert.deepEqual(JSON.parse(fs.readFileSync(file, 'utf8')), { a: 12 });
 });

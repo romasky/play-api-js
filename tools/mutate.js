@@ -17,6 +17,7 @@ const { spawnSync } = require('child_process');
 const { ROOT } = require('./spec');
 const { parse, children, functions } = require('./lib/functions');
 const { apply } = require('./lib/mutant-hook');
+const { option } = require('./lib/args');
 
 const HOOK = path.join(__dirname, 'lib', 'mutant-hook.js');
 const FLIPS = {
@@ -112,9 +113,8 @@ function inFunction(source, fnName) {
 const score = (total, survived) => (total === 0 ? 100 : Math.round(((total - survived) / total) * 100));
 
 function main(argv) {
-  const arg = (name) => (argv.includes(name) ? argv[argv.indexOf(name) + 1] : undefined);
   const file = path.resolve(argv[0] ?? '');
-  const tests = arg('--tests')?.split(',').map((test) => path.resolve(test)) ?? testsFor(file);
+  const tests = option(argv, '--tests')?.split(',').map((test) => path.resolve(test)) ?? testsFor(file);
   if (!fs.existsSync(file) || tests.length === 0) {
     console.error(`no unit test requires ${argv[0]} — write one first (cover the uncovered)`);
     return 2;
@@ -123,7 +123,7 @@ function main(argv) {
     console.error('the unit tests fail without any mutant — make them green first');
     return 2;
   }
-  const all = inFunction(fs.readFileSync(file, 'utf8'), arg('--fn'));
+  const all = inFunction(fs.readFileSync(file, 'utf8'), option(argv, '--fn'));
   const survivors = all.filter((mutant) => run({ file, mutant, tests }) === 'survived');
   for (const m of survivors) console.log(`SURVIVED  ${path.relative(ROOT, file)}:${m.line}  ${m.description}`);
   const killed = all.length - survivors.length;

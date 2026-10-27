@@ -8,13 +8,15 @@
  * Fails on a pair at or above --threshold beyond quality/dry-baseline.json (tools/lib/baseline.js).
  *
  *   node tools/dry.js                      # gate (threshold 0.8, min 60 tokens)
- *   node tools/dry.js --update             # accept today's pairs as the baseline
+ *   node tools/dry.js --update             # shrink the baseline (refused while anything is new or worse)
+ *   node tools/dry.js --update --accept    # record today's pairs — say why in the commit
  */
 const path = require('path');
 const acorn = require('acorn');
 const { ROOT } = require('./spec');
 const { allFunctions } = require('./lib/functions');
 const { gate } = require('./lib/baseline');
+const { option, flag } = require('./lib/args');
 
 const BASELINE = path.join(ROOT, 'quality', 'dry-baseline.json');
 const SHINGLE = 5;
@@ -63,13 +65,12 @@ function duplicates(units, { threshold, minTokens }) {
 }
 
 function main(argv) {
-  const arg = (name, fallback) => (argv.includes(name) ? Number(argv[argv.indexOf(name) + 1]) : fallback);
-  const options = { threshold: arg('--threshold', 0.8), minTokens: arg('--min-tokens', 60) };
+  const options = { threshold: option(argv, '--threshold', 0.8, Number), minTokens: option(argv, '--min-tokens', 60, Number) };
   const units = allFunctions().map((fn) => ({ ...fn, tokens: shape(fn.source, fn.node) }));
   const pairs = duplicates(units, options);
   console.log(`similarity ≥ ${options.threshold} (functions of ${options.minTokens}+ tokens): ${pairs.length} pair(s)`);
   for (const pair of pairs) console.log(`${pair.similarity.toFixed(2)}  ${pair.key}`);
-  return gate(BASELINE, Object.fromEntries(pairs.map((pair) => [pair.key, pair.similarity])), { update: argv.includes('--update') });
+  return gate(BASELINE, Object.fromEntries(pairs.map((pair) => [pair.key, pair.similarity])), { update: flag(argv, '--update'), accept: flag(argv, '--accept') });
 }
 
 if (require.main === module) process.exitCode = main(process.argv.slice(2));

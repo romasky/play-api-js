@@ -18,22 +18,36 @@ function compare(current, baseline) {
 
 const load = (file) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {});
 
-/** Print the comparison (or rewrite the baseline with `update`); the exit code of the gate. */
-function gate(file, current, { update = false } = {}) {
-  if (update) {
-    const sorted = Object.fromEntries(Object.entries(current).sort(([a], [b]) => a.localeCompare(b)));
-    fs.writeFileSync(file, `${JSON.stringify(sorted, null, 2)}\n`);
-    console.log(`baseline ${path.relative(process.cwd(), file)}: ${Object.keys(sorted).length} accepted offender(s)`);
-    return 0;
-  }
+/** Write the baseline, keys sorted; exit code 0. */
+function save(file, current) {
+  const sorted = Object.fromEntries(Object.entries(current).sort(([a], [b]) => a.localeCompare(b)));
+  fs.writeFileSync(file, `${JSON.stringify(sorted, null, 2)}\n`);
+  console.log(`baseline ${path.relative(process.cwd(), file)}: ${Object.keys(sorted).length} accepted offender(s)`);
+  return 0;
+}
+
+function verdict(failed, accepted, update) {
+  if (update) return `refusing to update: ${failed} offender(s) beyond the baseline (fix them, or --accept with a reason in the commit)`;
+  return failed ? `${failed} offender(s) beyond the baseline` : `OK — no offender beyond the baseline (${accepted} accepted)`;
+}
+
+/**
+ * Print the comparison; the exit code of the gate. `update` rewrites the baseline only when that shrinks it (nothing
+ * new or worse); `accept` rewrites it regardless — the deliberate, justified exception (a first baseline, an I/O shell).
+ */
+function gate(file, current, { update = false, accept = false } = {}) {
+  if (update && accept) return save(file, current);
   const baseline = load(file);
   const { added, worsened, fixed } = compare(current, baseline);
-  for (const key of added) console.log(`NEW    ${current[key]}  ${key}`);
-  for (const key of worsened) console.log(`WORSE  ${baseline[key]} → ${current[key]}  ${key}`);
-  for (const key of fixed) console.log(`FIXED  ${key}  (run with --update to shrink the baseline)`);
-  const failed = added.length + worsened.length;
-  console.log(failed ? `${failed} offender(s) beyond the baseline` : `OK — no offender beyond the baseline (${Object.keys(baseline).length} accepted)`);
-  return failed ? 1 : 0;
+  const beyond = [
+    ...added.map((key) => `NEW    ${current[key]}  ${key}`),
+    ...worsened.map((key) => `WORSE  ${baseline[key]} → ${current[key]}  ${key}`),
+  ];
+  beyond.forEach((line) => console.log(line));
+  if (update && beyond.length === 0) return save(file, current);
+  fixed.forEach((key) => console.log(`FIXED  ${key}  (run with --update to shrink the baseline)`));
+  console.log(verdict(beyond.length, Object.keys(baseline).length, update));
+  return beyond.length ? 1 : 0;
 }
 
 module.exports = { compare, gate };
