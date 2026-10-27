@@ -6,17 +6,23 @@
     "test": "npx cucumber-js",
     "test:smoke": "npx cucumber-js --tags '@Smoke'",
     "test:dry": "npx cucumber-js --dry-run --format summary --tags 'not @Ignore'",
+    "unit": "node --test 'test/**/*.test.js'",
     "spec:drift": "node tools/spec-drift.js",
     "spec:coverage": "node tools/spec-coverage.js",
     "docs:steps": "node tools/step-reference.js",
     "allure:generate": "npx allure generate allure-results -o allure-report",
-    "allure:open": "npx allure open allure-report"
+    "allure:open": "npx allure open allure-report",
+    "gate:crap": "node tools/crap.js",
+    "gate:dry": "node tools/dry.js",
+    "gate:mutate": "node tools/mutate.js",
+    "scenario": "node tools/scenario.js"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.9.0",
+    "acorn": "^8.19.0",
     "ajv": "^8.20.0",
     "allure": "^3.8.0",
     "allure-cucumberjs": "^3.8.0",
