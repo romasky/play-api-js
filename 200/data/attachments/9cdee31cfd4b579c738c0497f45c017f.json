@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid query parameter",
+    "details": "steps must be between 5 and 100"
+  },
+  "timestamp": "2026-10-27T11:23:33.095911151Z",
+  "request_id": "a4faf852-326b-440f-adf7-ac2871ab64c8"
+}
