@@ -3,6 +3,7 @@
  * UB_MUTANT names a mutant, the one file it targets is compiled with the mutant spliced in. The file on disk is
  * never touched — a crash mid-run cannot leave a mutated tree behind.
  */
+const fs = require('fs');
 const Module = require('module');
 
 /** The source with the mutant's [start, end) range replaced. */
@@ -12,7 +13,9 @@ if (process.env.UB_MUTANT) {
   const mutant = JSON.parse(process.env.UB_MUTANT);
   const compile = Module.prototype._compile;
   Module.prototype._compile = function (content, filename) {
-    return compile.call(this, filename === mutant.file ? apply(content, mutant) : content, filename);
+    if (filename !== mutant.file) return compile.call(this, content, filename);
+    fs.writeFileSync(mutant.mark, ''); // proof for tools/mutate.js that the mutant reached the file
+    return compile.call(this, apply(content, mutant), filename);
   };
 }
 

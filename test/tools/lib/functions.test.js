@@ -74,3 +74,7 @@ test('the gates judge every .js under src/ and tools/, nested folders included, 
   const mine = allFunctions().find((fn) => fn.file === 'tools/lib/functions.js' && fn.name === 'functions');
   assert.match(mine.source, /^\/\*\*/);
 });
+
+test('a class field holding a function is named by the field', () => {
+  assert.deepEqual(functions('class K { handler = () => {}; }').map((f) => f.name), ['handler']);
+});
