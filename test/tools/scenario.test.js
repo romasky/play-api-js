@@ -34,11 +34,12 @@ test('the scenario count is read from the summary formatter', () => {
 });
 
 /** main() against a fake cucumber: `selected` scenarios on the dry run, `status` for the live run. */
-function cli(argv, { selected = 1, status = 0 } = {}) {
+function cli(argv, { selected = 1, status = 0, dryRun } = {}) {
   const calls = [];
   const cucumber = (args) => {
     calls.push(args);
-    return args.includes('--dry-run') ? { stdout: `${selected} scenario${selected === 1 ? '' : 's'} (${selected} skipped)\n` } : { status };
+    if (args.includes('--dry-run')) return dryRun ?? { status: 0, stdout: `${selected} scenario${selected === 1 ? '' : 's'} (${selected} skipped)\n` };
+    return { status };
   };
   const { log, error } = console;
   const printed = [];
@@ -79,4 +80,23 @@ test('no title is a usage error', () => {
 
 test('a live run killed by a signal (no exit status) fails the command', () => {
   assert.equal(cli(['Get user returns 404'], { status: null }).code, 1);
+});
+
+test('when cucumber cannot even start, its own error is shown — not "no scenario matches"', () => {
+  const { code, calls, printed } = cli(['Get user returns 404'], { dryRun: { status: 1, stdout: '', stderr: 'Error: Undefined step file\n' } });
+  assert.equal(code, 1);
+  assert.equal(calls.length, 1);
+  assert.deepEqual(printed, ['Error: Undefined step file\n']);
+});
+
+test('flags may come before the title', () => {
+  const { code, printed } = cli(['--dry', 'Get user returns 404']);
+  assert.equal(code, 0);
+  assert.equal(printed[0], '1 scenario(s) match ^Get user returns 404$');
+});
+
+test('when cucumber-js cannot be spawned (no node_modules, e.g. a fresh worktree), the spawn error is shown', () => {
+  const { code, printed } = cli(['Get user returns 404'], { dryRun: { status: null, error: new Error('spawn node_modules/.bin/cucumber-js ENOENT') } });
+  assert.equal(code, 1);
+  assert.deepEqual(printed, ['spawn node_modules/.bin/cucumber-js ENOENT']);
 });

@@ -5,7 +5,7 @@
  * Two cucumber-js traps make the obvious commands lie:
  * - `cucumber-js <feature>:<line>` ADDS the line to the profile's `paths` (cucumber.js), so it runs almost the
  *   whole suite against the live API;
- * - `--name` is a regex matched against the name with Outline placeholders filled in, so a title with ( ) + . ?
+ * - `--name` is a regex matched against the name with Outline placeholders filled in, so a title with ( ) + ?
  *   or a <placeholder> silently matches nothing — and a run of 0 scenarios exits 0, i.e. reads as green.
  * This tool escapes the title, turns each <placeholder> into a wildcard (empty Examples cells included), dry-runs
  * first and refuses 0 matches.
@@ -35,13 +35,18 @@ const cucumber = (args) => spawnSync(CUCUMBER, args, { cwd: ROOT, encoding: 'utf
 
 /** `run` is the cucumber-js runner — injectable, so the decisions here are tested without the live API. */
 function main(argv, run = cucumber) {
-  const [title] = argv;
+  const title = argv.find((arg) => !arg.startsWith('--'));
   if (!title) {
     console.error('usage: node tools/scenario.js "<scenario title>" [--dry]');
     return 2;
   }
   const name = namePattern(title);
-  const count = scenarioCount(run(['--dry-run', '--format', 'summary', '--name', name]).stdout);
+  const dry = run(['--dry-run', '--format', 'summary', '--name', name]);
+  if (dry.status !== 0) {
+    console.error(dry.stderr || dry.error?.message || `cucumber-js exited ${dry.status}`); // a broken step file, a bad profile …
+    return dry.status || 1;
+  }
+  const count = scenarioCount(dry.stdout);
   if (count === 0) {
     console.error(`no scenario matches "${title}" — check the title; a missing @Run, or a @Bug / @Ignore / @NotImplemented tag, also hides it`);
     return 2;
