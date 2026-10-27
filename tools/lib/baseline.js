@@ -4,6 +4,7 @@
  * WORSE; an offender that was fixed is reported so `--update` can shrink the file. The baseline only goes down.
  */
 const fs = require('fs');
+const path = require('path');
 
 /** { added, worsened, fixed } — keys of `current` (offenders now) against `baseline` (offenders accepted). */
 function compare(current, baseline) {
@@ -22,7 +23,7 @@ function gate(file, current, { update = false } = {}) {
   if (update) {
     const sorted = Object.fromEntries(Object.entries(current).sort(([a], [b]) => a.localeCompare(b)));
     fs.writeFileSync(file, `${JSON.stringify(sorted, null, 2)}\n`);
-    console.log(`baseline ${file}: ${Object.keys(sorted).length} accepted offender(s)`);
+    console.log(`baseline ${path.relative(process.cwd(), file)}: ${Object.keys(sorted).length} accepted offender(s)`);
     return 0;
   }
   const baseline = load(file);

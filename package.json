@@ -12,7 +12,8 @@
     "docs:steps": "node tools/step-reference.js",
     "allure:generate": "npx allure generate allure-results -o allure-report",
     "allure:open": "npx allure open allure-report",
-    "gate:crap": "node tools/crap.js"
+    "gate:crap": "node tools/crap.js",
+    "gate:dry": "node tools/dry.js"
   },
   "engines": {
     "node": ">=22"

@@ -78,8 +78,10 @@ function functions(source) {
   return found;
 }
 
-/** functions() of every source file, each tagged with its `file`. */
-const allFunctions = () => sourceFiles()
-  .flatMap((file) => functions(fs.readFileSync(path.join(ROOT, file), 'utf8')).map((fn) => ({ file, ...fn })));
+/** functions() of every source file, each tagged with its `file` and that file's `source`. */
+const allFunctions = () => sourceFiles().flatMap((file) => {
+  const source = fs.readFileSync(path.join(ROOT, file), 'utf8');
+  return functions(source).map((fn) => ({ file, source, ...fn }));
+});
 
 module.exports = { parse, children, functions, sourceFiles, allFunctions };

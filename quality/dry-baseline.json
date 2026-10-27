@@ -1,0 +1,5 @@
+{
+  "src/steps/common/assertSteps.js::Then '/^Assert response header \"([^\"]+)\" equals \"(.*)\" in \"([^\"]+)\"$/' ~ src/steps/common/assertSteps.js::Then 'Assert field {string} equals {string} in response {string}'": 0.91,
+  "src/steps/common/assertSteps.js::Then '/^Assert response header \"([^\"]+)\" equals \"(.*)\" in \"([^\"]+)\"$/' ~ src/steps/common/assertSteps.js::Then 'Assert header {string} equals field {string} in response {string}'": 0.8,
+  "src/steps/common/assertSteps.js::Then 'Assert field {string} is not null in response {string}' ~ src/steps/common/dataSteps.js::Then 'Extract {string} from {string} and save as {string}'": 0.86
+}
