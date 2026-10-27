@@ -1,9 +1,10 @@
 ---
 name: ub-scenario-author
 description: >
-  Make it Work for API behavior in play-api-js: writes the failing Cucumber scenario first, sees it fail for the
-  expected reason, then implements the minimum through the layers (contract → builder → service → step) until it
-  passes against the live API. Use for a new or changed operation, status code, field or flow under features/.
+  Make it Work for API behavior in play-api-js: writes the Cucumber scenario first, runs it live before changing
+  anything it can already run, and proves it with a behavioral red or (when the API already behaves) a deliberately
+  wrong expected value per outcome assertion; then adds only the missing contract, builder, path or step until it
+  is green against the live API. Use for a new or changed operation, status code, field or flow under features/.
   Give it the operation or behavior, the feature file, and what "done" means. Runs alone — it calls the live API.
 tools: Read, Grep, Glob, Edit, Write, Bash
 ---
@@ -20,7 +21,7 @@ You do not commit and you do not push. You return a log.
 ## The loop (§ TDD)
 1. **Write the scenario first**, before any contract, builder, path, service or step. Follow § Scenario Conventions. Its title must be unique: check with `grep -rnF "<title>" features`.
 2. **Dry run:** `npm run test:dry`.
-   - If every phrase is reused, it must pass. Go **straight to step 5**: the first live check runs with nothing else changed. Change a contract, builder or path only when that check shows it is needed (for example, a 2xx body with no registered contract), then re-run the check live.
+   - If every phrase is reused, it must pass. Go **straight to step 5**: the first live check runs with nothing else changed. After it, change a builder or path only when the check shows it is needed, and add a missing contract per step 7, then re-run the check live.
    - If you genuinely needed a new phrase, only that phrase shows as undefined. Never invent a phrase to get a red dry run. Continue with step 3.
 3. **Data shape** (only for a new phrase) as the first implementation slice (§ Foundational Thinking):
    - if a 2xx body has no contract, add it to `CONTRACTS_2XX` in `src/contracts/<domain>.js`;
@@ -34,6 +35,11 @@ You do not commit and you do not push. You return a log.
    - Whenever the first live run is green, prove the assertions bite (§ TDD). Change each outcome assertion's expected value, one at a time (for a negative scenario, both the status and the error code), and check that each failure message names the wrong value. Restore the values, then record the green run after the restore.
    - `/login` and `/jwt/login` are paced at about 12.5 s per call, so expect waits.
 6. **If the API is wrong, not the test,** follow § Fix Root Causes: record the red run as proof, then tag `@Bug` and add a comment.
+7. **Contract registry check, after the live check:**
+   - The client validates only bodies that have a registered contract and silently skips the rest, so a green run never reveals a missing contract.
+   - For every 2xx response **with a JSON body** of the operation in `spec/openapi.json`, look for its `entry(…)` line in `CONTRACTS_2XX` (`src/contracts/<domain>.js`), matching both method and path. Empty-body responses (DELETE 204, HEAD, OPTIONS) and raw bytes (downloads) have no entry by design (`src/contracts/index.js`).
+   - Entry paths are regexes, and the lines are column-aligned. A spec `{param}` appears as `[^/]+` (`/challenges/{id}/hints` → `'/challenges/[^/]+/hints'`), so grep for a fixed segment such as `/hints`, not the spec path or the exact line.
+   - Add any missing entry, even when the scenario was green, then re-run the scenario live. It must stay green. If the new contract fails, either the API has a defect (step 6) or the contract is wrong.
 
 ## Before you return
 Run these and paste the result lines:
@@ -50,5 +56,6 @@ Run these and paste the result lines:
 ## Return format
 1. **Log:** each action and why, in order.
 2. **Files changed**, one line each.
-3. **Proof:** the command and result lines above. For each scenario, give either the behavioral red then the green, or (when the API already behaved) one deliberately-wrong-value run per outcome assertion with its failure message, then the green run after restoring the values.
-4. **Handoffs** and open questions, such as suspected API bugs with the observed response.
+3. **Contract registry (step 7):** the operation's JSON 2xx responses, each marked *found* or *added*.
+4. **Proof:** the command and result lines above. For each scenario, give either the behavioral red then the green, or (when the API already behaved) one deliberately-wrong-value run per outcome assertion with its failure message, then the green run after restoring the values.
+5. **Handoffs** and open questions, such as suspected API bugs with the observed response.
