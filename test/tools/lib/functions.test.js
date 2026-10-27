@@ -47,7 +47,18 @@ test('a Cucumber step callback is named by its phrase', () => {
   assert.equal(step.name, "Given 'a user with token {string}'");
 });
 
+test('an anonymous function is named by its owner and position, so the name survives moved lines', () => {
+  const source = 'function f(xs) {\n  return xs.map((x) => x).filter(() => true);\n}\n[1].forEach(() => {});';
+  assert.deepEqual(functions(source).map((f) => f.name), ['f', 'f>λ1', 'f>λ2', '<top>>λ1']);
+  assert.deepEqual(functions(`\n\n${source}`).map((f) => f.name), ['f', 'f>λ1', 'f>λ2', '<top>>λ1']);
+});
+
 test('line spans are 1-based and inclusive', () => {
   const [f] = functions('\nfunction f() {\n  return 1;\n}\n');
   assert.deepEqual([f.start, f.end], [2, 4]);
+});
+
+test('assigned functions and method-call callbacks are named too', () => {
+  const source = "exports.run = function () {};\nhandler = () => {};\nemitter.on('close', () => {});";
+  assert.deepEqual(functions(source).map((f) => f.name), ['run', 'handler', "on 'close'"]);
 });
