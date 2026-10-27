@@ -32,7 +32,7 @@ commit.
 | A new or changed API behavior (feature, steps, service, contract, builder) | `ub-scenario-author` | the operation / behavior, the feature file, what "done" looks like |
 | Framework code: pure `src/` modules (utils, assertions, contracts, builders, http helpers) or `tools/` | `ub-unit-tdd` | the module, the behavior to add or the bug to reproduce |
 | Gates after either of the above, or paying down `quality/*-baseline.json` | `ub-gatekeeper` | the files touched, or "top N offenders" |
-| Before every commit | `ub-reviewer` | the diff range (`git diff main...HEAD` or the staged diff) |
+| Before every commit, and before a merge | `ub-reviewer` | `--staged` plus the proposed commit message, or a branch range `<base>...<head>` |
 
 Agents cannot start agents. When one reports work for another agent, you start that agent.
 
@@ -79,16 +79,24 @@ The profile tag filter (`@Run and not @Ignore and not @Bug and not @NotImplement
 - Make the smallest edit that solves the problem. Reuse an existing step phrase before you write a new one (`npm run docs:steps`).
 
 ## Foundational Thinking
-- Get the data shape right first: the response schema in `src/contracts/<domain>.js` and the request builder in `src/builders/`, then the step logic.
+- Once the failing check exists, get the data shape right first: the response schema in `src/contracts/<domain>.js` and the request builder in `src/builders/`, then the step logic.
 - Do first whatever helps every later step, for example a missing path constant or a shared assertion.
 - Do not share state that a concurrent writer could touch.
 
 ## TDD
-- **Scenarios.**
-  1. Write the scenario first.
-  2. `npm run test:dry` must show its new steps as *undefined*.
-  3. A live run (`npm run scenario`) must fail **for the reason you expect**: the status or field you assert, not a TypeError.
-  4. Implement until it passes.
+- **Scenarios.** Write the scenario first, before any contract, builder, path, service or step. Then:
+  1. **Dry run.**
+     - If every phrase is reused, `npm run test:dry` must pass.
+     - If a new phrase is genuinely needed, it, and only it, shows as *undefined*. Never invent a phrase just to get a red dry run.
+  2. **When the first live check runs.**
+     - With every phrase reused, run it **right after the dry run**, before any contract, builder or path change. Make such a change only when the check shows it is needed (for example, a 2xx body with no registered contract), then re-run the check live.
+     - With a new phrase, the data shape is the first implementation slice (§ Foundational Thinking). Then comes the glue, then the live check.
+  3. **Behavioral red.** An undefined step proves only that glue is missing. The red that counts is the live run (`npm run scenario`) failing **for the reason you expect**: the assertion on a status or field, not a TypeError or an undefined step. Such a red is real when the API has a defect (§ Fix Root Causes) or a contract or builder does not match yet.
+  4. **Whenever the first live run is green,** which is common because this suite tests an existing API, prove the scenario's assertions bite:
+     - change the expected value of each assertion that decides the outcome, one at a time (for a negative scenario, both the status and the error code), for example `201` → `200`;
+     - check that the failure message names the wrong value;
+     - restore it.
+     The green that counts is the run after the restore.
 - **Framework code.** Write a failing `node:test` test in `test/<same path>.test.js`, watch it fail for the expected reason, then make the smallest change that passes.
 - **Existing code.** When you test code that already exists, the tests pin current behavior and are green from the start. `gate:mutate` is their proof that they actually detect faults.
 - If an honest test is impractical, for example an I/O shell or live-only behavior, do not write a bad test. Say so instead.
