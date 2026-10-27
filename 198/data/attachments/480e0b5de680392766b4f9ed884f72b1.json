@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "token is required"
+  },
+  "timestamp": "2026-10-27T06:13:53.488787468Z",
+  "request_id": "93d473fd-cd4e-4437-b134-a61d13febb5c"
+}

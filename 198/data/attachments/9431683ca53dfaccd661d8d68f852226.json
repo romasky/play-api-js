@@ -1,0 +1,34 @@
+{
+  "id": "6ae0411b8a6e647a79dcbf20",
+  "email": "sandbox-9c4d076c29e9ec7ddc2800a7a05e446a@play-qa.com",
+  "username": "sandbox_9c4d076c29e9ec7ddc28",
+  "profile": {
+    "first_name": "Playwright",
+    "last_name": "User"
+  },
+  "contacts": {
+    "phone_verified": false
+  },
+  "address": {},
+  "employment": {},
+  "settings": {
+    "language": "",
+    "timezone": "",
+    "theme": "",
+    "notifications_enabled": false,
+    "email_notifications": false,
+    "sms_notifications": false,
+    "two_factor_enabled": false,
+    "private_profile": false
+  },
+  "metadata": {
+    "created_at": "2026-10-27T06:13:47.303Z",
+    "updated_at": "2026-10-27T06:13:47.851Z",
+    "expires_at": "2026-10-28T06:13:47.303Z",
+    "login_count": 0,
+    "is_active": true,
+    "is_verified": false,
+    "is_premium": false,
+    "role": "user"
+  }
+}
