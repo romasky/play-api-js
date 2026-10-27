@@ -75,7 +75,18 @@ function functions(source) {
     for (const child of children(node)) visit(child, node, unit, inClass);
   };
   visit(parse(source), null, top, undefined);
-  return found;
+  return distinct(found);
+}
+
+/** The 2nd, 3rd … function with an already-used name becomes `name#2`, `name#3` — gate keys must never merge. */
+function distinct(fns) {
+  const seen = new Map();
+  for (const fn of fns) {
+    const count = (seen.get(fn.name) ?? 0) + 1;
+    seen.set(fn.name, count);
+    if (count > 1) fn.name = `${fn.name}#${count}`;
+  }
+  return fns;
 }
 
 /** functions() of every source file, each tagged with its `file` and that file's `source`. */

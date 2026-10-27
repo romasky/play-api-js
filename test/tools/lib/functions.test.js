@@ -78,3 +78,8 @@ test('the gates judge every .js under src/ and tools/, nested folders included, 
 test('a class field holding a function is named by the field', () => {
   assert.deepEqual(functions('class K { handler = () => {}; }').map((f) => f.name), ['handler']);
 });
+
+test('two functions with the same name in one file get distinct names, so gate keys never merge', () => {
+  const source = 'function a() { const check = () => 1; }\nfunction b() { const check = () => 2; }\nclass K { get x() {} set x(v) {} }';
+  assert.deepEqual(functions(source).map((f) => f.name), ['a', 'check', 'b', 'check#2', 'K.x', 'K.x#2']);
+});
