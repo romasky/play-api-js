@@ -13,6 +13,9 @@ Adapted from [unclebob/ub-mode](https://github.com/unclebob/ub-mode) (itself red
 principle headings are his; the wording and every repo-specific rule below are ours. The Clojure gates
 (crapper, dryer, mutator) are replaced by `tools/crap.js`, `tools/dry.js` and `tools/mutate.js`.
 
+**This file is the single source of the rules.** The agents in `.claude/agents/` carry only their role, procedure
+and return format, and refer here by section name (for example "§ Make Operations Idempotent").
+
 Every requested change runs the same three stages, in order:
 
 1. **First Make it Work.** Write a failing check, then the smallest change that passes it.
@@ -31,9 +34,14 @@ commit.
 | Gates after either of the above, or paying down `quality/*-baseline.json` | `ub-gatekeeper` | the files touched, or "top N offenders" |
 | Before every commit | `ub-reviewer` | the diff range (`git diff main...HEAD` or the staged diff) |
 
-Agents cannot start agents. If one reports that work belongs to another agent, you start that agent. Run
-independent agents in parallel, for example two scenario authors on different features. Never run two agents that
-call the live API at the same time, because rate limits are per IP (see `src/http/throttle.js`).
+Agents cannot start agents. When one reports work for another agent, you start that agent.
+
+**Run agents one at a time in this checkout.** Every one of them writes shared outputs:
+- `gate:crap` writes `reports/lcov.info`;
+- `test:dry` and every cucumber run write `reports/cucumber-report.*` and `allure-results/`, because the profile's formats always apply;
+- live calls share per-IP rate limits (`src/http/throttle.js`).
+
+**Parallel work needs separate git worktrees** (Agent `isolation: "worktree"`). Even then it must be offline only, because live calls from any worktree share one IP. A new worktree has no `node_modules`, so run `npm ci` there first. Without it, `npm run scenario` reports the spawn error.
 
 ## Commands
 
@@ -41,14 +49,23 @@ call the live API at the same time, because rate limits are per IP (see `src/htt
 |---|---|---|
 | `npm run test:dry` | every Gherkin step is defined once, with no undefined or ambiguous steps | seconds, offline |
 | `npm run unit` | `node:test` behavior tests under `test/` | seconds, offline |
-| `npm run gate:crap` | no function beyond `quality/crap-baseline.json` at CRAP ≥ 10 (complexity² × (1−cov)³ + complexity) | seconds, offline |
+| `npm run gate:crap` | no function beyond `quality/crap-baseline.json` at CRAP ≥ 10 (complexity² × (1−cov)³ + complexity). Runs the unit tests first. | seconds, offline |
 | `npm run gate:dry` | no function pair beyond `quality/dry-baseline.json` at structural similarity ≥ 0.8 (60+ tokens) | < 1 s, offline |
-| `npm run gate:mutate -- <file> [--fn <name>]` | the unit tests notice faults in that file | ~0.2 s per mutant, offline |
-| `npx cucumber-js <feature>:<line>` | one scenario against the live API | live, rate-limited |
+| `npm run gate:mutate -- <file> [--fn <name>]` | the unit tests notice faults in that file. Needs a unit test that requires the file. | ~0.2 s per mutant, offline |
+| `npm run scenario -- "<scenario title>" [--dry]` | **one** scenario against the live API (an Outline title, `<placeholders>` included, runs every row). `--dry` only counts. | live, rate-limited |
 
-The baselines are a ratchet. A gate fails only on a **new** offender or a **worse** one. A FIXED line means
-"shrink the baseline": run `--update` and commit the deletion. Never use `--update` to accept a new offender
-unless it is an I/O shell that cannot be tested honestly, and if so, say that in the commit message.
+**Running one live scenario: always `npm run scenario`** (`tools/scenario.js`). The plain cucumber commands lie:
+- `npx cucumber-js <feature>:<line>` *adds* the line to the profile's `paths`, so it runs every other feature's scenarios against the live API as well.
+- `--name` is a regex matched with Outline placeholders filled in. Titles with `( ) + ?`, and Outline titles, silently match nothing, and **0 scenarios exits 0**.
+- The tool escapes the title, dry-runs first, and refuses a 0 match.
+- Scenario titles are unique across the suite. Keep them unique.
+
+The profile tag filter (`@Run and not @Ignore and not @Bug and not @NotImplemented`) applies to every run. A scenario without `@Run`, or with `@Bug`, cannot be selected, and `--tags` ANDs with the filter instead of bypassing it.
+
+**The baselines are a ratchet.**
+- A gate fails only on a **new** offender or a **worse** one.
+- A FIXED line means you should shrink the baseline with `--update`. The tool refuses `--update` while anything is new or worse.
+- `--update --accept` records offenders on purpose. Use it only for a first baseline or an I/O shell that cannot be tested honestly, and state the reason in the commit message.
 
 # First Make it Work
 
@@ -56,9 +73,9 @@ unless it is an I/O shell that cannot be tested honestly, and if so, say that in
 - Each decision has one owner:
   - endpoints live in `src/http/paths.js`;
   - rate limits live in the `BUCKETS` table in `src/http/throttle.js`;
-  - `src/config/config.js` is the only module that reads env;
+  - within `src/`, `src/config/config.js` is the only reader of `process.env`;
   - `src/http/client.js` is the only HTTP choke point;
-  - `src/http/attach.js` is the only path to Allure attachments.
+  - `src/http/attach.js` is the only path to Allure *attachments*. Allure `step()` is opened in `client.js`, plus the WebSocket steps (connect, receive, echo) in `services/realtime.js`.
 - Make the smallest edit that solves the problem. Reuse an existing step phrase before you write a new one (`npm run docs:steps`).
 
 ## Foundational Thinking
@@ -67,8 +84,13 @@ unless it is an I/O shell that cannot be tested honestly, and if so, say that in
 - Do not share state that a concurrent writer could touch.
 
 ## TDD
-- **Scenarios.** Write the scenario first. `npm run test:dry` must show its new steps as *undefined*. A live run must then fail *for the reason you expect* (the status or field you are asserting), not with a TypeError. Implement until it passes.
+- **Scenarios.**
+  1. Write the scenario first.
+  2. `npm run test:dry` must show its new steps as *undefined*.
+  3. A live run (`npm run scenario`) must fail **for the reason you expect**: the status or field you assert, not a TypeError.
+  4. Implement until it passes.
 - **Framework code.** Write a failing `node:test` test in `test/<same path>.test.js`, watch it fail for the expected reason, then make the smallest change that passes.
+- **Existing code.** When you test code that already exists, the tests pin current behavior and are green from the start. `gate:mutate` is their proof that they actually detect faults.
 - If an honest test is impractical, for example an I/O shell or live-only behavior, do not write a bad test. Say so instead.
 
 ## Redesign From First Principles
@@ -90,18 +112,32 @@ unless it is an I/O shell that cannot be tested honestly, and if so, say that in
 
 ## Architecture
 
+### Layers
+Calls go one way: feature → step (`src/steps/<domain>`) → service (`src/services/<domain>.js`) → `src/http/client.js`.
+
+- **Steps** are thin function-style definitions on the World:
+  - they resolve context keys (`this.str`, `this.opt`, `this.render`, `this.query`, `this.bearer`);
+  - they call builders and services, and save responses (`this.save`), with sections under `// ─── Section ───` comments;
+  - they never import axios, call `request()`, or use `paths`. Importing the helpers `rawBody` and `timed` from the client is fine.
+- **Services** are thin: plain values in, raw response out. They never see the World.
+  - Most are one line per operation: `(…) => request(METHOD, paths.X, { json | params | headers })`.
+  - `services/realtime.js`, the WebSocket/SSE I/O shell, is the known exception.
+- **Logic** beyond a line lives in pure functions in `src/assertions/` or `src/utils/`, or in a tool's core, and gets unit tests.
+
 ### Model the Domain
-- Encode the domain where an illegal state cannot be expressed. Examples: a contract for every 2xx response, which the client checks, and a builder that only emits valid bodies (scenarios override single fields through context keys).
+- Encode the domain where an illegal state cannot be expressed:
+  - the client checks every 2xx body that has a registered contract (`CONTRACTS_2XX`);
+  - builders only emit valid bodies, and scenarios override single fields through context keys.
 - Domain terms such as epic, bucket, contract, context key and quota go in the README Tag Reference and Configuration sections, so they keep one meaning.
 - If the code is already clear and local, leave it alone.
 
 ### Boundary Discipline
 - Check data where it enters:
-  - the client validates every 2xx JSON body against its contract;
+  - registered contracts check 2xx bodies;
   - `World.res()` and `World.render()` fail loudly on a missing key;
   - config is parsed once.
 - Once data is inside, trust it.
-- Keep the logic in pure functions (`src/assertions`, `src/utils`, the `tools/` cores). Steps, services and `main()` functions stay thin shells.
+- Keep the logic in pure functions. Steps, services and `main()` stay thin shells.
 
 ### Type System Discipline (JS edition)
 - Make a wrong value impossible to write:
@@ -110,17 +146,28 @@ unless it is an I/O shell that cannot be tested honestly, and if so, say that in
   - use builders instead of hand-written bodies.
 - Do not silence failures:
   - no `catch` that swallows an error;
-  - no `?? {}` that hides missing data;
+  - no `?? {}` or `|| []` that hides missing data;
   - never weaken the failed-vs-broken classification in `src/support/hooks.js`.
 
 ### Make Operations Idempotent
 - A scenario run twice, or rerun after a crash, must end in the same state:
-  - generate unique data (`src/utils/generator.js`) and never use fixed emails or usernames;
-  - register deletion of anything that counts against a per-IP quota (webhook inboxes, uploads) with `saveCreated` or `this.defer`, so it is cleaned up even when the scenario fails.
+  - generate unique data (the `Generate … and save as` steps, `src/utils/generator.js`) and never use fixed emails, usernames or IDs;
+  - register deletion of anything that counts against a per-IP quota (webhook inboxes, uploads, sessions) with `saveCreated(world, key, create, cleanup)` (`src/support/cleanup.js`) or `this.defer(fn)`, so it is cleaned up even when the scenario fails.
 
 ### Separate Before Serializing Shared State
 - Per-scenario state lives on the World, which Cucumber builds fresh for every scenario.
-- Run-wide state is limited to `support/session.js` and the throttle's `lastCall`. Each has exactly one writer and depends on `parallel: 1`, and the CI matrix provides the scaling. Do not add more run-wide state.
+- Run-wide state is limited to `support/session.js` and the throttle's `lastCall`. Each has exactly one writer and depends on `parallel: 1`, and the CI matrix provides the scaling. Do not add more module-level mutable state.
+
+## Scenario Conventions
+- Feature files are `features/play_qa_api/<Thing>Tests.feature`. The names are shared with the Java and Python ports, so never rename one.
+- **Tags:**
+  - `@Run`, plus `@Positive`/`@Negative`/`@Flow`, plus `@allure.label.story:Positive_Scenario` or `Negative_Scenario`;
+  - `@Smoke` plus `@allure.label.severity:critical` only for the critical path;
+  - the feature's `@allure.label.epic:X` must appear in the CI matrix (`.github/workflows/test.yml`).
+- **Titles** state the outcome (`… returns 201`, `… returns 401 MISSING_TOKEN`) and are unique across the suite, because `npm run scenario` selects by title.
+- **Negative scenarios** assert the status **and** `Assert error code is "<CODE>" in response "<key>"`.
+- **Layout:** follow the section dividers of the file you edit, if it has any. Use `Scenario Outline` with `Examples:` for data variants.
+- **Context keys:** data passes through them (`save as "x"`, then `"x"`). A literal that is also an existing key resolves to that key's value, so pick literals that cannot collide.
 
 # Then Make it Right
 
@@ -128,32 +175,46 @@ unless it is an I/O shell that cannot be tested honestly, and if so, say that in
 - Reproduce the problem first: a unit test, or one live scenario.
 - Fix the cause. A guard that only hides the crash is not a fix.
 - When the API itself is wrong:
-  - tag the scenario `@Bug` and add a comment naming the defect;
-  - never change the expected value to match the bug.
+  1. Keep the correct expectation.
+  2. Record the red live run, which is your proof.
+  3. Then tag the scenario `@Bug`, with a comment above it naming the defect and the observed response.
+  4. Never weaken the assertion to match the bug.
+- A `@Bug` scenario cannot be selected while it carries the tag (see § Commands). To recheck it later, remove the tag first.
 
 ## Sequence Work into Verifiable Units
-- Finish one small unit, prove it with its command from the table above, then start the next.
+- Finish one small unit, prove it with its command from § Commands, then start the next.
 
 ## Test Behavior, Not Implementation
-- Call the code the way its user does (a step, another module, a CLI) and check what that user would see: the value, or the failure message in the report.
+- Call the code the way its user does (a step, another module, a CLI `main`) and check what that user would see: the value, or the failure message in the report.
 - If a test would still pass when every function returned nothing, throw it out. `gate:mutate` is how you check that.
+- For time and randomness (`generator.js`, `jwtTools.js`, `webhookSign.js`), assert shapes and invariants, or use `node:test`'s `mock.timers`. Never assert one random value.
+- Do not export test-only hooks from production modules.
 
 ## CRAP (`npm run gate:crap`)
 - Get each function under 10 by splitting it, testing it, or both.
 - A `switch` or an if-chain that dispatches on a type usually becomes a lookup table. See `NAMED_BY_PARENT` in `tools/lib/functions.js` and `MUTATIONS` in `tools/mutate.js`.
+- Coverage comes from the unit tests only, never the live run. A file that no unit test loads counts as uncovered.
 
 ## Duplication (`npm run gate:dry`)
-- Remove pairs at or above 0.8 by moving the shared logic to the module that owns it (`src/assertions`, `src/builders`, `src/support`).
+- Remove pairs at or above 0.8 by moving the shared logic to the module that owns it:
+  - assertions to `src/assertions/`;
+  - request bodies to `src/builders/`;
+  - World plumbing to `src/support/`.
+- Keep a step phrase unchanged when its body moves.
 - Three-line steps that look alike are normal Cucumber style. The 60-token minimum already ignores them.
 
 ## Mutation (`npm run gate:mutate -- <file>`)
 - Cover what is uncovered.
 - Kill the survivors.
 - Delete dead code.
-- Report equivalent mutants (for example `??` → `&&` where the left side is never nullish) instead of writing tests that contort around them.
+- Report equivalent mutants with a reason instead of contorting a test around them. The known kinds are:
+  - a `return []` that a caller normalizes;
+  - `??` → `&&` where the left side is never nullish;
+  - mutants in an untested `main()` shell, which are untested code, not equivalent mutants. Say which they are.
+- "No unit test requires <file>" is not a gate failure. For new behavior it is a missing test, so write one. For untouched legacy code it is backlog.
 
 ## Refactoring
-- **Pin** the current behavior with unit tests, or with the scenarios that use the step you are changing.
+- **Pin** the current behavior with unit tests, or with the scenarios that use the step you are changing (`npm run scenario`, one at a time).
 - **Change** the structure.
 - **Prove** nothing changed: the same tests are green, plus `npm run test:dry` and the gates.
 
@@ -172,6 +233,6 @@ unless it is an I/O shell that cannot be tested honestly, and if so, say that in
 
 ## Commit and Push
 - Commit often, in small ordered commits, on a feature branch, never on `main`.
-- Each message gives **Why**, **What changed**, and **Proof** (the commands that were run and their result).
+- Each message gives **Why**, **What changed**, and **Proof** (the commands that were run and their result). Write the proof only once it exists.
 - Run `ub-reviewer` before you commit.
-- Push only when the user asks.
+- Push only when the user asks. This is a deliberate departure from upstream ub-mode, which pushes to the main line at the end.

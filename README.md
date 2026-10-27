@@ -95,6 +95,11 @@ npm run test:dry            # offline: every step defined, none ambiguous
 # one epic (what each CI matrix job runs)
 npx cucumber-js --tags "@Run and @allure.label.epic:Webhooks"
 
+# one scenario (or every row of an Outline) by its unique title — escapes it, dry-runs first, refuses 0 matches.
+# NOT `cucumber-js <feature>:<line>` (adds to the profile's paths: runs almost the whole suite live) and NOT a raw
+# `--name` (a regex: titles with ( ) + ? or <placeholders> match nothing, and 0 scenarios exits 0)
+npm run scenario -- "Get user with non-existent ID returns 404"
+
 npm run spec:drift          # live Swagger vs spec/openapi.json (--update accepts the live spec)
 npm run spec:coverage       # operations called by the last run (reads allure-results/)
 npm run docs:steps          # the step reference (272 phrases) as Markdown
@@ -183,7 +188,11 @@ The gates are offline and judge `src/` and `tools/` (never the live run):
 | `gate:mutate` | flipped operators, dropped `!`, negated conditions, emptied returns must fail a unit test | on demand (per file) |
 
 The suite predates the gates, so today's offenders are recorded in `quality/*-baseline.json`: a gate fails only on a
-**new** or **worse** offender, and a **FIXED** one is removed with `--update` — the baseline only goes down.
+**new** or **worse** offender, and a **FIXED** one is removed with `--update` — which the tools refuse while anything is
+new or worse, so the baseline only goes down (`--update --accept` records offenders deliberately, justified in the commit).
+
+The rules themselves — layers, scenario conventions, idempotent cleanup, the remedies per gate — live in one place,
+[`.claude/skills/ub-mode/SKILL.md`](.claude/skills/ub-mode/SKILL.md); the agents and this section refer to it.
 
 ---
 
