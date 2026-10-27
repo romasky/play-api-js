@@ -8,6 +8,7 @@
     "test:dry": "npx cucumber-js --dry-run --format summary --tags 'not @Ignore'",
     "spec:drift": "node tools/spec-drift.js",
     "spec:coverage": "node tools/spec-coverage.js",
+    "docs:steps": "node tools/step-reference.js",
     "allure:generate": "npx allure generate allure-results -o allure-report",
     "allure:open": "npx allure open allure-report"
   },

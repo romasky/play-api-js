@@ -97,7 +97,7 @@ jobs:
     if: always() && needs.test.result != 'skipped'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4  # brings the committed allure-results/categories.json
+      - uses: actions/checkout@v4  # brings allurerc.mjs (report name, grouping, failure categories)
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

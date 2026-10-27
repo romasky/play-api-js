@@ -1,15 +1,22 @@
 const { After, setDefaultTimeout, setDefinitionFunctionWrapper } = require('@cucumber/cucumber');
 const { scrub } = require('../http/attach');
+const { ContractError } = require('../contracts');
 
 // Rate-limited calls are paced in the client (http/throttle.js): one /login waits up to 12.5 s, so the
 // cucumber default of 5 s per step is far too short.
 setDefaultTimeout(60_000);
 
-// Failure messages are published with the report: scrub secrets (whsec_…) from EVERY step / hook error at this
-// one choke point, whatever value an assertion message echoes. The wrapper keeps the arity cucumber relies on.
+// Every step / hook error passes this one choke point: secrets (whsec_…) are scrubbed from it — failure messages
+// are published with the report — and assertion failures are classified. The wrapper keeps cucumber's arity.
+// The checks throw plain Errors and the client a ContractError: both mean "the API answered wrongly", so they are
+// renamed AssertionError — Allure then reports them `failed` (product defect) instead of `broken`, which stays for
+// real breakage (TypeError, network errors, an unexpected client timeout).
+const isAssertion = (err) => err.constructor === Error || err instanceof ContractError;
+
 // Promise-transparent on purpose: an always-async wrapper would break callback-style steps.
 function scrubbed(err) {
   if (err instanceof Error) {
+    if (isAssertion(err)) err.name = 'AssertionError';
     err.message = scrub(err.message);
     err.stack = scrub(err.stack);
   }

@@ -20,7 +20,7 @@
 - **Strict 2xx contracts** — every 2xx JSON body is validated against a JSON Schema (ajv, strict types) registered per `(method, path)`, whatever the scenario asserts afterwards
 - **Per-endpoint rate-limit pacing** in the HTTP client — the server's per-IP token buckets are paced at their refill rate, never retried
 - **Clean-up after every scenario** — uploads and webhook inboxes a scenario creates are deleted in an `After` hook, pass or fail
-- **Allure HTML reports** — one nested step per HTTP call with scrubbed attachments (`whsec_` signing secrets masked), auto-published to GitHub Pages
+- **Allure HTML reports** — grouped by epic → feature, one nested step per HTTP call with scrubbed attachments (`whsec_` signing secrets masked); API defects are reported *failed*, test breakage *broken*, sorted into failure categories (outage, rate limit, contract, status / error code, content); auto-published to GitHub Pages
 - **Spec tooling** — `spec:drift` compares the live Swagger with the committed snapshot; `spec:coverage` fails CI below 100 % of operations called
 - **CI matrix by epic** — six jobs, one runner (one IP, its own rate-limit buckets) each: ≈ 8 min wall time instead of ≈ 21 min serially (Authentication is the long pole)
 
@@ -46,11 +46,13 @@
 ```
 play-api-js/
 ├── cucumber.js                    # Cucumber config (runner, formatters, tag filter, parallel: 1)
+├── allurerc.mjs                   # Allure 3 config: report name, epic → feature grouping, failure categories
 ├── spec/openapi.json              # Swagger 2.0 snapshot the expectations are written against (79 operations)
 ├── tools/
 │   ├── spec.js                    # shared snapshot loader for the two tools below
 │   ├── spec-drift.js              # live Swagger vs snapshot — operations and response codes that moved
-│   └── spec-coverage.js           # which operations a run called (from allure-results), --min 100 in CI
+│   ├── spec-coverage.js           # which operations a run called (from allure-results), --min 100 in CI
+│   └── step-reference.js          # generates the wiki's Step Definitions Reference from src/steps
 ├── src/
 │   ├── config/config.js           # BASE_URL, REQUEST_TIMEOUT, ADMIN_SEED_CODE (.env)
 │   ├── http/
@@ -89,6 +91,7 @@ npx cucumber-js --tags "@Run and @allure.label.epic:Webhooks"
 
 npm run spec:drift          # live Swagger vs spec/openapi.json (--update accepts the live spec)
 npm run spec:coverage       # operations called by the last run (reads allure-results/)
+npm run docs:steps          # the step reference (272 phrases) as Markdown
 
 npm run allure:generate && npm run allure:open
 ```
@@ -152,10 +155,15 @@ shared per-IP buckets), 503 "not configured", a real reCAPTCHA pass, the WebSock
 Full documentation lives in the [project wiki](https://github.com/romasky/play-api-js/wiki):
 [Getting Started](https://github.com/romasky/play-api-js/wiki/Getting-Started) ·
 [Architecture](https://github.com/romasky/play-api-js/wiki/Architecture) ·
+[Scenario Context](https://github.com/romasky/play-api-js/wiki/Scenario-Context) ·
 [Step Definitions Reference](https://github.com/romasky/play-api-js/wiki/Step-Definitions-Reference) ·
+[Contracts, Builders & Assertions](https://github.com/romasky/play-api-js/wiki/Contracts-Builders-and-Assertions) ·
 [Authorization Header Testing](https://github.com/romasky/play-api-js/wiki/Authorization-Header-Testing) ·
 [Feature Files & Coverage](https://github.com/romasky/play-api-js/wiki/Feature-Files-and-Coverage) ·
-[Comparison: JS vs Java](https://github.com/romasky/play-api-js/wiki/Comparison-JS-vs-Java)
+[Rate Limiting & Pacing](https://github.com/romasky/play-api-js/wiki/Rate-Limiting-and-Pacing) ·
+[Allure Reporting](https://github.com/romasky/play-api-js/wiki/Allure-Reporting) ·
+[CI/CD](https://github.com/romasky/play-api-js/wiki/CI-CD) ·
+[Comparison: JS vs Java vs Python](https://github.com/romasky/play-api-js/wiki/Comparison-JS-vs-Java)
 
 ---
 

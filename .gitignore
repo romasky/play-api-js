@@ -1,7 +1,6 @@
 node_modules/
 allure-report/
 allure-results/*
-!allure-results/categories.json
 reports/
 docs/
 .env
