@@ -35,6 +35,11 @@ jobs:
       - run: npm ci
       - name: Offline step check (every step defined, none ambiguous)
         run: npm run test:dry
+      # ub-mode gates (README "Quality gates"): offline, judge src/ and tools/, fail only beyond quality/*-baseline.json
+      - name: Unit tests + CRAP gate (gate:crap runs the unit tests with coverage, red tests fail the step)
+        run: npm run gate:crap
+      - name: Duplication gate
+        run: npm run gate:dry
       - name: Every Allure epic is in the test matrix (a missing one would silently drop its scenarios)
         run: |
           for epic in $(grep -rho 'allure.label.epic:[A-Za-z_]*' features | sort -u | cut -d: -f2); do

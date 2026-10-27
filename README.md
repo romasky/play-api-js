@@ -38,6 +38,7 @@
 | `allure-cucumberjs` | ^3.8 | Allure formatter for Cucumber |
 | `allure-js-commons` | ^3.8 | Allure step/attachment API |
 | `dotenv` | ^16.4 | Environment config |
+| `acorn` | ^8 | JS parser behind the quality gates (`tools/crap.js`, `dry.js`, `mutate.js`) |
 
 ---
 
@@ -52,7 +53,9 @@ play-api-js/
 │   ├── spec.js                    # shared snapshot loader for the two tools below
 │   ├── spec-drift.js              # live Swagger vs snapshot — operations and response codes that moved
 │   ├── spec-coverage.js           # which operations a run called (from allure-results), --min 100 in CI
-│   └── step-reference.js          # generates the wiki's Step Definitions Reference from src/steps
+│   ├── step-reference.js          # generates the wiki's Step Definitions Reference from src/steps
+│   ├── crap.js / dry.js / mutate.js  # quality gates: CRAP per function, structural duplication, mutation testing
+│   └── lib/                       # function analysis (acorn), ratchet baselines, the mutant compile hook
 ├── src/
 │   ├── config/config.js           # BASE_URL, REQUEST_TIMEOUT, ADMIN_SEED_CODE (.env)
 │   ├── http/
@@ -72,7 +75,10 @@ play-api-js/
 │   │   └── session.js             # one shared JWT session per run
 │   ├── utils/                     # generator, jsonPath, jwtTools, samples, webhookSign, lookup
 │   └── steps/<domain>/*.js        # step definitions (function steps on the World)
-└── features/play_qa_api/          # 45 feature files, one Allure epic each (see below)
+├── features/play_qa_api/          # 45 feature files, one Allure epic each (see below)
+├── test/                          # offline node:test unit tests of src/ and tools/ (mirrors their paths)
+├── quality/*-baseline.json        # ratchet: accepted CRAP / duplication offenders — only ever shrinks
+└── .claude/                       # ub-mode skill + agents (see "Quality gates — ub-mode")
 ```
 
 ---
@@ -92,6 +98,11 @@ npx cucumber-js --tags "@Run and @allure.label.epic:Webhooks"
 npm run spec:drift          # live Swagger vs spec/openapi.json (--update accepts the live spec)
 npm run spec:coverage       # operations called by the last run (reads allure-results/)
 npm run docs:steps          # the step reference (272 phrases) as Markdown
+
+npm run unit                # offline unit tests (node:test)
+npm run gate:crap           # CRAP < 10 per function, beyond quality/crap-baseline.json
+npm run gate:dry            # structural duplication ≥ 0.8, beyond quality/dry-baseline.json
+npm run gate:mutate -- src/assertions/body.js   # do the unit tests notice faults?
 
 npm run allure:generate && npm run allure:open
 ```
@@ -147,6 +158,32 @@ shared per-IP buckets), 503 "not configured", a real reCAPTCHA pass, the WebSock
 | `@Ignore` | Excluded from run (known skip) |
 | `@Bug` | Known failing — excluded from CI |
 | `@NotImplemented` | Placeholder — excluded from CI |
+
+---
+
+## 🧪 Quality gates — ub-mode
+
+Changes follow [ub-mode](https://github.com/unclebob/ub-mode) (Uncle Bob): **First Make it Work** (failing check
+first), **Then Make it Right** (gates, refactoring under pinned behavior), **Practice** (log, small commits with proof).
+Run `/ub-mode` in Claude Code; the skill routes work to four agents in `.claude/agents/`:
+
+| Agent | Role |
+|---|---|
+| `ub-scenario-author` | Failing scenario first (`test:dry` undefined → live red for the expected reason → green), then contract → builder → service → step |
+| `ub-unit-tdd` | `node:test` red-green-refactor for pure `src/` and `tools/` code, proven with `gate:mutate` |
+| `ub-gatekeeper` | CRAP / duplication / mutation gates; refactors pin → change → prove; shrinks the baselines |
+| `ub-reviewer` | Read-only diff review against the layers, tags, cleanup and gate rules — `file:line` findings and a verdict |
+
+The gates are offline and judge `src/` and `tools/` (never the live run):
+
+| Gate | Rule | CI |
+|---|---|---|
+| `gate:crap` | complexity² × (1 − coverage)³ + complexity < 10 per function; coverage from the unit tests | lint job |
+| `gate:dry` | no two functions (60+ tokens) with ≥ 0.8 structural similarity (names and literals abstracted) | lint job |
+| `gate:mutate` | flipped operators, dropped `!`, negated conditions, emptied returns must fail a unit test | on demand (per file) |
+
+The suite predates the gates, so today's offenders are recorded in `quality/*-baseline.json`: a gate fails only on a
+**new** or **worse** offender, and a **FIXED** one is removed with `--update` — the baseline only goes down.
 
 ---
 
