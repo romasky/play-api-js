@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILTER_VALUE",
+    "message": "filter value is not valid for this field",
+    "details": "filter value is not valid for this field: \"hr67vgp9jit9nag04mliy5z5oohiarwrkvuf975h89iyhxyleevf1q4y106s8eibn\" for \"address.country\" must be 1-64 characters"
+  },
+  "timestamp": "2026-10-27T14:04:32.156108496Z",
+  "request_id": "ef754218-3033-4cf3-bd36-bf6566727a36"
+}

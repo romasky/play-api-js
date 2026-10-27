@@ -1,0 +1,7 @@
+query,code
+count=5,SEED_REQUIRED
+seed=x,INVALID_SEED
+seed=1&count=0,INVALID_COUNT
+seed=1&count=51,INVALID_COUNT
+seed=1&fail_rate=2,INVALID_FAIL_RATE
+seed=1&fail_status=200,INVALID_FAIL_STATUS
