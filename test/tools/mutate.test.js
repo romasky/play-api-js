@@ -113,8 +113,10 @@ test('a mutant that never reaches the compiled file is an error, not a survivor'
   assert.throws(() => run({ file: unrelated, mutant: boundary, tests: [path.join(FIXTURES, 'weak.check.js')] }), /never compiled into/);
 });
 
-test('a file reached through a symlink is still mutated (Node compiles the real path)', () => {
-  const link = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'mutate-')), 'fixtures');
+test('a file reached through a symlink is still mutated (Node compiles the real path)', (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mutate-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const link = path.join(dir, 'fixtures');
   fs.symlinkSync(FIXTURES, link);
   const file = path.join(link, 'age.js');
   const [boundary] = mutants(fs.readFileSync(file, 'utf8')).filter((m) => m.description === '>= → >');
@@ -162,4 +164,13 @@ test('an operator written without spaces is found', () => {
 
 test('a run that times out counts as killed (an endless loop is a fault the tests caught)', () => {
   assert.equal(run({ file: path.join(FIXTURES, 'age.js'), tests: [path.join(FIXTURES, 'strong.check.js')], timeout: 1 }), 'killed');
+});
+
+test('a run leaves no temporary directory behind', () => {
+  const marks = () => fs.readdirSync(os.tmpdir()).filter((name) => name.startsWith('mutant-')).length;
+  const before = marks();
+  const [boundary] = mutants(fs.readFileSync(path.join(FIXTURES, 'age.js'), 'utf8')).filter((m) => m.description === '>= → >');
+  run({ file: path.join(FIXTURES, 'age.js'), mutant: boundary, tests: [path.join(FIXTURES, 'strong.check.js')] });
+  run({ file: path.join(FIXTURES, 'age.js'), tests: [path.join(FIXTURES, 'strong.check.js')] });
+  assert.equal(marks(), before);
 });

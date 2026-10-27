@@ -59,3 +59,8 @@ test('when another function on the same line ran, the line coverage decides', ()
   const file = parseLcov('SF:src/c.js\nFN:1,f\nFN:1,g\nFNDA:0,f\nFNDA:1,g\nDA:1,1\nend_of_record').get('src/c.js');
   assert.equal(lineCoverage({ start: 1, end: 1 }, file), 1);
 });
+
+test('FN and FNDA rows pair by position, so two functions with one name keep their own call counts', () => {
+  const file = parseLcov('SF:src/c.js\nFN:1,check\nFN:5,check\nFNDA:0,check\nFNDA:2,check\nend_of_record').get('src/c.js');
+  assert.deepEqual([file.calls.get(1), file.calls.get(5)], [[0], [2]]);
+});

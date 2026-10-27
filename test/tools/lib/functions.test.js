@@ -30,7 +30,7 @@ test('switch cases count, default does not; catch counts', () => {
 test('a nested function is its own unit, not part of its parent', () => {
   const [outer, inner] = functions('function outer(a) { if (a) {} const inner = (b) => b && a; }');
   assert.deepEqual([outer.name, outer.complexity], ['outer', 2]);
-  assert.deepEqual([inner.name, inner.complexity], ['inner', 2]);
+  assert.deepEqual([inner.name, inner.complexity], ['outer>inner', 2]);
 });
 
 test('names come from declarations, variables, methods and properties', () => {
@@ -79,7 +79,17 @@ test('a class field holding a function is named by the field', () => {
   assert.deepEqual(functions('class K { handler = () => {}; }').map((f) => f.name), ['handler']);
 });
 
-test('two functions with the same name in one file get distinct names, so gate keys never merge', () => {
-  const source = 'function a() { const check = () => 1; }\nfunction b() { const check = () => 2; }\nclass K { get x() {} set x(v) {} }';
-  assert.deepEqual(functions(source).map((f) => f.name), ['a', 'check', 'b', 'check#2', 'K.x', 'K.x#2']);
+test('a nested function is named by its owner too, so same-named helpers in different functions stay distinct', () => {
+  const source = 'function a() { const check = () => 1; }\nfunction b() { const check = () => 2; }';
+  assert.deepEqual(functions(source).map((f) => f.name), ['a', 'a>check', 'b', 'b>check']);
+});
+
+test('the name of a function does not depend on functions added before it', () => {
+  const before = functions('function b() { const check = () => 2; }').map((f) => f.name);
+  const after = functions('function a() { const check = () => 1; }\nfunction b() { const check = () => 2; }').map((f) => f.name);
+  assert.deepEqual(after.slice(2), before);
+});
+
+test('only a true clash in the same owner falls back to a #2 suffix', () => {
+  assert.deepEqual(functions('class K { get x() {} set x(v) {} }').map((f) => f.name), ['K.x', 'K.x#2']);
 });

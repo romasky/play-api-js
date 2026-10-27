@@ -25,17 +25,20 @@ const BASELINE = path.join(ROOT, 'quality', 'crap-baseline.json');
 function parseLcov(text) {
   const files = new Map();
   let file;
-  let startOf;
+  let starts;
   for (const row of text.split('\n')) {
     if (row.startsWith('SF:')) {
-      file = { lines: new Map(), calls: new Map() };
-      startOf = new Map(); // FN name → start line, for the FNDA rows that follow
+      file = { lines: new Map(), calls: new Map(), fnda: 0 };
+      starts = []; // FN start lines; the FNDA rows that follow come in the same order (names may repeat)
       files.set(row.slice(3), file);
     }
     const [, kind, a, b] = /^(DA|FN|FNDA):(\d+|[^,]*),(.*)$/.exec(row) ?? [];
     if (kind === 'DA') file.lines.set(Number(a), Number(b));
-    if (kind === 'FN') startOf.set(b, Number(a));
-    if (kind === 'FNDA') file.calls.set(startOf.get(b), [...(file.calls.get(startOf.get(b)) ?? []), Number(a)]);
+    if (kind === 'FN') starts.push(Number(a));
+    if (kind === 'FNDA') {
+      const start = starts[file.fnda++];
+      file.calls.set(start, [...(file.calls.get(start) ?? []), Number(a)]);
+    }
   }
   return files;
 }

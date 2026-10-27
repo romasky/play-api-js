@@ -48,20 +48,23 @@ const NAMED_BY_PARENT = {
     (first?.type === 'Literal' ? `${keyName(callee.property ?? callee)} '${first.value}'` : undefined),
 };
 
+const TOP = '<top>';
+
 /**
- * The name a reader would give the function, from where it is defined. An anonymous one is `<owner>>λ<n>` (the
- * n-th anonymous function directly inside its owner): stable when lines move, so baselines can key on it.
+ * The name a reader would give the function, from where it is defined, prefixed by its owner when nested
+ * (`request>attach`). An anonymous one is `<owner>>λ<n>`, the n-th anonymous function directly inside its owner.
+ * Neither depends on line numbers or on functions elsewhere in the file, so baselines can key on them.
  */
 function nameOf(fn, parent, className, owner) {
   const name = fn.id?.name ?? NAMED_BY_PARENT[parent.type]?.(parent, className);
-  if (name) return name;
-  owner.anonymous += 1;
-  return `${owner.name}>λ${owner.anonymous}`;
+  if (!name) owner.anonymous += 1;
+  const local = name ?? `λ${owner.anonymous}`;
+  return owner.name === TOP && name ? local : `${owner.name}>${local}`;
 }
 
 function functions(source) {
   const found = [];
-  const top = { name: '<top>', anonymous: 0 };
+  const top = { name: TOP, anonymous: 0 };
   const visit = (node, parent, owner, className) => {
     let unit = owner;
     if (FUNCTION.has(node.type)) {
@@ -78,7 +81,7 @@ function functions(source) {
   return distinct(found);
 }
 
-/** The 2nd, 3rd … function with an already-used name becomes `name#2`, `name#3` — gate keys must never merge. */
+/** A true clash in one owner (a getter and its setter) becomes `name#2`, `name#3` — gate keys must never merge. */
 function distinct(fns) {
   const seen = new Map();
   for (const fn of fns) {

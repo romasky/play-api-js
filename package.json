@@ -14,7 +14,8 @@
     "allure:open": "npx allure open allure-report",
     "gate:crap": "node tools/crap.js",
     "gate:dry": "node tools/dry.js",
-    "gate:mutate": "node tools/mutate.js"
+    "gate:mutate": "node tools/mutate.js",
+    "scenario": "node tools/scenario.js"
   },
   "engines": {
     "node": ">=22"

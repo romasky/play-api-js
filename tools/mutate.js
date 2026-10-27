@@ -116,7 +116,8 @@ function runEnv(mutant, file, mark) {
   const { NODE_TEST_CONTEXT, ...rest } = process.env;
   const env = { ...rest, NODE_V8_COVERAGE: '' };
   if (!mutant) return env;
-  return { ...env, NODE_OPTIONS: `${env.NODE_OPTIONS ?? ''} --require "${HOOK}"`, UB_MUTANT: JSON.stringify({ file, mark, ...mutant }) };
+  const options = [env.NODE_OPTIONS, `--require "${HOOK}"`].filter(Boolean).join(' ');
+  return { ...env, NODE_OPTIONS: options, UB_MUTANT: JSON.stringify({ file, mark, ...mutant }) };
 }
 
 /**
@@ -126,11 +127,16 @@ function runEnv(mutant, file, mark) {
  */
 function run({ file, mutant, tests, timeout = 60_000 }) {
   const target = fs.realpathSync(file);
-  const mark = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'mutant-')), 'compiled');
-  const result = spawnSync(process.execPath, ['--test', ...tests], { cwd: ROOT, stdio: 'ignore', timeout, env: runEnv(mutant, target, mark) });
-  if (result.error && result.error.code !== 'ETIMEDOUT') throw result.error;
-  if (mutant && !fs.existsSync(mark)) throw new Error(`the mutant was never compiled into ${file} — do the tests load it?`);
-  return result.status === 0 ? 'survived' : 'killed';
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mutant-'));
+  const mark = path.join(dir, 'compiled');
+  try {
+    const result = spawnSync(process.execPath, ['--test', ...tests], { cwd: ROOT, stdio: 'ignore', timeout, env: runEnv(mutant, target, mark) });
+    if (result.error && result.error.code !== 'ETIMEDOUT') throw result.error;
+    if (mutant && !fs.existsSync(mark)) throw new Error(`the mutant was never compiled into ${file} — do the tests load it?`);
+    return result.status === 0 ? 'survived' : 'killed';
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 const REQUIRE = /require\(['"](\.[^'"]+)['"]\)/g;
