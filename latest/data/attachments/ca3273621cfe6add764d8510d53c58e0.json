@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "HINT_LEVEL_OUT_OF_ORDER",
+    "message": "Hint levels are revealed in order",
+    "details": "reveal level 1 first"
+  },
+  "timestamp": "2026-10-28T02:45:18.629113864Z",
+  "request_id": "397f01d5-9246-4484-9e4e-0cc6db4d0f88"
+}
