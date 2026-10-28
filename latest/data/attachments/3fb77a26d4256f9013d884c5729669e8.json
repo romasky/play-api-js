@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "UNKNOWN_BUG_ID",
+    "message": "Unknown bug id",
+    "details": "See GET /buggy for the catalog"
+  },
+  "timestamp": "2026-10-28T14:54:35.864147327Z",
+  "request_id": "1286d9b7-7179-4dab-99b8-b15ec07e26f2"
+}

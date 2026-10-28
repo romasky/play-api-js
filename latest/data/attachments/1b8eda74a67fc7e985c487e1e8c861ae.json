@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "header": {
+    "alg": "HS256",
+    "typ": "JWT"
+  },
+  "payload": {
+    "email": "egepiatq7d@play-qa.com",
+    "exp": 1793195676,
+    "iat": 1793192076,
+    "iss": "play-qa.com",
+    "jti": "61cdc3318b22a9b64d26110e82a510cd",
+    "sub": "6ae20c958a6e647a79dcd7ce",
+    "type": "access"
+  },
+  "signature_valid": false,
+  "expired": true,
+  "expires_at": "2026-10-28T13:54:36Z",
+  "issued_at": "2026-10-28T12:54:36Z"
+}

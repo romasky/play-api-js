@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_INDEX",
+    "message": "index must be an integer in 0-49",
+    "details": "index must be an integer in 0-49: got -1"
+  },
+  "timestamp": "2026-10-28T14:55:28.640131753Z",
+  "request_id": "f8d08215-1013-46ff-b4c7-eb144acb959b"
+}

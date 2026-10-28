@@ -1,0 +1,4 @@
+label,since,status
+equal to Last-Modified,Tue, 01 Sep 2026 00:00:00 GMT,304
+older than Last-Modified,Mon, 31 Aug 2026 00:00:00 GMT,200
+not a date (ignored),garbage,200
