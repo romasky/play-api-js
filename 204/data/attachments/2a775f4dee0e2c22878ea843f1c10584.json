@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_TOKEN_FORMAT",
+    "message": "Invalid token format",
+    "details": "The token is longer than this endpoint accepts"
+  },
+  "timestamp": "2026-10-29T05:28:52.016992506Z",
+  "request_id": "a1cbbaa5-77d5-496c-9a09-fe5097f4452c"
+}

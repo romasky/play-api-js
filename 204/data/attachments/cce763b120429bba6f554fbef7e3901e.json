@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FAIL_RATE",
+    "message": "fail_rate must be a finite number in 0.0-1.0",
+    "details": "fail_rate must be a finite number in 0.0-1.0: not a number: \"x\""
+  },
+  "timestamp": "2026-10-29T05:27:03.642459417Z",
+  "request_id": "a52a44d9-be6e-44bd-91af-9e2fdb5b4936"
+}

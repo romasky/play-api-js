@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input",
+    "details": "steps[1] must not be blank"
+  },
+  "timestamp": "2026-10-29T05:26:41.440457899Z",
+  "request_id": "1eba66ea-78b3-4289-a220-a859f43d22fa"
+}

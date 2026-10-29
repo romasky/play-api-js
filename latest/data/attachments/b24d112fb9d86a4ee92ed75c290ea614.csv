@@ -1,0 +1,7 @@
+label,query
+no date,tz=UTC
+an impossible date,date=2026-02-30&tz=UTC
+a non-ISO date,date=01-07-2026&tz=UTC
+no tz,date=2026-07-01
+an unknown zone,date=2026-07-01&tz=Mars/Base
+a lower-cased zone,date=2026-07-01&tz=europe/berlin

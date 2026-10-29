@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILTER_VALUE",
+    "message": "filter value is not valid for this field",
+    "details": "filter value is not valid for this field: \"bx46oalvy4861snzpy6s1fwp0opwfiha57b758ml7wlmwksx0phhtv1p41y57lvx0\" for \"address.country\" must be 1-64 characters"
+  },
+  "timestamp": "2026-10-29T05:26:41.39757458Z",
+  "request_id": "f77ed707-cafc-45ea-b6b0-83f853b9ea3e"
+}
