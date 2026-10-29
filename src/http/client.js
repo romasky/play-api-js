@@ -21,6 +21,8 @@ const { scrub, attach, attachJson } = require('./attach');
  *   followed) are recorded too.
  * - Every 2xx JSON body is validated against its registered contract. A violation throws ContractError,
  *   which carries the response — so a create step can still register its cleanup (support/cleanup.js).
+ * - An ECONNRESET on a reused keep-alive socket is resent once (see `staleSocket`); any other transport error
+ *   throws. Status codes are never retried — rate limits are paced instead (throttle.js).
  * - `timeout` (ms) is a hard wall-clock deadline. A timeout is recorded inside the step (which stays green)
  *   and re-thrown after it: timeout scenarios catch it (see `timed()`).
  */
@@ -55,6 +57,13 @@ function rawBody(text) {
     return new RawJson(text);
   }
 }
+
+/**
+ * A reset on a REUSED keep-alive socket — almost always the server closing it while idle (the race Node's docs
+ * describe for `req.reusedSocket`), so the request was never read. Resent once whatever the method: should the
+ * origin have read it after all, a duplicated create fails LOUDLY (409, an unexpected total), never passes.
+ */
+const staleSocket = (err) => err.code === 'ECONNRESET' && err.request?.reusedSocket === true;
 
 class RequestTimeout extends Error {
   constructor(method, path, ms) {
@@ -115,15 +124,23 @@ async function request(method, path, opts = {}) {
     const started = Date.now();
     let redirects = 0;
     let response;
+    const signal = AbortSignal.timeout(deadline); // shared: a resend does not get a fresh deadline
+    const send = () => http.request({
+      method, url: path, params, headers,
+      // a string goes as bytes: axios would re-stringify a JSON-typed string ('{"a":' → '"{\"a\":"')
+      data: form ?? (typeof content === 'string' ? Buffer.from(content) : content) ?? json,
+      maxRedirects: follow ? 20 : 0,
+      beforeRedirect: () => { redirects += 1; },
+      signal,
+    });
     try {
-      response = await http.request({
-        method, url: path, params, headers,
-        // a string goes as bytes: axios would re-stringify a JSON-typed string ('{"a":' → '"{\"a\":"')
-        data: form ?? (typeof content === 'string' ? Buffer.from(content) : content) ?? json,
-        maxRedirects: follow ? 20 : 0,
-        beforeRedirect: () => { redirects += 1; },
-        signal: AbortSignal.timeout(deadline),
-      });
+      try {
+        response = await send();
+      } catch (err) {
+        if (!staleSocket(err)) throw err;
+        await attach('Stale socket', 'ECONNRESET on a reused keep-alive connection — resent once');
+        response = await send();
+      }
     } catch (err) {
       if (err.code !== 'ERR_CANCELED' && err.code !== 'ECONNABORTED') throw err;
       timedOut = true;
