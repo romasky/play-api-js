@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid params",
+    "details": "invalid params: unknown param: x"
+  },
+  "timestamp": "2026-10-29T15:00:30.067629698Z",
+  "request_id": "9b2f3cda-2ae2-45f4-a459-c452e0134993"
+}

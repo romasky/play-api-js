@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_JWT_FORMAT",
+    "message": "The value is not a well-formed JWT",
+    "details": "the token is not a well-formed JWT: the payload segment is not a JSON object"
+  },
+  "timestamp": "2026-10-29T15:00:16.432094851Z",
+  "request_id": "8d08d638-8a85-4949-8b72-9ffc7fa953be"
+}

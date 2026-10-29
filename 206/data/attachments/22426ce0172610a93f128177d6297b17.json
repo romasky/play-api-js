@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid query parameter",
+    "details": "page must be an integer"
+  },
+  "timestamp": "2026-10-29T15:00:36.211258155Z",
+  "request_id": "bcdcbf65-fee1-48eb-aab0-1c624c46733f"
+}

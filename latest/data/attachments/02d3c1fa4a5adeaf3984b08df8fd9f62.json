@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "ADMIN_REQUIRED",
+    "message": "This operation requires the admin role",
+    "details": "Your token is valid, but the account it belongs to is not an admin. 401 would mean the token was not accepted; 403 means it was."
+  },
+  "timestamp": "2026-10-29T14:59:32.510917767Z",
+  "request_id": "9200f55f-f36b-448a-9658-ae952e8b1e0a"
+}

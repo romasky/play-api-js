@@ -1,0 +1,29 @@
+{
+  "events": [
+    {
+      "id": "evt_ae4e9a2960b0e051",
+      "method": "DELETE",
+      "content_type": "",
+      "body_preview": "",
+      "body_size": 0,
+      "body_encoding": "utf8",
+      "signature_valid": null,
+      "received_at": "2026-10-29T15:02:11.366Z"
+    },
+    {
+      "id": "evt_63ff56a095a59f5d",
+      "method": "PATCH",
+      "content_type": "application/x-www-form-urlencoded",
+      "body_preview": "",
+      "body_size": 0,
+      "body_encoding": "utf8",
+      "signature_valid": null,
+      "received_at": "2026-10-29T15:02:11.157Z"
+    }
+  ],
+  "total": 3,
+  "returned": 2,
+  "page": 1,
+  "per_page": 2,
+  "dropped_count": 0
+}
