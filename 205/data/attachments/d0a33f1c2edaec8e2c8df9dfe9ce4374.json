@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "FILE_TOO_LARGE",
+    "message": "The file is too large",
+    "details": "the file must be at most 5242880 bytes"
+  },
+  "timestamp": "2026-10-29T05:42:15.682791664Z",
+  "request_id": "44837277-919c-4f01-87ac-ea625e3b92ce"
+}

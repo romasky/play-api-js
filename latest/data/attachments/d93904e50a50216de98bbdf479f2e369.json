@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "access t t l seconds must be at most 900 characters long"
+  },
+  "timestamp": "2026-10-29T05:41:33.419784123Z",
+  "request_id": "1cdf1bf7-7b89-4c09-989f-bbf09c42b2cf"
+}

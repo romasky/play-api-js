@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_SEED",
+    "message": "seed must be a 64-bit decimal integer",
+    "details": "seed must be a 64-bit decimal integer: \"\""
+  },
+  "timestamp": "2026-10-29T05:40:37.426837416Z",
+  "request_id": "bffd48f2-ea26-4561-9ce2-dc6b87fcc5d3"
+}
