@@ -43,6 +43,14 @@ test('assertSorted compares strings by bytes, like the server: uppercase before 
   assert.throws(() => assertSorted({ data: [{ s: 'apple' }, { s: 'Zed' }] }, 'data', 's', 'asc'), /not sorted by s asc/);
 });
 
+test('assertSorted orders ISO timestamps by time, whatever their millisecond digits', () => {
+  const at = (...ts) => ({ data: ts.map((t) => ({ t })) });
+  assertSorted(at('2026-10-29T14:59:56.876Z', '2026-10-29T14:59:56.8Z', '2026-10-29T14:59:56Z'), 'data', 't', 'desc');
+  assert.throws(() => assertSorted(at('2026-10-29T14:59:56.8Z', '2026-10-29T14:59:56.876Z'), 'data', 't', 'desc'), /not sorted by t desc/);
+  // only when BOTH are instants: a timestamp beside plain text still compares by bytes
+  assert.throws(() => assertSorted(at('b', '2026-10-29T14:59:56Z'), 'data', 't', 'asc'), /not sorted by t asc/);
+});
+
 test('assertSorted fails on the wrong order, a missing key, or a bad direction', () => {
   assert.throws(() => assertSorted(page, 'data', 'id', 'desc'), /'data' not sorted by id desc: \[1,2\]/);
   assert.throws(() => assertSorted({ data: [{ n: 1 }, {}] }, 'data', 'n', 'asc'), /some 'data' items have no 'n'/);
