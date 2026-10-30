@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input",
+    "details": "description must be at most 200 characters"
+  },
+  "timestamp": "2026-10-30T14:55:25.737125345Z",
+  "request_id": "8277e9f7-b166-49f7-a54a-a7d8439e4280"
+}

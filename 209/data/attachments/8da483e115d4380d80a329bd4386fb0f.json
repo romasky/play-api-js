@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "challenge_id": "patch-first-name",
+  "already_solved": false,
+  "attempt_id": "6ae4af768a6e647a79dcef04",
+  "status": "open",
+  "started_at": "2026-10-30T14:53:42.250908784Z",
+  "expires_at": "2026-10-31T14:53:41.612Z",
+  "target": {
+    "user_id": "6ae4af768a6e647a79dcef03",
+    "email": "sandbox-591187b8efd917f00df9c89f3681e473@play-qa.com",
+    "username": "sandbox_591187b8efd917f00df9",
+    "password": "86858c9e62f9be79f350e5fb",
+    "access_token": "usr_1793372022_b723f566374ffc6258a82932e9ccbd5b"
+  }
+}
