@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "EVENT_NOT_FOUND",
+    "message": "Event not found",
+    "details": "No event with this id in this inbox"
+  },
+  "timestamp": "2026-10-30T07:59:52.519915659Z",
+  "request_id": "a4fad18d-0a7f-43d4-b028-d886aff49301"
+}

@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Username and password do not match any user in this service.",
+    "details": "invalid credentials: username \"locked_out_user\""
+  },
+  "timestamp": "2026-10-30T08:03:34.88249206Z",
+  "request_id": "45c816d6-0523-4aef-bf82-7f573b7756fe"
+}

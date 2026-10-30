@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "TOO_MANY_FILTERS",
+    "message": "too many filters (max 10)",
+    "details": "too many filters (max 10): got 11"
+  },
+  "timestamp": "2026-10-30T07:58:20.603071142Z",
+  "request_id": "50651511-8008-4f46-b4d9-c310248d557b"
+}

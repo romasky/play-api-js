@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "refresh token is required"
+  },
+  "timestamp": "2026-10-30T08:00:37.839989267Z",
+  "request_id": "b04add45-c4d3-425b-a849-0148dc1f5c38"
+}
