@@ -32,12 +32,20 @@ function assertEveryItemEquals(body, listPath, field, expected) {
   if (wrong.length > 0) fail(`${wrong.length} item(s) of '${listPath}' have '${field}' != '${expected}': ${show(wrong.slice(0, 5))}`);
 }
 
-/** Byte order (the API's binary string order for UTF-8), like the server's sort. */
+const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+
+/**
+ * Byte order (the API's binary string order for UTF-8), like the server's sort — except two ISO instants,
+ * compared by time: the server trims millisecond zeros ('…56.8Z'), so their text order is not time order.
+ */
 function assertSorted(body, listPath, key, direction) {
   if (direction !== 'asc' && direction !== 'desc') fail(`direction must be asc|desc, got '${direction}'`);
   const values = items(body, listPath).map((row) => getPath(row, key));
   if (values.some((v) => v === undefined || v === null)) fail(`some '${listPath}' items have no '${key}': ${show(values)}`);
-  const cmp = (a, b) => (typeof a === 'string' ? Buffer.compare(Buffer.from(a), Buffer.from(b)) : a - b);
+  const cmp = (a, b) => {
+    if (ISO_INSTANT.test(a) && ISO_INSTANT.test(b)) return Date.parse(a) - Date.parse(b);
+    return typeof a === 'string' ? Buffer.compare(Buffer.from(a), Buffer.from(b)) : a - b;
+  };
   const expected = [...values].sort((a, b) => (direction === 'asc' ? cmp(a, b) : cmp(b, a)));
   if (values.some((v, i) => v !== expected[i])) fail(`'${listPath}' not sorted by ${key} ${direction}: ${show(values)}`);
 }
