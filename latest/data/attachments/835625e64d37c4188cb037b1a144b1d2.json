@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "USER_LOCKED_OUT",
+    "message": "Sorry, this user has been locked out.",
+    "details": "this user has been locked out: locked_out_user"
+  },
+  "timestamp": "2026-10-31T14:27:10.201422951Z",
+  "request_id": "45316d32-c2f9-467c-be1f-73892c67dde4"
+}

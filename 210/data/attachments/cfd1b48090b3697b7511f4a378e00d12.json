@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "total": 1,
+  "returned": 1,
+  "files": [
+    {
+      "file_id": "fil_cfa76506ae86877fd16055b0b0cba3a1",
+      "filename": "note.txt",
+      "size": 23,
+      "content_type": "text/plain",
+      "declared_type": "text/plain",
+      "description": "",
+      "download_url": "/api/v1/files/fil_cfa76506ae86877fd16055b0b0cba3a1/download",
+      "created_at": "2026-10-31T14:21:39.017Z",
+      "expires_at": "2026-11-01T14:21:39.017Z"
+    }
+  ]
+}

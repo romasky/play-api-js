@@ -1,1 +1,1 @@
-{"id":"27ed4398a55092bb6394149e60c7a641","fullName":"features/play_qa_api/BuggyApiTests.feature#Cart with qty 0 returns 400 VALIDATION_ERROR","name":"Cart with qty 0 returns 400 VALIDATION_ERROR","status":"passed","testResultsByEnv":{"default":"37086be092f3b3a9b8e67b2fd918e5a9"}}
+{"id":"27ed4398a55092bb6394149e60c7a641","fullName":"features/play_qa_api/BuggyApiTests.feature#Cart with no items returns 400 VALIDATION_ERROR","name":"Cart with no items returns 400 VALIDATION_ERROR","status":"passed","testResultsByEnv":{"default":"a3c050c970832e542256b1045a96bfbe"}}

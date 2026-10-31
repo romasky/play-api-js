@@ -1,0 +1,35 @@
+{
+  "success": true,
+  "user_id": "6ae5f9878a6e647a79dcf2bb",
+  "solved_count": 1,
+  "total_challenges": 4,
+  "total_points": 10,
+  "solved": [
+    {
+      "challenge_id": "patch-first-name",
+      "category": "crud",
+      "points": 10,
+      "solved_at": "2026-10-31T14:22:01.204Z",
+      "attempt_id": "6ae5f9888a6e647a79dcf2bf",
+      "hints_used": 2
+    }
+  ],
+  "hints": [
+    {
+      "challenge_id": "patch-first-name",
+      "revealed_count": 2,
+      "revealed": [
+        {
+          "level": 1,
+          "kind": "nudge",
+          "hint": "challenge.patch-first-name.hint1"
+        },
+        {
+          "level": 2,
+          "kind": "approach",
+          "hint": "challenge.patch-first-name.hint2"
+        }
+      ]
+    }
+  ]
+}

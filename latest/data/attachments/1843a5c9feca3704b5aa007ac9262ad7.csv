@@ -1,0 +1,6 @@
+label,header
+bare Bearer,Bearer
+Basic scheme,Basic abc
+no prefix,${token}
+lowercase bearer,bearer ${token}
+trailing garbage,Bearer ${token} x
