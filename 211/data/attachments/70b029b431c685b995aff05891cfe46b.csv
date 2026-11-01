@@ -1,0 +1,5 @@
+query,code,detail
+page=0&limit=0,INVALID_PAGINATION,'page'
+limit=0&sort=bad,INVALID_PAGINATION,limit
+sort=x&filter=bogus:1,INVALID_SORT_FIELD,sortable
+filter=bogus:1&search=,INVALID_FILTER_FIELD,bogus

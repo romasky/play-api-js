@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request",
+    "details": "invalid input: page must be a positive integer"
+  },
+  "timestamp": "2026-11-01T14:50:31.572811307Z",
+  "request_id": "8215eceb-a346-4ac1-9094-6e62b90504c7"
+}
