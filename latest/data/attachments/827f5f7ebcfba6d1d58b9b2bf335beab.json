@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_REDIRECT_COUNT",
+    "message": "redirect count must be an integer >= 1",
+    "details": "redirect count must be an integer >= 1: \"abc\" is not an integer"
+  },
+  "timestamp": "2026-11-02T17:57:32.466232597Z",
+  "request_id": "b428d2ed-34c8-4ba5-9f1a-5c7585b2c10e"
+}

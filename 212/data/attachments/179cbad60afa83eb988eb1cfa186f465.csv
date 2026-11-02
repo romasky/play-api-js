@@ -1,0 +1,5 @@
+label,username,password,detail
+empty username,,secret_sauce,username is required
+empty password,standard_user,,password is required
+username too long,long65,secret_sauce,at most 64 characters
+password too long,standard_user,long129,at most 128 characters
