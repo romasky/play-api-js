@@ -1,0 +1,72 @@
+{
+  "id": "6aea0397e9b2e2de97f1448e",
+  "email": "g488ugud99@play-qa.com",
+  "username": "user_ebt97fgv",
+  "access_token": "usr_1793721239_48d1515dc1412161878fe9e5c00de701",
+  "profile": {
+    "first_name": "Testskteae",
+    "last_name": "Userldinqr",
+    "middle_name": "Michael",
+    "avatar_url": "https://example.com/avatar.jpg",
+    "bio": "Short bio here.",
+    "date_of_birth": "1990-01-15",
+    "gender": "other",
+    "interests": [
+      "coding",
+      "travel"
+    ]
+  },
+  "contacts": {
+    "phone": "+13468521858",
+    "phone_verified": false,
+    "telegram": "@tester",
+    "whatsapp": "+14822283263",
+    "linkedin": "https://linkedin.com/in/tester",
+    "github": "https://github.com/tester",
+    "website": "https://tester.dev"
+  },
+  "address": {
+    "country": "US",
+    "state": "California",
+    "city": "San Francisco",
+    "street": "Market St",
+    "building": "100",
+    "apartment": "5A",
+    "zip_code": "94105",
+    "coordinates": {
+      "latitude": 37.7749,
+      "longitude": -122.4194
+    }
+  },
+  "employment": {
+    "status": "employed",
+    "company": "Acme Inc",
+    "position": "Engineer",
+    "department": "R&D",
+    "start_date": "2020-03-01",
+    "salary": {
+      "amount": 120000,
+      "currency": "USD"
+    }
+  },
+  "settings": {
+    "language": "en",
+    "timezone": "America/Los_Angeles",
+    "theme": "dark",
+    "notifications_enabled": true,
+    "email_notifications": false,
+    "sms_notifications": false,
+    "two_factor_enabled": false,
+    "private_profile": false
+  },
+  "metadata": {
+    "created_at": "2026-11-03T15:53:59.966400335Z",
+    "updated_at": "2026-11-03T15:53:59.966400335Z",
+    "expires_at": "2026-11-04T15:53:59.966400335Z",
+    "login_count": 0,
+    "is_active": true,
+    "is_verified": false,
+    "is_premium": false,
+    "role": "user"
+  }
+}

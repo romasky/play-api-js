@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "FILE_NOT_FOUND",
+    "message": "File not found",
+    "details": "The id is unknown, expired, or the file belongs to another player"
+  },
+  "timestamp": "2026-11-03T15:54:47.762287901Z",
+  "request_id": "a325f263-3fdc-4292-a0d3-efe7e6d1672c"
+}

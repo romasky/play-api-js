@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_JWT_FORMAT",
+    "message": "The value is not a well-formed JWT",
+    "details": "the token is not a well-formed JWT: the header segment is not valid base64url"
+  },
+  "timestamp": "2026-11-03T15:54:47.646261894Z",
+  "request_id": "19fc50cc-4cc3-4052-915c-8a4e8bbb6a51"
+}

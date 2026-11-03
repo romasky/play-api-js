@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Username and password do not match any user in this service.",
+    "details": "invalid credentials: username \"Standard_User\""
+  },
+  "timestamp": "2026-11-03T16:00:10.318792461Z",
+  "request_id": "763aa274-308d-4a90-9998-8562bbb19e05"
+}
