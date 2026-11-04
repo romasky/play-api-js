@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "level is required (an integer 1..3)"
+  },
+  "timestamp": "2026-11-04T16:00:53.842128404Z",
+  "request_id": "577e72de-9681-4b06-848c-2010d4ca4b77"
+}

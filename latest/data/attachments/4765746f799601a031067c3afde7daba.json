@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_PAGINATION",
+    "message": "page must be 1-1000000 and limit a positive integer",
+    "details": "page must be 1-1000000 and limit a positive integer: 'limit' must be a positive integer, got \"-1\""
+  },
+  "timestamp": "2026-11-04T16:00:28.09141262Z",
+  "request_id": "c904968b-83be-4ea1-b78f-717454a0f720"
+}

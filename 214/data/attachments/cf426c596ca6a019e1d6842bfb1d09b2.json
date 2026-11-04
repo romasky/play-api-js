@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_SORT_FIELD",
+    "message": "sort field is not sortable",
+    "details": "sort field is not sortable: sort field \"metadata.created_at\" is not sortable; allowed: created_at, email, last_login_at, login_count, updated_at, username"
+  },
+  "timestamp": "2026-11-04T16:00:29.194387532Z",
+  "request_id": "2c4d2691-dc00-439b-bca3-a29ccd3edc1a"
+}

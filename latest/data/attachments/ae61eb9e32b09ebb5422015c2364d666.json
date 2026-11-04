@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "id": "6aeb5699e9b2e2de97f14864",
+      "email": "91yghlrz5c@play-qa.com",
+      "username": "user_2n4wczzw",
+      "profile": {
+        "first_name": "Testqtqlew",
+        "last_name": "Useryduvmd"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {
+        "country": "Countryrwb7oe7e4v1e"
+      },
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "dark",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-04T16:00:25.384Z",
+        "updated_at": "2026-11-04T16:00:25.522Z",
+        "expires_at": "2026-11-05T16:00:25.384Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    }
+  ],
+  "page": 1,
+  "per_page": 10,
+  "total": 1,
+  "total_pages": 1
+}
