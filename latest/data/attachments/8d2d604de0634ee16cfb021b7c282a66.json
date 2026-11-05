@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "TOO_MANY_REDIRECTS",
+    "message": "redirect count must be <= 10",
+    "details": "redirect count must be <= 10: got 11"
+  },
+  "timestamp": "2026-11-05T16:14:55.844007387Z",
+  "request_id": "011462e2-bc31-4031-ad53-214359b5f0d5"
+}

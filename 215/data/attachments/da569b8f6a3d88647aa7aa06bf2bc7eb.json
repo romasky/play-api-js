@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "UNSUPPORTED_MEDIA_TYPE",
+    "message": "This file type is not accepted",
+    "details": ".exe is not accepted; allowed extensions are .png, .jpg, .jpeg, .pdf, .txt, .csv, .json"
+  },
+  "timestamp": "2026-11-05T16:16:03.372019285Z",
+  "request_id": "7f761b0e-40aa-4c2a-8a40-8a64fd230c6d"
+}

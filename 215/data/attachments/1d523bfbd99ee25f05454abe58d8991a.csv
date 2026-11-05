@@ -1,0 +1,7 @@
+query,code
+page=0,INVALID_PAGINATION
+sort=bogus,INVALID_SORT_FIELD
+sort=username:up,INVALID_SORT_DIR
+filter=role:root,INVALID_FILTER_VALUE
+filter=role:user&filter=role:admin,DUPLICATE_FILTER_FIELD
+search=,INVALID_SEARCH
