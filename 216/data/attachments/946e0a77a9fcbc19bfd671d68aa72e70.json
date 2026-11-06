@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "unexpected EOF"
+  },
+  "timestamp": "2026-11-06T15:44:27.419157442Z",
+  "request_id": "067728af-2431-4dbc-b38c-e392a7f284b2"
+}

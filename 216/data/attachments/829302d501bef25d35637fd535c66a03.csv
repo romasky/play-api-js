@@ -1,0 +1,5 @@
+label,etag
+strong match,\"chaos-v1\"
+weak match,W/\"chaos-v1\"
+in a list,\"x\", \"chaos-v1\"
+wildcard,*

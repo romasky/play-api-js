@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_SIGNATURE",
+    "message": "Invalid token signature",
+    "details": "The token was not signed by this server"
+  },
+  "timestamp": "2026-11-06T15:46:20.511374969Z",
+  "request_id": "af7c639c-31af-4a94-842b-fb0dc51b231e"
+}

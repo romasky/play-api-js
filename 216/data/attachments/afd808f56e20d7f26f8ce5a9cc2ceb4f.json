@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "NO_FILE",
+    "message": "The file field is required",
+    "details": "Add a `file` part to the multipart body"
+  },
+  "timestamp": "2026-11-06T15:45:25.993914206Z",
+  "request_id": "9d64c05a-804b-444d-80c0-4403f1b1be1d"
+}

@@ -1,0 +1,148 @@
+{
+  "users": [
+    {
+      "id": "6aedf5a3e9b2e2de97f14fb8",
+      "email": "e75q0it4lq@play-qa.com",
+      "username": "user_k5ckm8ve",
+      "profile": {
+        "first_name": "Testwrsssn",
+        "last_name": "Userpfpdkr"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-06T15:43:31.275Z",
+        "updated_at": "2026-11-06T15:43:31.275Z",
+        "expires_at": "2026-11-07T15:43:31.275Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6aedf5a2e9b2e2de97f14fb5",
+      "email": "mcsgp6mf3r@play-qa.com",
+      "username": "user_d75v0fef",
+      "profile": {
+        "first_name": "Testfxufwj",
+        "last_name": "Userkxyepu"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "system",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-06T15:43:30.922Z",
+        "updated_at": "2026-11-06T15:43:30.922Z",
+        "expires_at": "2026-11-07T15:43:30.922Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6aedf5a2e9b2e2de97f14fb2",
+      "email": "55qe7uhlun@play-qa.com",
+      "username": "user_uge0ocpu",
+      "profile": {
+        "first_name": "Testdiecvl",
+        "last_name": "Useryjpwzu"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-06T15:43:30.578Z",
+        "updated_at": "2026-11-06T15:43:30.578Z",
+        "expires_at": "2026-11-07T15:43:30.578Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6aedf5a2e9b2e2de97f14fb1",
+      "email": "monv7x92o1@play-qa.com",
+      "username": "user_0u1rl6j4",
+      "profile": {
+        "first_name": "Testzdhrff",
+        "last_name": "Userseingh"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "dark",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-06T15:43:30.224Z",
+        "updated_at": "2026-11-06T15:43:30.224Z",
+        "expires_at": "2026-11-07T15:43:30.224Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    }
+  ],
+  "page": 1,
+  "per_page": 4,
+  "total": 573,
+  "total_pages": 144
+}

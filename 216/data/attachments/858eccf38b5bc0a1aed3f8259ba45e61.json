@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "TOKEN_EXPIRED",
+    "message": "Token has expired",
+    "details": "Obtain a new access token via POST /api/v1/jwt/refresh"
+  },
+  "timestamp": "2026-11-06T15:46:21.871799156Z",
+  "request_id": "f090199e-206a-469c-87e0-b63a3006ce9c"
+}
