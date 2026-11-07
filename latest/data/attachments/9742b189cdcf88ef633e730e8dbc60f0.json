@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid role",
+    "details": "Allowed roles: user, admin. Note that the data model also accepts \"moderator\", but v1 does not grant it."
+  },
+  "timestamp": "2026-11-07T14:43:27.373249224Z",
+  "request_id": "3e0c470e-ce02-44fd-9564-cdcadc5a4fc4"
+}
