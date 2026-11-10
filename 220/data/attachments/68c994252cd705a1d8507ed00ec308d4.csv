@@ -1,0 +1,7 @@
+bug_id,severity,verdict,ok,points
+pagination-off-by-one,medium,reasonable,true,15
+pagination-off-by-one,critical,overblown,false,0
+cart-total-wrong,critical,reasonable,true,15
+cart-total-wrong,low,understated,false,0
+timezone-shift,high,reasonable,true,15
+timezone-shift,low,understated,false,0

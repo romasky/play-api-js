@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_STATUS_CODE",
+    "message": "status code must be an integer in 200-599",
+    "details": "status code must be an integer in 200-599: \"1e2\" is not an integer"
+  },
+  "timestamp": "2026-11-10T16:11:15.908679026Z",
+  "request_id": "b1d89f60-777a-4346-801b-081b65df8bd4"
+}
