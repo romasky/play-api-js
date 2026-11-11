@@ -1,0 +1,5 @@
+label,second,total
+country + role user,role:user,1
+country + role admin,role:admin,0
+country + is_active,is_active:true,1
+country + premium,is_premium:true,0

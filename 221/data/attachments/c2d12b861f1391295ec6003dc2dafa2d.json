@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_SEARCH",
+    "message": "search must be 1-64 characters",
+    "details": "search must be 1-64 characters: got 0 characters"
+  },
+  "timestamp": "2026-11-11T15:54:35.129841847Z",
+  "request_id": "e9273304-5efa-4606-80fc-ffb9299549d7"
+}

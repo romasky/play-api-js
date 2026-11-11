@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "id": "6af48fd6e9b2e2de97f160d4",
+      "email": "sandbox-bcb672a112f08b2dd7249faccd0dc839@play-qa.com",
+      "username": "sandbox_bcb672a112f08b2dd724",
+      "profile": {
+        "first_name": "Sandbox",
+        "last_name": "User"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-11T15:55:02.015Z",
+        "updated_at": "2026-11-11T15:55:02.015Z",
+        "expires_at": "2026-11-12T15:55:02.015Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6af48fd5e9b2e2de97f160d3",
+      "email": "oyuxdvokkw@play-qa.com",
+      "username": "user_aibgu6ti",
+      "profile": {
+        "first_name": "Testlkgmts",
+        "last_name": "Userlxgigt"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-11T15:55:01.371Z",
+        "updated_at": "2026-11-11T15:55:01.371Z",
+        "expires_at": "2026-11-12T15:55:01.371Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    }
+  ],
+  "page": 1,
+  "per_page": 2,
+  "total": 617,
+  "total_pages": 309
+}

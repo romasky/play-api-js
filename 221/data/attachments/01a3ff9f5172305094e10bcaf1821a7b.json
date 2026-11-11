@@ -1,0 +1,118 @@
+{
+  "users": [
+    {
+      "id": "6af48fb5e9b2e2de97f1607f",
+      "email": "jweah2zx2n@play-qa.com",
+      "username": "user_zo0ew4xg",
+      "profile": {
+        "first_name": "Testprsvat",
+        "last_name": "Userdgbsqf"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-11T15:54:29.332Z",
+        "updated_at": "2026-11-11T15:54:29.332Z",
+        "expires_at": "2026-11-12T15:54:29.332Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6af48fb5e9b2e2de97f1607e",
+      "email": "va3jbskr0g@play-qa.com",
+      "username": "user_fmqkksic",
+      "profile": {
+        "first_name": "Testhxsehc",
+        "last_name": "Userblrkqw",
+        "interests": [
+          "coding",
+          "travel",
+          "music"
+        ]
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-11T15:54:29.238Z",
+        "updated_at": "2026-11-11T15:54:29.238Z",
+        "expires_at": "2026-11-12T15:54:29.238Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6af48fb4e9b2e2de97f1607b",
+      "email": "s70ri4tzp9@play-qa.com",
+      "username": "user_k1911xpx",
+      "profile": {
+        "first_name": "Testjsxtxz",
+        "last_name": "Uservounpv"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-11T15:54:28.66Z",
+        "updated_at": "2026-11-11T15:54:28.66Z",
+        "expires_at": "2026-11-12T15:54:28.66Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    }
+  ],
+  "page": 1,
+  "per_page": 3,
+  "total": 553,
+  "total_pages": 185
+}

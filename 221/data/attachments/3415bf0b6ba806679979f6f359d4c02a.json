@@ -1,0 +1,12 @@
+{
+  "id": "wh_af0c0567554ce309",
+  "token": "3933408d-3655-435a-a00c-ad6e10c6c323",
+  "ingest_token": "c29b5cfd-afb1-4dd9-b959-1e2af9347cd0",
+  "ingest_url": "https://www.play-qa.com/api/v1/webhooks/in/c29b5cfd-afb1-4dd9-b959-1e2af9347cd0",
+  "signing_secret": "whsec_***",
+  "event_count": 0,
+  "total_received": 0,
+  "dropped_count": 0,
+  "created_at": "2026-11-11T15:57:07.340275199Z",
+  "expires_at": "2026-11-11T17:57:07.340275199Z"
+}
