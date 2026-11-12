@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "id": "6af5eb72e9b2e2de97f16442",
+      "email": "zfijwj0wbq@play-qa.com",
+      "username": "afk",
+      "profile": {
+        "first_name": "Testlcfjlz",
+        "last_name": "Userihtsjn"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-12T16:38:10.07Z",
+        "updated_at": "2026-11-12T16:38:10.07Z",
+        "expires_at": "2026-11-13T16:38:10.07Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6af5eb92e9b2e2de97f164b6",
+      "email": "sandbox-2ed872316437337749f8b5a8e314766a@play-qa.com",
+      "username": "sandbox_2ed872316437337749f8",
+      "profile": {
+        "first_name": "Sandbox",
+        "last_name": "User"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-12T16:38:42.062Z",
+        "updated_at": "2026-11-12T16:38:42.062Z",
+        "expires_at": "2026-11-13T16:38:42.062Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    }
+  ],
+  "page": 2,
+  "per_page": 2,
+  "total": 133,
+  "total_pages": 67
+}

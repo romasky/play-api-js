@@ -1,0 +1,6 @@
+kind,valid
+valid,true
+wrong hmac,false
+stale timestamp,false
+future timestamp,false
+garbage,false

@@ -1,0 +1,185 @@
+{
+  "users": [
+    {
+      "id": "6af5eb70e9b2e2de97f16435",
+      "email": "idq0em8t5s@play-qa.com",
+      "username": "user_owjfboz7",
+      "profile": {
+        "first_name": "Testrfsibh",
+        "last_name": "Userspxbfa"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-12T16:38:08.528Z",
+        "updated_at": "2026-11-12T16:38:08.528Z",
+        "expires_at": "2026-11-13T16:38:08.528Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6af5eb6fe9b2e2de97f16433",
+      "email": "8j7ly32vje@play-qa.com",
+      "username": "user_0ic3kr5b",
+      "profile": {
+        "first_name": "Testtdwqnd",
+        "last_name": "Userflegiy",
+        "middle_name": "Michael",
+        "avatar_url": "https://example.com/avatar.jpg",
+        "bio": "Short bio here.",
+        "date_of_birth": "1990-01-15",
+        "gender": "other",
+        "interests": [
+          "coding",
+          "travel"
+        ]
+      },
+      "contacts": {
+        "phone": "+18564469273",
+        "phone_verified": false,
+        "telegram": "@tester",
+        "whatsapp": "+19591755329",
+        "linkedin": "https://linkedin.com/in/tester",
+        "github": "https://github.com/tester",
+        "website": "https://tester.dev"
+      },
+      "address": {
+        "country": "US",
+        "state": "California",
+        "city": "San Francisco",
+        "street": "Market St",
+        "building": "100",
+        "apartment": "5A",
+        "zip_code": "94105",
+        "coordinates": {
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        }
+      },
+      "employment": {
+        "status": "employed",
+        "company": "Acme Inc",
+        "position": "Engineer",
+        "department": "R&D",
+        "start_date": "2020-03-01",
+        "salary": {
+          "amount": 120000,
+          "currency": "USD"
+        }
+      },
+      "settings": {
+        "language": "en",
+        "timezone": "America/Los_Angeles",
+        "theme": "dark",
+        "notifications_enabled": true,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-12T16:38:07.957Z",
+        "updated_at": "2026-11-12T16:38:07.957Z",
+        "expires_at": "2026-11-13T16:38:07.957Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6af5eb6fe9b2e2de97f16432",
+      "email": "k48ub5bnms@play-qa.com",
+      "username": "user_bvrynkqw",
+      "profile": {
+        "first_name": "Testczwssh",
+        "last_name": "Useruqfutk"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-12T16:38:07.688Z",
+        "updated_at": "2026-11-12T16:38:07.688Z",
+        "expires_at": "2026-11-13T16:38:07.688Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6af5eb6fe9b2e2de97f16430",
+      "email": "dinustuqwj@play-qa.com",
+      "username": "user_wfdsru3n",
+      "profile": {
+        "first_name": "Testmectys",
+        "last_name": "Userimsrpc"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-12T16:38:07.37Z",
+        "updated_at": "2026-11-12T16:38:07.37Z",
+        "expires_at": "2026-11-13T16:38:07.37Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    }
+  ],
+  "page": 1,
+  "per_page": 4,
+  "total": 54,
+  "total_pages": 14
+}

@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILTER_VALUE",
+    "message": "filter value is not valid for this field",
+    "details": "filter value is not valid for this field: \"eng\" for \"settings.language\" must be a 2-letter language code"
+  },
+  "timestamp": "2026-11-12T16:38:59.007060896Z",
+  "request_id": "ceb624ed-f1eb-479a-8d4b-6b3b3a0e5b37"
+}

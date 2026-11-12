@@ -1,0 +1,5 @@
+label,body
+empty object,{}
+missing password,{\"username\":\"standard_user\"}
+numeric username,{\"username\":123,\"password\":\"x\"}
+truncated JSON,{\"username\":\"standard_user\"
