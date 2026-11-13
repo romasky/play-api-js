@@ -1,0 +1,4 @@
+label,header,message
+Bearer scheme,Bearer sometoken,Invalid authentication format
+bad base64,Basic !!!notbase64,Invalid base64 encoding
+no colon in creds,Basic YWRtaW4=,Invalid credentials format

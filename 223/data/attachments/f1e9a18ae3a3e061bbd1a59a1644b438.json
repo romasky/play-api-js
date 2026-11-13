@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "challenge_id": "logout-revokes-token",
+  "already_solved": false,
+  "attempt_id": "6af73372e9b2e2de97f1681f",
+  "status": "open",
+  "started_at": "2026-11-13T15:57:38.038912625Z",
+  "expires_at": "2026-11-14T15:57:37.431Z",
+  "target": {
+    "user_id": "6af73372e9b2e2de97f1681e",
+    "email": "sandbox-6c04198ddc905a8e3d5ae32f3700a067@play-qa.com",
+    "username": "sandbox_6c04198ddc905a8e3d5a",
+    "password": "e38503d772e07582559887b9",
+    "access_token": "usr_1794585458_4bb723fb6e0f7ada6afe37fb7c20e49b"
+  }
+}
