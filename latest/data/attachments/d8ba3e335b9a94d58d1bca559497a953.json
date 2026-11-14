@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "SEED_REQUIRED",
+    "message": "seed query parameter is required",
+    "details": "seed query parameter is required"
+  },
+  "timestamp": "2026-11-14T14:50:43.679087075Z",
+  "request_id": "d41b319c-3f55-40a9-b540-c04b2b87a3dc"
+}

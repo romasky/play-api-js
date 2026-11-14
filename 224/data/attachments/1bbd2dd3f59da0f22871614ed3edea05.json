@@ -1,0 +1,43 @@
+{
+  "users": [
+    {
+      "id": "6af87518e9b2e2de97f16be0",
+      "email": "sandbox-2066f3127980af8be5bddd7966417702@play-qa.com",
+      "username": "sandbox_2066f3127980af8be5bd",
+      "profile": {
+        "first_name": "Sandbox",
+        "last_name": "User"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-14T14:50:00.04Z",
+        "updated_at": "2026-11-14T14:50:07.462Z",
+        "expires_at": "2026-11-15T14:50:00.04Z",
+        "last_login_at": "2026-11-14T14:50:07.462Z",
+        "login_count": 1,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    }
+  ],
+  "page": 1,
+  "per_page": 1,
+  "total": 648,
+  "total_pages": 648
+}

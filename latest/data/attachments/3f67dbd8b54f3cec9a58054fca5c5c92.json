@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "json: cannot unmarshal number into Go struct field JWTRefreshRequest.refresh_token of type string"
+  },
+  "timestamp": "2026-11-14T14:52:33.695951808Z",
+  "request_id": "e5b463d0-2213-4fd8-95d9-53680f0e0b5c"
+}
