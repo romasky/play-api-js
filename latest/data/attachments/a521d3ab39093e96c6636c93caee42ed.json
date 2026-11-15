@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid query parameter",
+    "details": "steps must be an integer"
+  },
+  "timestamp": "2026-11-15T15:26:44.160825836Z",
+  "request_id": "25064619-8b62-4537-80d9-b4d9e1b2e623"
+}

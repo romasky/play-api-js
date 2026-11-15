@@ -1,0 +1,55 @@
+{
+  "id": "evt_72d9502a1f041c1b",
+  "method": "POST",
+  "path": "/api/v1/webhooks/in/3a1c71d8-e6fb-41b4-be79-d4f13416acf9",
+  "headers": {
+    "Accept": [
+      "*/*"
+    ],
+    "Accept-Encoding": [
+      "gzip, br"
+    ],
+    "Cdn-Loop": [
+      "cloudflare; loops=1"
+    ],
+    "Cf-Connecting-Ip": [
+      "20.65.156.18"
+    ],
+    "Cf-Ipcountry": [
+      "US"
+    ],
+    "Cf-Ray": [
+      "a5af44893847c456-AMS"
+    ],
+    "Cf-Visitor": [
+      "{\"scheme\":\"https\"}"
+    ],
+    "Content-Length": [
+      "33"
+    ],
+    "Content-Type": [
+      "application/json"
+    ],
+    "User-Agent": [
+      "axios/1.16.0"
+    ],
+    "X-Forwarded-For": [
+      "20.65.156.18, 104.23.168.28"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ],
+    "X-Real-Ip": [
+      "104.23.168.28"
+    ]
+  },
+  "headers_truncated": false,
+  "query_truncated": false,
+  "content_type": "application/json",
+  "body": "{\"event\":\"order.created\",\"id\":42}",
+  "body_size": 33,
+  "body_encoding": "utf8",
+  "remote_ip": "20.65.156.18",
+  "signature_valid": null,
+  "received_at": "2026-11-15T15:25:17.716Z"
+}

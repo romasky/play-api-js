@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "header": {
+    "alg": "HS256",
+    "typ": "JWT"
+  },
+  "payload": {
+    "email": "xzi9ss3onr@play-qa.com",
+    "iat": 1794756319,
+    "iss": "play-qa.com",
+    "jti": "f6ba6bb04ad1b4296fadf7c75084aef4",
+    "sub": "6af9cedfe9b2e2de97f16f52",
+    "type": "access"
+  },
+  "signature_valid": false,
+  "expired": null,
+  "expires_at": null,
+  "issued_at": "2026-11-15T15:25:19Z"
+}
