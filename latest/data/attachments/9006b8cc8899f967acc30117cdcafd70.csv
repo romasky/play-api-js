@@ -1,0 +1,4 @@
+label,query
+empty,search=
+whitespace only,search=%20%20%20
+65 characters,search=${long65}

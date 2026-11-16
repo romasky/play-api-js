@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "CHALLENGE_NOT_FOUND",
+    "message": "Challenge not found",
+    "details": "See GET /challenges for the catalog"
+  },
+  "timestamp": "2026-11-16T18:03:07.278639959Z",
+  "request_id": "5d505df5-9ef5-4722-871e-1dcab7499577"
+}
