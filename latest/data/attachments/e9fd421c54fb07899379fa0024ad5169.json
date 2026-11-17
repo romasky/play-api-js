@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_JWT_FORMAT",
+    "message": "The value is not a well-formed JWT",
+    "details": "the token is not a well-formed JWT: the token exceeds 8192 bytes"
+  },
+  "timestamp": "2026-11-17T17:26:45.985526979Z",
+  "request_id": "d1933e6f-b9d1-4dbe-ae40-e3768a0421c5"
+}
