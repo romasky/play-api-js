@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "PAYLOAD_TOO_LARGE",
+    "message": "Request body too large",
+    "details": "The report must be at most 64 KiB"
+  },
+  "timestamp": "2026-11-18T17:00:16.718291625Z",
+  "request_id": "caaf46b6-59b2-46cd-8819-0548f29fd29e"
+}

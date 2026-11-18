@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input",
+    "details": "title, expected and actual must not be blank"
+  },
+  "timestamp": "2026-11-18T16:59:59.756917841Z",
+  "request_id": "58335f62-945a-481d-9bea-87141760efa7"
+}

@@ -1,0 +1,7 @@
+query
+filter=
+filter=role
+filter=:user
+filter=bogus:1
+filter=password:x
+filter=metadata.role:user

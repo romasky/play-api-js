@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "bug i d must be at most 64 characters long"
+  },
+  "timestamp": "2026-11-18T16:59:51.359603022Z",
+  "request_id": "e6c05500-099b-486d-bbbe-16c59715c4ee"
+}

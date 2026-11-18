@@ -1,0 +1,4 @@
+index,bug_id,method,path
+0,pagination-off-by-one,GET,/buggy/items
+1,cart-total-wrong,POST,/buggy/cart/total
+2,timezone-shift,GET,/buggy/schedule
