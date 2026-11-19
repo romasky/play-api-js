@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input",
+    "details": "per_page must be between 1 and 50"
+  },
+  "timestamp": "2026-11-19T17:08:05.579827194Z",
+  "request_id": "89052485-e2f1-4a0d-b2ba-e36374e2c466"
+}

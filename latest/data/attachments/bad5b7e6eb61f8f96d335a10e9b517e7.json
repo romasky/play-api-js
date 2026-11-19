@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "UPGRADE_REQUIRED",
+    "message": "This endpoint speaks WebSocket",
+    "details": "the Upgrade header must be websocket"
+  },
+  "timestamp": "2026-11-19T17:08:21.618459648Z",
+  "request_id": "370c1f14-11a6-4035-9cb3-3253090c563e"
+}

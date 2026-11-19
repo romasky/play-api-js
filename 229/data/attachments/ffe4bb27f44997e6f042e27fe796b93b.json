@@ -1,0 +1,152 @@
+{
+  "users": [
+    {
+      "id": "6aff2cb8e9b2e2de97f17dd8",
+      "email": "vxx3dlm1uw@play-qa.com",
+      "username": "user_h966wur0",
+      "profile": {
+        "first_name": "Testcqclxz",
+        "last_name": "Userdjkgnu"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-19T17:07:04.211Z",
+        "updated_at": "2026-11-19T17:07:04.211Z",
+        "expires_at": "2026-11-20T17:07:04.211Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6aff2cb7e9b2e2de97f17dd7",
+      "email": "xhl8vtcg93@play-qa.com",
+      "username": "user_dw7yh9yo",
+      "profile": {
+        "first_name": "Testvehsmw",
+        "last_name": "Userapdrhb"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {
+        "status": "freelancer"
+      },
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-19T17:07:03.83Z",
+        "updated_at": "2026-11-19T17:07:03.83Z",
+        "expires_at": "2026-11-20T17:07:03.83Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6aff2cb7e9b2e2de97f17dd5",
+      "email": "2bfi5l6qej@play-qa.com",
+      "username": "user_uqsq95o2",
+      "profile": {
+        "first_name": "Testmcpapb",
+        "last_name": "Userxjakxc"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-19T17:07:03.501Z",
+        "updated_at": "2026-11-19T17:07:03.501Z",
+        "expires_at": "2026-11-20T17:07:03.501Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      },
+      "has_active_token": true
+    },
+    {
+      "id": "6aff2cb7e9b2e2de97f17dd4",
+      "email": "08vc6g7bum@play-qa.com",
+      "username": "user_0vcm8y3r",
+      "profile": {
+        "first_name": "Testxgczla",
+        "last_name": "Userxlcmpy"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {
+        "status": "retired"
+      },
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-19T17:07:03.151Z",
+        "updated_at": "2026-11-19T17:07:03.151Z",
+        "expires_at": "2026-11-20T17:07:03.151Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      },
+      "has_active_token": true
+    }
+  ],
+  "page": 1,
+  "per_page": 4,
+  "total": 93,
+  "total_pages": 24
+}

@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "EMPTY_FILE",
+    "message": "The file is empty",
+    "details": "Upload a file with at least one byte"
+  },
+  "timestamp": "2026-11-19T17:09:11.024213202Z",
+  "request_id": "2b8ee11d-0d81-44cb-a9f5-8965816e7673"
+}

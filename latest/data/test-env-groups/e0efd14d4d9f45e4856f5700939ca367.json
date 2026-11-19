@@ -1,1 +1,1 @@
-{"id":"e0efd14d4d9f45e4856f5700939ca367","fullName":"features/play_qa_api/ChaosTransportTests.feature#A 308 redirect preserves the POST body","name":"A 308 redirect preserves the POST body","status":"passed","testResultsByEnv":{"default":"0499950a5fd01c2e2cecf8c224efaa34"}}
+{"id":"e0efd14d4d9f45e4856f5700939ca367","fullName":"features/play_qa_api/ChaosTransportTests.feature#A 302 redirect drops (POST→GET) the POST body","name":"A 302 redirect drops (POST→GET) the POST body","status":"passed","testResultsByEnv":{"default":"8989c46daeff26188af8cc35b80ce301"}}
