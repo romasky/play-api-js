@@ -1,0 +1,5 @@
+route,header
+stats,Bearer
+users,Basic abc
+set role,Bearer
+delete user,Basic abc

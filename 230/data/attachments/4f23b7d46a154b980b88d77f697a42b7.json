@@ -1,0 +1,48 @@
+{
+  "id": "evt_4b9defae415031ba",
+  "method": "DELETE",
+  "path": "/api/v1/webhooks/in/ca4a3b6e-15a5-484a-8d25-32062a5bc3a5",
+  "headers": {
+    "Accept": [
+      "*/*"
+    ],
+    "Accept-Encoding": [
+      "gzip, br"
+    ],
+    "Cdn-Loop": [
+      "cloudflare; loops=1"
+    ],
+    "Cf-Connecting-Ip": [
+      "20.169.120.144"
+    ],
+    "Cf-Ipcountry": [
+      "US"
+    ],
+    "Cf-Ray": [
+      "a5d8ecf91d621da7-AMS"
+    ],
+    "Cf-Visitor": [
+      "{\"scheme\":\"https\"}"
+    ],
+    "User-Agent": [
+      "axios/1.16.0"
+    ],
+    "X-Forwarded-For": [
+      "20.169.120.144, 104.22.109.98"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ],
+    "X-Real-Ip": [
+      "104.22.109.98"
+    ]
+  },
+  "headers_truncated": false,
+  "query_truncated": false,
+  "content_type": "",
+  "body_size": 0,
+  "body_encoding": "utf8",
+  "remote_ip": "20.169.120.144",
+  "signature_valid": null,
+  "received_at": "2026-11-20T16:45:33.129Z"
+}

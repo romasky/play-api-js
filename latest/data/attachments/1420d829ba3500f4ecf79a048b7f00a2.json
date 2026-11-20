@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_TOKEN_FORMAT",
+    "message": "Invalid token format",
+    "details": "the token is not a well-formed JWT: token is malformed: token contains an invalid number of segments"
+  },
+  "timestamp": "2026-11-20T16:48:11.10135399Z",
+  "request_id": "d6c54113-3eb1-4472-9b9d-f0aab653f6a8"
+}

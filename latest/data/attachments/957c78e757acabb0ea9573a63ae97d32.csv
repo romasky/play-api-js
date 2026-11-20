@@ -1,0 +1,9 @@
+label,body
+with no items,{\"items\":[]}
+without items,{}
+that is not JSON,{\"items\":
+with 3 price decimals,{\"items\":[{\"price\":1.234,\"qty\":1}]}
+with a negative price,{\"items\":[{\"price\":-1,\"qty\":1}]}
+with a string price,{\"items\":[{\"price\":\"10\",\"qty\":1}]}
+with qty 0,{\"items\":[{\"price\":1,\"qty\":0}]}
+with qty 1001,{\"items\":[{\"price\":1,\"qty\":1001}]}

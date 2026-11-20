@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "UNSUPPORTED_MEDIA_TYPE",
+    "message": "This file type is not accepted",
+    "details": "the detected type application/octet-stream is not accepted"
+  },
+  "timestamp": "2026-11-20T16:47:44.88088355Z",
+  "request_id": "632a15fb-2f7b-4579-802f-3fa139f2f1e1"
+}
