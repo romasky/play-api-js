@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_TIMEOUT",
+    "message": "after must be a finite number >= 0",
+    "details": "after must be a finite number >= 0: not a finite number: \"NaN\""
+  },
+  "timestamp": "2026-11-21T15:57:54.251964855Z",
+  "request_id": "fcb62da7-1b17-433c-a998-dfcb93b341ef"
+}

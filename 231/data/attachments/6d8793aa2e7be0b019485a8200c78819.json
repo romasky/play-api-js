@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "PAYLOAD_TOO_LARGE",
+    "message": "Request body exceeds the 1048576 byte input limit",
+    "details": "http: request body too large"
+  },
+  "timestamp": "2026-11-21T15:57:42.70262599Z",
+  "request_id": "788091ee-d3f7-4de5-8659-8e94b4f0486a"
+}

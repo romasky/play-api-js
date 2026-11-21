@@ -1,0 +1,178 @@
+{
+  "users": [
+    {
+      "id": "6b01bf6ce9b2e2de97f185a0",
+      "email": "7p4ktn99n8@play-qa.com",
+      "username": "user_5dec0fla",
+      "profile": {
+        "first_name": "Testlefloo",
+        "last_name": "Userzzqfeq"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-21T15:57:32.115Z",
+        "updated_at": "2026-11-21T15:57:32.115Z",
+        "expires_at": "2026-11-22T15:57:32.115Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6b01bf6be9b2e2de97f1859e",
+      "email": "nafr5y4v60@play-qa.com",
+      "username": "user_qwip2o7l",
+      "profile": {
+        "first_name": "Testrbgogi",
+        "last_name": "Userchymtl"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-21T15:57:31.835Z",
+        "updated_at": "2026-11-21T15:57:31.835Z",
+        "expires_at": "2026-11-22T15:57:31.835Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6b01bf6be9b2e2de97f1859c",
+      "email": "sandbox-aa160e3144cbc6a9dc8be0dcde7a3a0c@play-qa.com",
+      "username": "sandbox_aa160e3144cbc6a9dc8b",
+      "profile": {
+        "first_name": "Sandbox",
+        "last_name": "User"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-21T15:57:31.106Z",
+        "updated_at": "2026-11-21T15:57:31.106Z",
+        "expires_at": "2026-11-22T15:57:31.106Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6b01bf6ae9b2e2de97f18599",
+      "email": "q30tacoykj@play-qa.com",
+      "username": "user_545hxhzb",
+      "profile": {
+        "first_name": "Testoebspz",
+        "last_name": "Usertnjswr"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-21T15:57:30.446Z",
+        "updated_at": "2026-11-21T15:57:30.446Z",
+        "expires_at": "2026-11-22T15:57:30.446Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6b01bf69e9b2e2de97f18597",
+      "email": "sandbox-80e92ef89a3996297f4474d25d1e47da@play-qa.com",
+      "username": "sandbox_80e92ef89a3996297f44",
+      "profile": {
+        "first_name": "Sandbox",
+        "last_name": "User"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-21T15:57:29.702Z",
+        "updated_at": "2026-11-21T15:57:29.702Z",
+        "expires_at": "2026-11-22T15:57:29.702Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    }
+  ],
+  "page": 1,
+  "per_page": 5,
+  "total": 659,
+  "total_pages": 132
+}

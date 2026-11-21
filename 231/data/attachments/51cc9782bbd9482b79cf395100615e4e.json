@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "WEBHOOK_NOT_FOUND",
+    "message": "Webhook inbox not found",
+    "details": "The token is unknown or the inbox has expired (inboxes live for 2 hours)"
+  },
+  "timestamp": "2026-11-21T16:00:21.979975456Z",
+  "request_id": "c8d0ae50-6157-41e9-b03c-ef99fed82e6d"
+}

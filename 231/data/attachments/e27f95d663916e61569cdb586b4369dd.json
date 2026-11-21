@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "total": 1,
+  "returned": 1,
+  "files": [
+    {
+      "file_id": "fil_bacfc6829ce2f20075c8508c7a0ce047",
+      "filename": "note.txt",
+      "size": 23,
+      "content_type": "text/plain",
+      "declared_type": "text/plain",
+      "description": "",
+      "download_url": "/api/v1/files/fil_bacfc6829ce2f20075c8508c7a0ce047/download",
+      "created_at": "2026-11-21T15:57:04.16Z",
+      "expires_at": "2026-11-22T15:57:04.16Z"
+    }
+  ]
+}
