@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "challenge_id": "delete-user-404",
+  "already_solved": false,
+  "attempt_id": "6b03116ae9b2e2de97f1891a",
+  "status": "open",
+  "started_at": "2026-11-22T15:59:38.657398121Z",
+  "expires_at": "2026-11-23T15:59:38.013Z",
+  "target": {
+    "user_id": "6b03116ae9b2e2de97f18919",
+    "email": "sandbox-f31f71b4023387c8b12a0c673c64bdba@play-qa.com",
+    "username": "sandbox_f31f71b4023387c8b12a",
+    "password": "fe5ecf076a4b2a600563a32b",
+    "access_token": "usr_1795363178_4e4d80b4889913f4c9d87cd29a1bc362"
+  }
+}
