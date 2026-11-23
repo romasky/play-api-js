@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input",
+    "details": "date must be a valid calendar date in YYYY-MM-DD format"
+  },
+  "timestamp": "2026-11-23T19:55:57.605399886Z",
+  "request_id": "937ea159-a747-4d70-8a1b-f8626b7c3360"
+}

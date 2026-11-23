@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "id": "6b049a0ae9b2e2de97f18cc2",
+      "email": "63hheti3k7@play-qa.com",
+      "username": "nnkn0izdp5gwsijyh5sw09es29udny",
+      "profile": {
+        "first_name": "Testbcxttd",
+        "last_name": "Useroanymn"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-23T19:54:50.361Z",
+        "updated_at": "2026-11-23T19:54:50.361Z",
+        "expires_at": "2026-11-24T19:54:50.361Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "user"
+      }
+    },
+    {
+      "id": "6b049a26e9b2e2de97f18d10",
+      "email": "5zp4qf3odq@play-qa.com",
+      "username": "user_0jo0as28",
+      "profile": {
+        "first_name": "Testxzvhwr",
+        "last_name": "Userkuzmnx"
+      },
+      "contacts": {
+        "phone_verified": false
+      },
+      "address": {},
+      "employment": {},
+      "settings": {
+        "language": "",
+        "timezone": "",
+        "theme": "",
+        "notifications_enabled": false,
+        "email_notifications": false,
+        "sms_notifications": false,
+        "two_factor_enabled": false,
+        "private_profile": false
+      },
+      "metadata": {
+        "created_at": "2026-11-23T19:55:18.567Z",
+        "updated_at": "2026-11-23T19:55:18.567Z",
+        "expires_at": "2026-11-24T19:55:18.567Z",
+        "login_count": 0,
+        "is_active": true,
+        "is_verified": false,
+        "is_premium": false,
+        "role": "admin"
+      }
+    }
+  ],
+  "page": 2,
+  "per_page": 2,
+  "total": 147,
+  "total_pages": 74
+}

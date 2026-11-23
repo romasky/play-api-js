@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input",
+    "details": "severity must be one of low, medium, high, critical"
+  },
+  "timestamp": "2026-11-23T19:55:20.892522158Z",
+  "request_id": "098e9758-8ab6-4592-817d-ec5bd4e2ccec"
+}

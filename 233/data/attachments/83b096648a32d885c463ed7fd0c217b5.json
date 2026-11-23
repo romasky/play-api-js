@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "json: cannot unmarshal array into Go value of type models.BugReportRequest"
+  },
+  "timestamp": "2026-11-23T19:55:39.751940659Z",
+  "request_id": "20b98326-0a3a-4ea7-ae93-d4e312f7aa2d"
+}

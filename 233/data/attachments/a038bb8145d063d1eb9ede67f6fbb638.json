@@ -1,0 +1,12 @@
+{
+  "id": "wh_17babba05310e000",
+  "token": "556acf2c-393a-4ad6-adf1-d49fd2c1916a",
+  "ingest_token": "714e85f0-5414-4262-836f-0972376b71c1",
+  "ingest_url": "https://www.play-qa.com/api/v1/webhooks/in/714e85f0-5414-4262-836f-0972376b71c1",
+  "signing_secret": "whsec_***",
+  "event_count": 0,
+  "total_received": 0,
+  "dropped_count": 0,
+  "created_at": "2026-11-23T19:57:57.591429476Z",
+  "expires_at": "2026-11-23T21:57:57.591429476Z"
+}
