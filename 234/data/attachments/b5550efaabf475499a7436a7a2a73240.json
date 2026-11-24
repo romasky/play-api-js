@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "DUPLICATE_FILTER_FIELD",
+    "message": "filter field must not repeat",
+    "details": "filter field must not repeat: field \"role\" appears more than once"
+  },
+  "timestamp": "2026-11-24T19:23:10.171121096Z",
+  "request_id": "b1466dcb-f09e-4575-97d3-91d0916614ba"
+}

@@ -1,0 +1,35 @@
+local_part,smtp_code,enhanced_status,category,message
+mailbox-full,552,5.2.2,recipient,Requested mail action aborted: mailbox full
+user-unknown,550,5.1.1,recipient,Requested action not taken: user unknown
+mailbox-disabled,550,5.2.1,recipient,Mailbox disabled, not accepting messages
+mailbox-unavailable,550,5.2.0,recipient,Mailbox temporarily unavailable
+recipient-rejected,550,5.1.1,recipient,Recipient address rejected
+rejected-by-policy,554,5.7.1,policy,Message rejected by policy (spam/content)
+relay-denied,554,5.7.1,policy,Relay access denied
+access-denied,550,5.7.1,policy,Access denied — not allowed to send to this domain
+sender-blocked,554,5.7.1,policy,Sender address blocked
+blacklisted,554,5.7.1,policy,IP/domain blacklisted
+auth-failed,535,5.7.8,auth,Authentication credentials invalid
+starttls-required,530,5.7.0,auth,Must issue a STARTTLS command first
+invalid-credentials,535,5.7.8,auth,Invalid SMTP credentials
+spf-fail,550,5.7.26,auth,Message failed SPF/DKIM/DMARC authentication checks
+too-many-messages,451,4.7.0,throttle,Too many messages — sending rate exceeded
+quota-exceeded,452,4.5.3,throttle,Daily sending quota exceeded
+connection-rate-limit,421,4.7.0,throttle,Connection rate limit exceeded
+greylisted,451,4.7.1,throttle,Greylisted — please try again later
+service-unavailable,421,4.3.0,temporary,Service temporarily unavailable
+temporary-failure,450,4.2.0,temporary,Requested action aborted: temporary failure
+delivery-timeout,451,4.4.2,temporary,Timeout during delivery
+connection-refused,421,4.4.1,temporary,Connection refused
+message-too-large,552,5.3.4,content,Message size exceeds fixed maximum message size
+content-rejected,554,5.6.0,content,Message content rejected
+invalid-mime,554,5.6.0,content,Invalid or malformed MIME message
+attachment-rejected,552,5.7.0,content,Attachment type rejected by server
+host-not-found,550,5.4.4,routing,Host not found / unable to route to domain
+domain-not-found,550,5.4.4,routing,Domain does not exist (DNS failure)
+no-mx-record,550,5.4.4,routing,No MX record found for domain
+routing-error,551,5.1.2,routing,User not local; invalid delivery route
+insufficient-storage,452,4.3.1,system,Insufficient system storage
+server-error,451,4.3.5,system,Server internal error
+queue-overflow,452,4.3.1,system,Mail queue overflow
+server-shutdown,421,4.3.2,system,Service shutting down

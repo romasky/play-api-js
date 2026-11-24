@@ -1,0 +1,35 @@
+{
+  "id": "6b05e45ae9b2e2de97f19116",
+  "email": "vo1cabtqys@play-qa.com",
+  "username": "user_2gkzvcrd",
+  "access_token": "usr_1795548250_a6d449cd35aa77dd5b4f9697b3cf5c3d",
+  "profile": {
+    "first_name": "Eve",
+    "last_name": "Escalate"
+  },
+  "contacts": {
+    "phone_verified": false
+  },
+  "address": {},
+  "employment": {},
+  "settings": {
+    "language": "",
+    "timezone": "",
+    "theme": "",
+    "notifications_enabled": false,
+    "email_notifications": false,
+    "sms_notifications": false,
+    "two_factor_enabled": false,
+    "private_profile": false
+  },
+  "metadata": {
+    "created_at": "2026-11-24T19:24:10.083654549Z",
+    "updated_at": "2026-11-24T19:24:10.083654549Z",
+    "expires_at": "2026-11-25T19:24:10.083654549Z",
+    "login_count": 0,
+    "is_active": true,
+    "is_verified": false,
+    "is_premium": false,
+    "role": "user"
+  }
+}
