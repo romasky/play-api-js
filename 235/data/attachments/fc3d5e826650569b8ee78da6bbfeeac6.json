@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid query parameter",
+    "details": "inline must be true or false"
+  },
+  "timestamp": "2026-11-25T18:29:26.272362347Z",
+  "request_id": "75dfaa04-1e7e-4cfa-812d-49bdc3ac9b12"
+}

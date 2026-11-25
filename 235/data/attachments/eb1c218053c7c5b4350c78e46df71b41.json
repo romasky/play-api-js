@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "title must be at most 200 characters long"
+  },
+  "timestamp": "2026-11-25T18:29:04.041406854Z",
+  "request_id": "3c5b8024-1672-4cc9-9ce5-427649d2739b"
+}

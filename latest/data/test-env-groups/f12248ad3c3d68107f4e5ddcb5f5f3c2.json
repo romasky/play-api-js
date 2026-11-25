@@ -1,1 +1,1 @@
-{"id":"f12248ad3c3d68107f4e5ddcb5f5f3c2","fullName":"features/play_qa_api/BuggyApiTests.feature#Items with per_page=0 returns 400 VALIDATION_ERROR","name":"Items with per_page=0 returns 400 VALIDATION_ERROR","status":"passed","testResultsByEnv":{"default":"8ee1accd8925271fd0b42bcba63e6fc4"}}
+{"id":"f12248ad3c3d68107f4e5ddcb5f5f3c2","fullName":"features/play_qa_api/BuggyApiTests.feature#Items with page=abc returns 400 VALIDATION_ERROR","name":"Items with page=abc returns 400 VALIDATION_ERROR","status":"passed","testResultsByEnv":{"default":"3fd513ee529c3742351de0a40f39006c"}}

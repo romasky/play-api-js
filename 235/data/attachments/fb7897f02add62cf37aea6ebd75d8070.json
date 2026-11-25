@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request body",
+    "details": "qty must be at most 1000 characters long"
+  },
+  "timestamp": "2026-11-25T18:29:31.504448017Z",
+  "request_id": "c347f8d4-6433-4bbd-a5e3-583ff8580af8"
+}

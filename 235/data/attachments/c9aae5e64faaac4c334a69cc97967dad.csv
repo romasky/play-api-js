@@ -1,0 +1,11 @@
+query
+page=0
+page=
+page=1000001
+page=abc
+limit=0
+limit=
+limit=-1
+limit=2.5
+per_page=
+limit=5&per_page=abc
