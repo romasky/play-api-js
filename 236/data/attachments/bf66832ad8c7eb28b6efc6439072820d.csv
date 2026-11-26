@@ -1,0 +1,5 @@
+label,body
+no token,{}
+an empty token,{\"token\":\"\"}
+a numeric token,{\"token\":123}
+a non-JSON body,{\"token\":

@@ -1,0 +1,5 @@
+label,query,per_page
+limit above 100 is clamped,limit=101,100
+limit wins over per_page,limit=5&per_page=2,5
+legacy per_page still works,per_page=2,2
+default page size is 10,page=1,10

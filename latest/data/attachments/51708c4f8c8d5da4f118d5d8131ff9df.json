@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "REPORT_NOT_FOUND",
+    "message": "Bug report not found",
+    "details": "The id is unknown or the report belongs to another player"
+  },
+  "timestamp": "2026-11-26T18:11:36.304127525Z",
+  "request_id": "40bc74f1-e974-4a72-b41d-1054eedeaf59"
+}
