@@ -1,0 +1,2033 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "REST API for practicing QA automation and API testing.\n\n**Base URL:** /api/v1\n\n**Authentication:**\n- Create a user with POST /users/create to receive an access_token\n- Or use POST /login with existing credentials to get a new access_token\n- Include the token in Authorization header as: Bearer {your_access_token}\n- Token required for: PUT, PATCH, DELETE operations\n\n**Auto-Deletion:**\n- All users are automatically deleted after 24 hours (TTL)\n- Maximum 1,000,000 users allowed in database\n\n**Rate Limiting:**\n- User creation: 100 requests per minute per IP\n- General API: 10 requests per second\n\n**Quick Start:**\n1. POST /users/create with email, username, password, profile.first_name, profile.last_name\n2. Save the access_token from response\n3. Use the token for authenticated operations (PUT, PATCH, DELETE)",
+    "title": "User API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "basePath": "/api/v1",
+  "paths": {
+    "/account": {
+      "delete": {
+        "description": "Requires the current password, account cookie, configured Origin and session CSRF token. The account is disabled and personal account credentials/recovery capabilities are scrubbed atomically before 202. The cookie is cleared. Associated progress and server-owned practice data are removed asynchronously by bounded reconciliation; 202 means accepted, not cleanup completed. Permanent minimal tombstones prevent reuse of the old account ID and allow late-write cleanup. A deleted account cannot be restored by password recovery. Independently created manual practice users and mail/webhook capabilities are separate identities.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Irreversibly disable and delete the signed-in website account",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Current password; account ID is derived from the session",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountDeletionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/models.AccountDeletionResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/capabilities": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Read website account recovery availability",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountCapabilitiesResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/challenges/progress": {
+      "get": {
+        "description": "Reads account-owned canonical solves without creating a practice player. Repeated players count once per challenge. Current live player's hints are returned when available. No client-selected account ID or practice Bearer is used.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Durable verified progress for the website account",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountChallengeProgressResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/challenges/{id}/hints/reveal": {
+      "post": {
+        "description": "Uses website cookie and CSRF authentication, never the target sandbox credential. Hint levels are snapshotted in the canonical solve decision.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Reveal a hint for the account's current practice player",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "delete-user-404",
+            "description": "Challenge slug",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Next hint level",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.RevealRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.RevealResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/challenges/{id}/start": {
+      "post": {
+        "description": "Uses the current server-bound practice player and snapshots website ownership. Same sandbox verification rules as the disposable challenge route. Cookie, Origin and CSRF are required.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Start a website-account challenge attempt",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "delete-user-404",
+            "description": "Challenge slug",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "boolean",
+            "default": false,
+            "description": "Reset an open attempt",
+            "name": "reset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.StartResponse"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/models.StartResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/challenges/{id}/verify": {
+      "post": {
+        "description": "Only the account's own server-created attempts can earn durable solves. Verified decisions and hint snapshots survive pending-write retries after sandbox expiry.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Verify a website-account challenge attempt",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "delete-user-404",
+            "description": "Challenge slug",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Optional attempt ID and params",
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/models.VerifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.VerifyResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/dashboard": {
+      "get": {
+        "description": "Cookie-authenticated account summary. Learning checkmarks and quiz results are self-reported. Five static badges derive solely from canonical verified challenge evidence; no-hints requires explicitly stored integer-zero hint evidence. Repeated practice players count once, while a later no-hints solve can independently qualify. Badge evidence includes exact challenge, attempt, solve timestamp and hint snapshot. Practice reports active expiry only, never credentials or inferred in-progress task status. Storage failures return an error rather than empty achievements.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Read the private learning and verified achievement dashboard",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountDashboardResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/learning-progress": {
+      "get": {
+        "description": "Private account state. Returns all five known tracks and a revision, including empty maps for untouched tracks. Tutorial completion and quiz results are learner-reported and never verified challenge evidence. No practice token or client-selected account ID is accepted.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Read synchronized self-reported learning progress",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountLearningResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/learning-progress/import": {
+      "post": {
+        "description": "Requires a bounded allow-listed task map, catalog version and expected revision. First import unions completed tasks and keeps the best valid quiz scores in one atomic write. A permanent account receipt makes every later valid import return current state without restoring tasks after reset. Browser checkmarks never create verified solves or badges.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Explicitly import this browser's self-reported learning state once",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Explicit browser state import",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountLearningImportRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountLearningResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "413": {
+            "description": "Request Entity Too Large",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/learning-progress/reset": {
+      "post": {
+        "description": "Clears every learner-reported task and quiz in one known track atomically. Requires the exact current revision. The permanent browser-import receipt remains set, so retrying an earlier import cannot undo a reset. Verified challenge evidence is separate.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Reset one learning track with revision protection",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Track and expected revision",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountLearningResetRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountLearningResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "413": {
+            "description": "Request Entity Too Large",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/learning-progress/{track}/{task}": {
+      "put": {
+        "description": "Requires the exact current revision and catalog version 1. Completion accepts true only and quiz scores retain the best result. Quiz totals must match a known tutorial task. Reset uses a separate revision-checked endpoint. Unknown fields and IDs are rejected; a stale write returns 409 without merging.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Mark a learning task or save a self-reported quiz result",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "tutorial",
+            "description": "Catalog track",
+            "name": "track",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "introduction",
+            "description": "Known task ID from the learning catalog",
+            "name": "task",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Revision-checked completion or quiz result",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountLearningUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountLearningResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "413": {
+            "description": "Request Entity Too Large",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/login": {
+      "post": {
+        "description": "Issues an independent seven-day cookie session. Invalid credentials receive the same response.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Sign in to a website account",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Website account credentials",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountAuthResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/logout": {
+      "post": {
+        "description": "Idempotent for absent/expired sessions; valid sessions require the CSRF token returned by login or me.",
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Revoke the current website session and clear its cookie",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website session cookie",
+            "name": "Cookie",
+            "in": "header"
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Required for a valid session",
+            "name": "X-CSRF-Token",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/me": {
+      "get": {
+        "description": "Uses the HttpOnly cookie, never practice Bearer authentication. Returns a session-bound CSRF token.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Restore the current website account session",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website session cookie",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountAuthResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/practice-player": {
+      "post": {
+        "description": "Server-owned binding to a fresh disposable player. Never adopts a submitted user ID. Cookie, configured Origin and CSRF are required; no request body is accepted. A deleted, expired or revoked player is replaced, while account solves remain.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Create or reuse the website account's practice player",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "playqa_account=opaque-session-token",
+            "description": "Website account session",
+            "name": "Cookie",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "session-bound-csrf-token",
+            "description": "Session CSRF token",
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountPracticePlayerResponse"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/models.AccountPracticePlayerResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/recovery/request": {
+      "post": {
+        "description": "Always returns the same acceptance for a valid email, including unknown/inactive accounts and unavailable mail. No reset token is exposed by this API. Email links expire after 15 minutes; new successfully activated requests replace earlier links. Concurrent obsolete requests can produce invalid links.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Request a private website-account password reset email",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Website account email",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountRecoveryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/models.AccountRecoveryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/recovery/reset": {
+      "post": {
+        "description": "The reset token authorizes this operation; no cookie or session CSRF token is required. Passwords are 6–20 ASCII characters: letters, digits, - _ !. Successful reset revokes every current session and requires signing in again.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Reset a website account password with a single-use email token",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Single-use reset token and new password",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountRecoveryResetRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AccountRecoveryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/account/register": {
+      "post": {
+        "description": "Separate from disposable practice users. Sets an HttpOnly seven-day cookie. Use the account practice routes to retain verified solves beyond a disposable player's expiry; old manual practice results are not adopted.\nPasswords are 6–20 characters and allow only English letters A–Z/a–z, digits 0–9, and - _ !. No combination of character types is required.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Website accounts"
+        ],
+        "summary": "Register a durable website account",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "http://localhost:5173",
+            "description": "Configured website origin",
+            "name": "Origin",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Website account credentials",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.AccountRegisterRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/models.AccountAuthResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Counts computed in ONE aggregation, so the three numbers are a single snapshot of a collection that a 24h TTL index is deleting from underneath. `by_role` always carries every role key, zero-filled — an absent key would be indistinguishable from a serialisation bug. Documents written before `metadata.role` existed are counted as `user`, which is the truth about their effective permissions.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Aggregate account statistics (admin)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AdminStatsResponse"
+            }
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Valid token, but the account is not an admin",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "The ordinary user list plus `has_active_token` per row — whether that account is currently logged in. Accepts the same page/per_page/sort/filter/search contract as GET /users/list, validated by the same code. NOTE what it does not add: `metadata.last_login_ip` stays owner-only even here. An admin token is not a way around it, because the seed code that mints an admin is published — if admins could read it, closing the leak would mean nothing.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Admin"
+        ],
+        "summary": "List users with the operator fields (admin)",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "Page number",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 10,
+            "description": "Items per page",
+            "name": "per_page",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "example": "created_at:desc",
+            "description": "field:asc|desc",
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "example": "role:admin",
+            "description": "field:value",
+            "name": "filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "example": "john",
+            "description": "Substring match",
+            "name": "search",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.AdminUsersListResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid pagination, sort or filter",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Valid token, but the account is not an admin",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}": {
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Scoped to your own account on this practice server, for the same reason SetRole is: the seed code is published, so an unscoped delete would let any visitor remove other students' accounts and the sandbox users the challenge system verifies against. Deleting yourself also invalidates your token, so the next admin call answers 401 — a clean demonstration that 401 and 403 are different failures.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Delete a user (admin)",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted; no body"
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Not an admin, or the target is not your own account",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}/role": {
+      "patch": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Privilege management. Allowed values are `user` and `admin`; the data model's enum also contains `moderator`, but v1 refuses to grant it — that difference is deliberate, not an oversight. On this practice server the target must be your OWN account: admins are obtainable by anyone with the published seed code, so cross-user mutation would let one student rewrite another's. Demoting yourself from admin to user is the intended exercise, and it is irreversible without a new seed call.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Change a user's role (admin)",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "New role",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.SetRoleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.UserResponse"
+            }
+          },
+          "400": {
+            "description": "Role not in user, admin",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "403": {
+            "description": "Not an admin, or the target is not your own account",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bug-reports": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "The authenticated player's reports, newest first. `total` (all reports of the player) and `reports` come from one snapshot, `returned` = len(reports). No PII.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buggy"
+        ],
+        "summary": "My bug reports",
+        "parameters": [
+          {
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer",
+            "default": 20,
+            "description": "Page size (1..50)",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.BugReportListResponse"
+            }
+          },
+          "400": {
+            "description": "limit out of range",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {}
+        ],
+        "description": "Deterministic scoring of a bug report about one of the catalog bugs — five criteria (has_steps 25, steps_reproducible 20, expected_actual 25, severity_reasonable 15, title_quality 15), each with an `ok`/`fail` feedback item and the parameters that explain the rule. Bearer is OPTIONAL: with a valid token the report is stored for 24h (201, `saved:true`, `report_id`), without a header it is only scored (200, `saved:false`, nothing stored). A presented but invalid/expired token is a 401, never a silent anonymous submit.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buggy"
+        ],
+        "summary": "Submit a bug report (auto-scored)",
+        "parameters": [
+          {
+            "description": "The report (steps 1..20 non-blank lines, severity low|medium|high|critical)",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.BugReportRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Anonymous: scored, not stored",
+            "schema": {
+              "$ref": "#/definitions/models.BugReportResponse"
+            }
+          },
+          "201": {
+            "description": "Stored for the authenticated player",
+            "schema": {
+              "$ref": "#/definitions/models.BugReportResponse"
+            }
+          },
+          "400": {
+            "description": "Missing/blank/too long fields, unknown severity",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Authorization header present but the token is invalid or expired",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "bug_id is not in the catalog",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "413": {
+            "description": "Body larger than 64 KiB",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "On average 30 reports per minute per IP (burst 10)",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        },
+        "x-auth-optional": true
+      }
+    },
+    "/bug-reports/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Full report of the authenticated owner (steps, expected, actual, score with feedback). A foreign, unknown or malformed id is the same 404 — nothing about other players is revealed.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buggy"
+        ],
+        "summary": "One of my bug reports",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "6650a1b2c3d4e5f6a7b8c9d0",
+            "description": "Report id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.BugReportDetailResponse"
+            }
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not this player's report",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/buggy": {
+      "get": {
+        "description": "The three intentionally buggy endpoints: id, method, path and the i18n keys of title, description and EXPECTED behaviour (the frontend shows the expectation behind a spoiler). No severity metadata — that would spoil the bug-report scoring.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buggy"
+        ],
+        "summary": "Bug catalog",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.BugCatalogResponse"
+            }
+          }
+        }
+      }
+    },
+    "/buggy/cart/total": {
+      "post": {
+        "description": "**This endpoint contains an intentional logic bug** (practice): the returned `total` is not sum(price × qty). Prices are parsed as exact decimals (at most two fraction digits) and summed in integer cents, so rounding is NOT the defect. Send two or more positions and check the arithmetic.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buggy"
+        ],
+        "summary": "Cart total (intentional wrong sum)",
+        "parameters": [
+          {
+            "description": "Cart positions (1..50); price is a bare decimal number, qty 1..1000",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.CartTotalRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The total as the server computes it",
+            "schema": {
+              "$ref": "#/definitions/models.CartTotalResponse"
+            }
+          },
+          "400": {
+            "description": "Body is not JSON, items empty, price not a 2-decimal number, qty out of range",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/buggy/items": {
+      "get": {
+        "description": "**This endpoint contains an intentional logic bug** (practice): status 200 does not mean the value is right. A 25-item deterministic dataset paginated by `page`/`per_page` — compare the number of returned items with `per_page` on a full page and with `total`. Which pages reproduce the problem?",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buggy"
+        ],
+        "summary": "Paginated items (intentional off-by-one)",
+        "parameters": [
+          {
+            "maximum": 1000000,
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "description": "Page (1..1000000)",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer",
+            "default": 10,
+            "description": "Page size (1..50)",
+            "name": "per_page",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page — count the items yourself",
+            "schema": {
+              "$ref": "#/definitions/models.BuggyItemsResponse"
+            }
+          },
+          "400": {
+            "description": "page / per_page out of range or not a number",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/buggy/schedule": {
+      "get": {
+        "description": "**This endpoint contains an intentional logic bug** (practice): the event starts at 09:00 LOCAL time of the requested IANA zone, but the returned instant is shifted. `tz` is required — in UTC the defect is invisible. Try a zone with a DST transition on that date.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buggy"
+        ],
+        "summary": "Event schedule (intentional timezone shift)",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "2026-03-29",
+            "description": "Calendar date YYYY-MM-DD",
+            "name": "date",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "Europe/Moscow",
+            "description": "IANA time zone",
+            "name": "tz",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "event_start in the zone + event_start_utc",
+            "schema": {
+              "$ref": "#/definitions/models.ScheduleResponse"
+            }
+          },
+          "400": {
+            "description": "Missing/invalid date or tz",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/challenges": {
+      "get": {
+        "description": "Public static catalog of server-verified challenges. `title`/`description` are i18n keys resolved by the frontend; `params` is the schema of the verify body (empty for the starter challenges). Progress is not mixed in — see GET /challenges/progress.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Challenges"
+        ],
+        "summary": "List challenges",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "crud",
+            "description": "Filter by category (crud, auth)",
+            "name": "category",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "example": "easy",
+            "description": "Filter by difficulty (easy, medium, hard)",
+            "name": "difficulty",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catalog (unknown filter values match nothing)",
+            "schema": {
+              "$ref": "#/definitions/models.ChallengeListResponse"
+            }
+          }
+        }
+      }
+    },
+    "/challenges/progress": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Solved challenges of the authenticated player in catalog order, with points. Progress is keyed by the player (user id), so it survives login token rotation; it expires together with the user (24h TTL). No PII.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Challenges"
+        ],
+        "summary": "Player progress",
+        "responses": {
+          "200": {
+            "description": "Progress",
+            "schema": {
+              "$ref": "#/definitions/models.ProgressResponse"
+            }
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/challenges/{id}/hints": {
+      "get": {
+        "description": "Public: how many hints a challenge has and their kinds (1 nudge, 2 approach, 3 solution). Never carries the hint keys/texts — those come only from POST /challenges/{id}/hints/reveal (which records the reveal) and from GET /challenges/progress (already revealed).",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Challenges"
+        ],
+        "summary": "Hint metadata",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "delete-user-404",
+            "description": "Challenge id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Levels without text",
+            "schema": {
+              "$ref": "#/definitions/models.HintsResponse"
+            }
+          },
+          "404": {
+            "description": "Unknown challenge id",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/challenges/{id}/hints/reveal": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Reveals hints strictly in order. The body names the level you want: an already revealed level (idempotent repeat — same answer, nothing recorded) or exactly the next one (recorded). Asking for a level above the next one is refused with 409 — nothing is skipped, and a retried request can never reveal more than you asked for. The answer always carries every revealed level (`revealed`) so one response restores the state. Revealing does not require an open attempt; the level revealed at the moment of a solve is snapshotted into progress as `hints_used`.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Challenges"
+        ],
+        "summary": "Reveal a hint level",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "delete-user-404",
+            "description": "Challenge id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Level to reveal (1..3): the next one or an already revealed one",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.RevealRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Revealed levels (cumulative)",
+            "schema": {
+              "$ref": "#/definitions/models.RevealResponse"
+            }
+          },
+          "400": {
+            "description": "Body is not JSON or level is missing / not an integer 1..3",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Missing, malformed, unknown or expired token",
+            "schema": {
+              "$ref": "#/definitions/models.ErrorResponse"
+            }
+          },
+          "404": {
+            "des
+… truncated (264858 chars in total)

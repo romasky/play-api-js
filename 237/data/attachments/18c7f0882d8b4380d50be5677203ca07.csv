@@ -1,0 +1,5 @@
+label,body
+no recipient,{}
+an empty to,{\"to\":\"\"}
+a numeric to,{\"to\":123}
+truncated JSON,{\"to\":

@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILTER_VALUE",
+    "message": "filter value is not valid for this field",
+    "details": "filter value is not valid for this field: \"neon\" for \"settings.theme\" must be one of light, dark, system"
+  },
+  "timestamp": "2026-11-27T17:54:46.078028488Z",
+  "request_id": "2f9b41e7-7a98-4a5e-8c44-c0b5ce5ce86e"
+}
